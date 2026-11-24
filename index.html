@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SPitch — Studio Pitch & Mugham Workstation</title>
+  <title>SPitch — Studio Pitch & Mugham Engine</title>
   <style>
     :root {
-      --bg-outer: #07090d;
-      --bg-panel: #0e1218;
-      --bg-header: linear-gradient(180deg, #171d27 0%, #11161f 100%);
-      --bg-surface: #131923;
-      --bg-surface-hover: #1b2432;
-      --border: #252e3d;
-      --border-soft: #1b222e;
-      --text-main: #edf2f7;
-      --text-muted: #8f9bb0;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.16);
-      --comma: #f59e0b;
-      --comma-soft: rgba(245, 158, 11, 0.18);
-      --danger: #f43f5e;
-      --ok: #10b981;
+      --bg-void: #05080d;
+      --bg-chassis: #0c121b;
+      --bg-panel: #090e15;
+      --bg-elevated: #121a26;
+      --border-metal: #1f2b3d;
+      --border-glow: rgba(56, 214, 255, 0.35);
+      --cyan: #38d6ff;
+      --cyan-bright: #9ef0ff;
+      --cyan-dim: rgba(56, 214, 255, 0.16);
+      --gold: #ffb020;
+      --gold-dim: rgba(255, 176, 32, 0.18);
+      --text: #eef6ff;
+      --muted: #7f92ad;
     }
 
     * {
@@ -34,391 +32,564 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 18% 12%, rgba(56, 189, 248, 0.08), transparent 42%),
-        radial-gradient(circle at 85% 88%, rgba(245, 158, 11, 0.06), transparent 45%),
-        var(--bg-outer);
-      color: var(--text-main);
+        radial-gradient(circle at 22% 28%, rgba(56, 214, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 78% 22%, rgba(28, 125, 196, 0.14), transparent 50%),
+        radial-gradient(circle at 65% 85%, rgba(255, 176, 32, 0.06), transparent 45%),
+        var(--bg-void);
+      color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 12px;
+      padding: 10px;
     }
 
-    .daw-shell {
+    .plugin-shell {
       width: 100%;
-      max-width: 1120px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
+      max-width: 1180px;
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.012) 0px,
+          rgba(255, 255, 255, 0.012) 2px,
+          transparent 2px,
+          transparent 6px
+        ),
+        linear-gradient(180deg, #111926 0%, #090e16 100%);
+      border: 1px solid var(--border-metal);
       border-radius: 14px;
       box-shadow:
-        0 28px 80px rgba(0, 0, 0, 0.85),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        0 30px 90px rgba(0, 0, 0, 0.92),
+        0 0 36px rgba(56, 214, 255, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
       overflow: hidden;
+      position: relative;
     }
 
-    /* Top Header & Knobs */
-    .top-bar {
+    /* Top Header Strip */
+    .header-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 14px 18px;
-      background: var(--bg-header);
-      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      padding: 9px 14px;
+      background: linear-gradient(180deg, #162030 0%, #0d141f 100%);
+      border-bottom: 1px solid var(--border-metal);
     }
 
-    .brand {
+    .header-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+      margin-right: 6px;
     }
 
-    .brand-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(245, 158, 11, 0.16));
-      border: 1px solid rgba(56, 189, 248, 0.45);
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border-glow);
+      background: radial-gradient(circle at 30% 25%, rgba(56, 214, 255, 0.35), rgba(10, 18, 30, 0.95));
+      box-shadow: 0 0 14px rgba(56, 214, 255, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 15px;
-      letter-spacing: -0.5px;
-      color: var(--accent);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      line-height: 1.15;
-    }
-
-    .brand p {
-      margin: 2px 0 0;
-      font-size: 10px;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .knobs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .knob-card {
-      background: rgba(11, 15, 21, 0.72);
-      border: 1px solid var(--border-soft);
-      border-radius: 9px;
-      padding: 7px 11px;
-      min-width: 112px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .knob-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.7px;
-      color: var(--text-muted);
-    }
-
-    .knob-val {
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
       font-size: 11px;
+      color: var(--cyan-bright);
     }
 
-    input[type="range"] {
-      width: 100%;
-      margin: 0;
-      height: 4px;
-      accent-color: var(--accent);
-      cursor: pointer;
+    .logo-title {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.4px;
+      color: var(--text);
     }
 
-    /* Toolbar: Presets, Root, Scale, Tools */
-    .sub-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 18px;
-      background: #0c1016;
-      border-bottom: 1px solid var(--border);
+    .logo-title span {
+      color: var(--cyan);
+      font-weight: 600;
     }
 
-    .tool-group {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .field-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
-      margin-right: 2px;
-    }
-
-    select, .btn {
-      background: var(--bg-surface);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 7px 11px;
-      font-size: 12px;
+    select, .pill-btn {
+      background: var(--bg-panel);
+      color: var(--text);
+      border: 1px solid var(--border-metal);
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-size: 11.5px;
       font-weight: 500;
       cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    select:hover, .pill-btn:hover {
+      border-color: rgba(56, 214, 255, 0.5);
+      box-shadow: 0 0 10px rgba(56, 214, 255, 0.12);
+    }
+
+    .pill-btn.active {
+      background: var(--cyan-dim);
+      border-color: var(--cyan);
+      color: var(--cyan-bright);
+      box-shadow: 0 0 12px rgba(56, 214, 255, 0.22);
+    }
+
+    .pill-btn.gold-active {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: #ffe299;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ab-box {
+      display: flex;
+      border: 1px solid var(--border-metal);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-panel);
+    }
+
+    .ab-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ab-btn.active {
+      background: var(--cyan-dim);
+      color: var(--cyan-bright);
+    }
+
+    /* Center Stage: Voices Strip + Viz Canvas + Hero Ring Knobs */
+    .center-stage {
+      display: grid;
+      grid-template-columns: 44px 1.25fr 350px;
+      min-height: 360px;
+      border-bottom: 1px solid var(--border-metal);
+      background: linear-gradient(135deg, #06090f 0%, #0b121c 62%, #101a29 100%);
+    }
+
+    .voices-rail {
+      border-right: 1px solid var(--border-metal);
+      background: rgba(8, 13, 21, 0.85);
+      padding: 8px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .voice-slot {
+      width: 100%;
+      flex: 1;
+      border-radius: 6px;
+      border: 1px solid #1b2638;
+      background: #0d1522;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 700;
       transition: all 0.14s ease;
     }
 
-    select:hover, .btn:hover {
-      background: var(--bg-surface-hover);
-      border-color: #364358;
+    .voice-slot.active {
+      border-color: var(--cyan);
+      background: rgba(56, 214, 255, 0.14);
+      color: var(--cyan-bright);
+      box-shadow: inset 0 0 12px rgba(56, 214, 255, 0.18);
     }
 
-    .btn-accent {
-      background: rgba(56, 189, 248, 0.14);
-      border-color: rgba(56, 189, 248, 0.55);
-      color: #bae6fd;
-      font-weight: 600;
-    }
-
-    .btn-accent:hover {
-      background: rgba(56, 189, 248, 0.24);
-    }
-
-    .btn-active {
-      background: rgba(245, 158, 11, 0.18);
-      border-color: rgba(245, 158, 11, 0.65);
-      color: #fde68a;
-      font-weight: 600;
-    }
-
-    /* Main Workspace: Piano + Note Roll Canvas */
-    .workspace {
-      display: grid;
-      grid-template-columns: 168px 1fr;
-      height: 470px;
-    }
-
-    .piano-pane {
-      background: #0d1118;
-      border-right: 1px solid var(--border);
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 2px;
-    }
-
-    .piano-key {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: filter 0.08s ease, transform 0.06s ease;
-      border: 1px solid transparent;
-    }
-
-    .piano-key:active {
-      transform: scale(0.985);
-    }
-
-    .key-white {
-      width: 100%;
-      background: #cbd5e1;
-      color: #0f172a;
-      border-color: #94a3b8;
-    }
-
-    .key-black {
-      width: 72%;
-      background: #171e2b;
-      color: #94a3b8;
-      border-color: #273246;
-    }
-
-    .key-in-scale {
-      background: var(--accent) !important;
-      color: #061018 !important;
-      border-color: #7dd3fc !important;
-    }
-
-    .key-in-comma {
-      background: var(--comma) !important;
-      color: #140d02 !important;
-      border-color: #fcd34d !important;
-    }
-
-    .key-playing {
-      filter: brightness(1.25);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
-    }
-
-    .roll-pane {
-      display: flex;
-      flex-direction: column;
-      background: #0b0f15;
-      padding: 10px 12px;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    .telemetry-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 11.5px;
-      color: var(--text-muted);
+    .voice-cent {
+      font-size: 8.5px;
+      color: var(--gold);
       font-variant-numeric: tabular-nums;
     }
 
-    .telemetry-left strong {
-      color: var(--text-main);
-      font-weight: 600;
+    .viz-zone {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px;
+      min-width: 0;
     }
 
-    .legend {
+    .viz-hud {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
       font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+      z-index: 2;
     }
 
-    .legend-item {
+    .viz-hud strong {
+      color: var(--text);
+    }
+
+    .viz-hud .cyan-txt {
+      color: var(--cyan-bright);
+    }
+
+    .viz-hud .gold-txt {
+      color: var(--gold);
+    }
+
+    .viz-canvas-wrap {
+      position: relative;
+      flex: 1;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 214, 255, 0.16);
+      background: radial-gradient(circle at 50% 50%, rgba(56, 214, 255, 0.06), rgba(5, 8, 13, 0.92) 75%);
+      overflow: hidden;
+    }
+
+    .piano-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 66px;
+      background: rgba(8, 13, 21, 0.86);
+      backdrop-filter: blur(4px);
+      border-right: 1px solid rgba(56, 214, 255, 0.22);
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 3px;
+      gap: 1.5px;
+      z-index: 3;
+    }
+
+    .p-key {
+      flex: 1;
+      min-height: 0;
+      border-radius: 2px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: space-between;
+      padding: 0 4px;
+      font-size: 8.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    canvas {
-      flex: 1;
+    .p-key.white {
       width: 100%;
+      background: #c7d4e6;
+      color: #09101a;
+    }
+
+    .p-key.black {
+      width: 72%;
+      background: #162030;
+      color: #8fa3bf;
+      border-color: #25344b;
+    }
+
+    .p-key.in-scale {
+      background: var(--cyan) !important;
+      color: #041018 !important;
+      box-shadow: 0 0 8px rgba(56, 214, 255, 0.45);
+    }
+
+    .p-key.in-comma {
+      background: var(--gold) !important;
+      color: #160e02 !important;
+      box-shadow: 0 0 8px rgba(255, 176, 32, 0.45);
+    }
+
+    #mainCanvas {
+      position: absolute;
+      inset: 0 0 0 66px;
+      width: calc(100% - 66px);
       height: 100%;
-      min-height: 0;
-      background: #0f141d;
-      border: 1px solid var(--border);
-      border-radius: 8px;
       touch-action: none;
       cursor: crosshair;
     }
 
-    /* Footer Status Bar */
-    .status-bar {
+    /* Right Hero Ring Knobs (Pitch + Formant/Mugham Comma) */
+    .hero-knobs {
+      border-left: 1px solid var(--border-metal);
+      background: linear-gradient(160deg, rgba(20, 32, 48, 0.75) 0%, rgba(8, 13, 22, 0.95) 100%);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .ring-dial {
+      position: relative;
+      width: 144px;
+      height: 144px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: ns-resize;
+      touch-action: none;
+    }
+
+    .ring-dial svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 10px rgba(56, 214, 255, 0.25));
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 25%, #192638, #090e16 80%);
+      border: 1px solid rgba(56, 214, 255, 0.28);
+      box-shadow:
+        inset 0 2px 10px rgba(0, 0, 0, 0.9),
+        0 8px 20px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .ring-val {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+
+    .ring-lbl {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 3px;
+      letter-spacing: 0.4px;
+    }
+
+    .link-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .link-led {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid var(--cyan);
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .link-led.off {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    /* Bottom Strip: Drive, Widener, Filters, Mix, Output Gain + Glowing Line */
+    .bottom-strip {
+      padding: 10px 16px 12px;
+      background: linear-gradient(180deg, #0d141f 0%, #080d14 100%);
+      position: relative;
+    }
+
+    .bottom-controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      gap: 14px;
+    }
+
+    .mini-knob {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 72px;
+    }
+
+    .mini-ring {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 25%, #1a273b, #090e16 80%);
+      border: 2px solid rgba(56, 214, 255, 0.55);
+      box-shadow: 0 0 12px rgba(56, 214, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan-bright);
+      font-variant-numeric: tabular-nums;
+      cursor: ns-resize;
+      touch-action: none;
+    }
+
+    .mini-label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.4px;
+    }
+
+    .filter-cluster {
+      display: flex;
+      align-items: center;
       gap: 10px;
-      padding: 9px 18px;
-      background: #0b0e14;
-      border-top: 1px solid var(--border);
-      font-size: 11.5px;
-      color: var(--text-muted);
+      background: rgba(9, 14, 22, 0.8);
+      border: 1px solid var(--border-metal);
+      border-radius: 8px;
+      padding: 7px 12px;
     }
 
-    .status-pill {
-      color: var(--accent);
+    .filter-badge {
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1px solid rgba(56, 214, 255, 0.35);
+      background: #0d1624;
+      color: var(--cyan-bright);
+      font-size: 10.5px;
       font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
 
-    @media (max-width: 760px) {
-      .workspace {
-        grid-template-columns: 124px 1fr;
-        height: 430px;
+    .filter-sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 130px;
+    }
+
+    .filter-sliders input[type="range"] {
+      height: 4px;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+
+    .meter-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10.5px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .meter-bars {
+      display: flex;
+      gap: 2.5px;
+      align-items: center;
+    }
+
+    .m-seg {
+      width: 4px;
+      height: 11px;
+      border-radius: 1.5px;
+      background: #1a2638;
+    }
+
+    .m-seg.lit {
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(56, 214, 255, 0.65);
+    }
+
+    .m-seg.peak {
+      background: var(--gold);
+      box-shadow: 0 0 6px rgba(255, 176, 32, 0.7);
+    }
+
+    .neon-seam {
+      margin-top: 10px;
+      height: 2px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(56, 214, 255, 0.35) 20%, var(--cyan-bright) 50%, rgba(56, 214, 255, 0.35) 80%, transparent 100%);
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px rgba(56, 214, 255, 0.55);
+      border-radius: 999px;
+    }
+
+    @media (max-width: 920px) {
+      .center-stage {
+        grid-template-columns: 40px 1fr;
       }
-      .knob-card {
-        min-width: 94px;
-        padding: 6px 8px;
+      .hero-knobs {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid var(--border-metal);
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 12px;
+      }
+      .ring-dial {
+        width: 116px;
+        height: 116px;
+      }
+      .ring-center {
+        inset: 18px;
+      }
+      .ring-val {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .piano-overlay {
+        width: 52px;
+      }
+      #mainCanvas {
+        left: 52px;
+        width: calc(100% - 52px);
       }
     }
   </style>
 </head>
 <body>
-  <div class="daw-shell">
+  <div class="plugin-shell">
     <!-- Top Header -->
-    <header class="top-bar">
-      <div class="brand">
-        <div class="brand-badge">SP</div>
-        <div>
-          <h1>SPitch</h1>
-          <p>Microtonal Pitch &amp; Mugham Workstation</p>
-        </div>
-      </div>
-
-      <div class="knobs">
-        <div class="knob-card">
-          <div class="knob-top">
-            <span>CORRECTION</span>
-            <span class="knob-val" id="corrVal">92%</span>
-          </div>
-          <input type="range" id="corrSlider" min="0" max="100" value="92" />
+    <div class="header-bar">
+      <div class="header-left">
+        <div class="logo-wrap">
+          <div class="logo-mark">SP</div>
+          <div class="logo-title">S<span>Pitch</span></div>
         </div>
 
-        <div class="knob-card">
-          <div class="knob-top">
-            <span>MELISMA</span>
-            <span class="knob-val" id="melismaVal">78%</span>
-          </div>
-          <input type="range" id="melismaSlider" min="0" max="100" value="78" />
-        </div>
+        <select id="presetSelect" title="Studia Presetləri"></select>
 
-        <div class="knob-card">
-          <div class="knob-top">
-            <span>SPEED</span>
-            <span class="knob-val" id="speedVal">45%</span>
-          </div>
-          <input type="range" id="speedSlider" min="1" max="100" value="45" />
-        </div>
-
-        <div class="knob-card">
-          <div class="knob-top">
-            <span>VIBRATO</span>
-            <span class="knob-val" id="vibVal">65%</span>
-          </div>
-          <input type="range" id="vibSlider" min="0" max="100" value="65" />
-        </div>
-      </div>
-    </header>
-
-    <!-- Presets, Root, Scale & Editing Tools -->
-    <div class="sub-toolbar">
-      <div class="tool-group">
-        <span class="field-label">Preset</span>
-        <select id="presetSelect" title="Hazır studiya presetləri"></select>
-
-        <span class="field-label">Mayə</span>
-        <select id="rootSelect">
+        <select id="rootSelect" title="Mayə / Kök Not">
           <option value="0">C (Do)</option>
           <option value="1">C# / Db</option>
           <option value="2" selected>D (Re)</option>
@@ -433,44 +604,128 @@
           <option value="11">B (Si)</option>
         </select>
 
-        <span class="field-label">Lad / Muğam</span>
-        <select id="scaleSelect"></select>
+        <select id="scaleSelect" title="Muğam və Ladlar"></select>
+
+        <button type="button" class="pill-btn active" id="btnPitchMode">Ton Sürüşdür</button>
+        <button type="button" class="pill-btn" id="btnCutMode">Kəs (Split)</button>
+        <button type="button" class="pill-btn" id="btnReset">Sıfırla</button>
+        <button type="button" class="pill-btn active" id="btnTest">▶ Səs Sınağı</button>
       </div>
 
-      <div class="tool-group">
-        <button type="button" class="btn btn-active" id="modePitchBtn">Sürüşdür / Düzəlt</button>
-        <button type="button" class="btn" id="modeCutBtn">Kəs (Split)</button>
-        <button type="button" class="btn" id="resetBtn">Sıfırla</button>
-        <button type="button" class="btn btn-accent" id="playTestBtn">Səs Sınağı</button>
+      <div class="header-right">
+        <div class="ab-box">
+          <button type="button" class="ab-btn active" id="abA">A</button>
+          <button type="button" class="ab-btn" id="abB">B</button>
+        </div>
+        <button type="button" class="pill-btn gold-active" id="btnBypass">Active</button>
       </div>
     </div>
 
-    <!-- Main Piano + Note Roll -->
-    <div class="workspace">
-      <div class="piano-pane" id="pianoPane"></div>
+    <!-- Center Stage -->
+    <div class="center-stage">
+      <!-- Left Voice/Layer Slots (0..4) -->
+      <div class="voices-rail" id="voicesRail"></div>
 
-      <div class="roll-pane">
-        <div class="telemetry-bar">
-          <div class="telemetry-left" id="telemetryText">
-            GİRİŞ: <strong>0.0 Hz</strong> &nbsp;|&nbsp; HƏDƏF: <strong>0.0 Hz</strong> &nbsp;|&nbsp; SƏPƏ: <strong>0c</strong>
+      <!-- Center Pitch Curve + Wave Visualizer + Piano -->
+      <div class="viz-zone">
+        <div class="viz-hud">
+          <div>
+            GİRİŞ: <strong id="hudIn">0.0 Hz</strong> &nbsp;|&nbsp;
+            HƏDƏF: <strong class="cyan-txt" id="hudTarget">0.0 Hz</strong> &nbsp;|&nbsp;
+            KOMMA: <strong class="gold-txt" id="hudComma">+0c</strong>
           </div>
-          <div class="legend">
-            <span class="legend-item"><span class="dot" style="background:#38bdf8;"></span>Düzəldilmiş xətt</span>
-            <span class="legend-item"><span class="dot" style="background:#94a3b8;"></span>İlkin boğaz/vokal</span>
-            <span class="legend-item"><span class="dot" style="background:#f59e0b;"></span>Mikrotonal komma</span>
+          <div>
+            LAD: <strong class="cyan-txt" id="hudScale">Muğam: Şur</strong> &nbsp;|&nbsp;
+            HİSSƏ: <strong id="hudSegs">1</strong>
           </div>
         </div>
-        <canvas id="rollCanvas"></canvas>
+
+        <div class="viz-canvas-wrap">
+          <div class="piano-overlay" id="pianoOverlay"></div>
+          <canvas id="mainCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Hero Ring Knobs -->
+      <div class="hero-knobs">
+        <div class="ring-dial" id="pitchDial" data-min="-24" data-max="24" data-step="0.5" data-val="0">
+          <svg viewBox="0 0 144 144">
+            <circle cx="72" cy="72" r="60" fill="none" stroke="#182436" stroke-width="10" />
+            <circle id="pitchArc" cx="72" cy="72" r="60" fill="none" stroke="url(#cyanGrad)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="188" transform="rotate(-90 72 72)" />
+            <defs>
+              <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#9ef0ff" />
+                <stop offset="55%" stop-color="#38d6ff" />
+                <stop offset="100%" stop-color="#ffb020" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-val" id="pitchValText">0.0</div>
+            <div class="ring-lbl">Pitch (st)</div>
+          </div>
+        </div>
+
+        <label class="link-row" id="linkToggle">
+          <span class="link-led" id="linkLed"></span>
+          <span>Muğam / Formant Link</span>
+        </label>
+
+        <div class="ring-dial" id="formantDial" data-min="-12" data-max="12" data-step="0.5" data-val="0">
+          <svg viewBox="0 0 144 144">
+            <circle cx="72" cy="72" r="60" fill="none" stroke="#182436" stroke-width="10" />
+            <circle id="formantArc" cx="72" cy="72" r="60" fill="none" stroke="url(#cyanGrad)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="188" transform="rotate(-90 72 72)" />
+          </svg>
+          <div class="ring-center">
+            <div class="ring-val" id="formantValText">0.0</div>
+            <div class="ring-lbl">Formant</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Bottom Bar -->
-    <footer class="status-bar">
-      <div id="segmentStatus">
-        Hissə: <span class="status-pill" id="segCount">1</span> &nbsp;|&nbsp; Xətti yuxarı-aşağı sürüşdürün və ya kəsmə rejimində üzərinə toxunun
+    <!-- Bottom Control Strip -->
+    <div class="bottom-strip">
+      <div class="bottom-controls">
+        <div class="mini-knob">
+          <div class="mini-ring" id="driveKnob" data-min="0" data-max="100" data-val="22">22</div>
+          <span class="mini-label">Drive</span>
+        </div>
+
+        <div class="mini-knob">
+          <div class="mini-ring" id="widenerKnob" data-min="0" data-max="100" data-val="45">45</div>
+          <span class="mini-label">Widener</span>
+        </div>
+
+        <div class="filter-cluster">
+          <span class="filter-badge" id="hpBadge">HP 80Hz</span>
+          <div class="filter-sliders">
+            <input type="range" id="hpRange" min="20" max="400" value="80" title="High-Pass Filter" />
+            <input type="range" id="lpRange" min="1500" max="18000" value="12400" title="Low-Pass Filter" />
+          </div>
+          <span class="filter-badge" id="lpBadge">LP 12.4k</span>
+        </div>
+
+        <div class="mini-knob">
+          <div class="mini-ring" id="mixKnob" data-min="0" data-max="100" data-val="100">100</div>
+          <span class="mini-label">Mix</span>
+        </div>
+
+        <div class="mini-knob">
+          <div class="mini-ring" id="gainKnob" data-min="-12" data-max="12" data-val="1.5">+1.5</div>
+          <span class="mini-label">Output Gain</span>
+        </div>
+
+        <div class="meter-box">
+          <span>Output</span>
+          <div class="meter-bars" id="meterBars"></div>
+          <strong id="meterDb">-2.4</strong>
+        </div>
       </div>
-      <div id="activePresetLabel">Preset: <strong>Şur Vokal Studiya</strong></div>
-    </footer>
+      <div class="neon-seam"></div>
+    </div>
   </div>
 
   <script>
@@ -484,122 +739,49 @@
       { name: "Muğam: Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] },
       { name: "Natural Major", cents: [0, 200, 400, 500, 700, 900, 1100] },
       { name: "Harmonik Major", cents: [0, 200, 400, 500, 700, 800, 1100] },
-      { name: "Melodik Major", cents: [0, 200, 400, 500, 700, 800, 1000] },
       { name: "Natural Minor", cents: [0, 200, 300, 500, 700, 800, 1000] },
-      { name: "Harmonik Minor", cents: [0, 200, 300, 500, 700, 800, 1100] },
-      { name: "Melodik Minor", cents: [0, 200, 300, 500, 700, 900, 1100] }
+      { name: "Harmonik Minor", cents: [0, 200, 300, 500, 700, 800, 1100] }
     ];
 
     const PRESETS = [
-      {
-        name: "Şur Vokal Studiya",
-        root: 2,
-        scaleIdx: 0,
-        corr: 92,
-        melisma: 82,
-        speed: 45,
-        vib: 68
-      },
-      {
-        name: "Segah Xanəndə Səliqəsi",
-        root: 4,
-        scaleIdx: 1,
-        corr: 88,
-        melisma: 90,
-        speed: 38,
-        vib: 76
-      },
-      {
-        name: "Rast Təbii İfa",
-        root: 7,
-        scaleIdx: 2,
-        corr: 84,
-        melisma: 75,
-        speed: 42,
-        vib: 55
-      },
-      {
-        name: "Çahargah Kəskin İntona",
-        root: 0,
-        scaleIdx: 3,
-        corr: 95,
-        melisma: 65,
-        speed: 62,
-        vib: 40
-      },
-      {
-        name: "Bayatı-Şiraz Lirik",
-        root: 9,
-        scaleIdx: 4,
-        corr: 80,
-        melisma: 88,
-        speed: 30,
-        vib: 72
-      },
-      {
-        name: "Modern Pop Vokal (Təmiz)",
-        root: 0,
-        scaleIdx: 7,
-        corr: 96,
-        melisma: 25,
-        speed: 78,
-        vib: 35
-      },
-      {
-        name: "Təbii Ballada / Akustik",
-        root: 9,
-        scaleIdx: 10,
-        corr: 68,
-        melisma: 55,
-        speed: 28,
-        vib: 60
-      },
-      {
-        name: "Yumşaq Vibrato & Dinamik",
-        root: 2,
-        scaleIdx: 12,
-        corr: 85,
-        melisma: 60,
-        speed: 50,
-        vib: 85
-      }
+      { name: "Şur Studiya Harmoniya", root: 2, scaleIdx: 0, pitch: 0, formant: 0, drive: 22, widener: 48, mix: 100, gain: 1.5, voiceCents: [0, 155, 300, 700, 855] },
+      { name: "Segah Mikrotonal Zəngulə", root: 4, scaleIdx: 1, pitch: 2, formant: -1.5, drive: 28, widener: 60, mix: 100, gain: 2.0, voiceCents: [0, 145, 345, 645, 845] },
+      { name: "Rast Klassik Kvartet", root: 7, scaleIdx: 2, pitch: 0, formant: 1.0, drive: 18, widener: 52, mix: 95, gain: 1.0, voiceCents: [0, 200, 365, 700, 1065] },
+      { name: "Çahargah Kəskin Vokal", root: 0, scaleIdx: 3, pitch: 5, formant: 2.0, drive: 36, widener: 65, mix: 100, gain: 2.5, voiceCents: [0, 135, 400, 700, 835] },
+      { name: "Bayatı-Şiraz Lirik Atmosfer", root: 9, scaleIdx: 4, pitch: -2, formant: -2.0, drive: 15, widener: 72, mix: 90, gain: 0.5, voiceCents: [0, 200, 300, 700, 800] },
+      { name: "Modern Pop Double-Track", root: 0, scaleIdx: 7, pitch: 12, formant: 4.0, drive: 30, widener: 78, mix: 100, gain: 2.0, voiceCents: [0, 400, 700, 1100, 1200] },
+      { name: "Akustik Ballada Təmiz", root: 9, scaleIdx: 9, pitch: 0, formant: 0, drive: 10, widener: 35, mix: 85, gain: 0.0, voiceCents: [0, 200, 300, 700, 1000] }
     ];
 
-    // Elements
+    // DOM refs
     const presetSelect = document.getElementById("presetSelect");
     const rootSelect = document.getElementById("rootSelect");
     const scaleSelect = document.getElementById("scaleSelect");
-    const pianoPane = document.getElementById("pianoPane");
-    const canvas = document.getElementById("rollCanvas");
+    const voicesRail = document.getElementById("voicesRail");
+    const pianoOverlay = document.getElementById("pianoOverlay");
+    const canvas = document.getElementById("mainCanvas");
     const ctx = canvas.getContext("2d");
-
-    const corrSlider = document.getElementById("corrSlider");
-    const melismaSlider = document.getElementById("melismaSlider");
-    const speedSlider = document.getElementById("speedSlider");
-    const vibSlider = document.getElementById("vibSlider");
-
-    const modePitchBtn = document.getElementById("modePitchBtn");
-    const modeCutBtn = document.getElementById("modeCutBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const playTestBtn = document.getElementById("playTestBtn");
+    const meterBars = document.getElementById("meterBars");
 
     // State
+    let activeSlot = 0;
+    let voiceCents = [0, 155, 300, 700, 855];
+    let linkedMode = true;
+    let bypassed = false;
+    let slotBank = "A";
+    let slotStates = { A: null, B: null };
     let editMode = "pitch"; // "pitch" | "cut"
-    let segments = [
-      { startX: 0.04, endX: 0.96, offsetCents: 0, selected: true }
-    ];
-    let draggingSegIndex = -1;
+    let segments = [{ startX: 0.06, endX: 0.96, offsetCents: 0, selected: true }];
+    let dragSegIdx = -1;
     let dragStartY = 0;
     let dragStartOffset = 0;
-
+    let playheadX = null;
+    let wavePhase = 0;
     let audioCtx = null;
-    let activePlayheadX = null;
-    let liveInputHz = 0;
-    let liveTargetHz = 0;
-    let liveOffsetCents = 0;
-    let activeKeyMidi = null;
 
-    // Populate dropdowns
+    let hudState = { inHz: 0, targetHz: 0, commaC: 0 };
+
+    // Init dropdowns
     PRESETS.forEach((p, i) => {
       const opt = document.createElement("option");
       opt.value = i;
@@ -614,33 +796,149 @@
       scaleSelect.appendChild(opt);
     });
 
-    function applyPreset(index) {
-      const p = PRESETS[index];
+    // Init meter segments
+    for (let i = 0; i < 16; i++) {
+      const seg = document.createElement("div");
+      seg.className = "m-seg";
+      meterBars.appendChild(seg);
+    }
+
+    function setMeterLevel(level01) {
+      const clamped = Math.max(0, Math.min(1, level01));
+      const litCount = Math.round(clamped * 16);
+      const segs = meterBars.querySelectorAll(".m-seg");
+      segs.forEach((el, idx) => {
+        el.classList.remove("lit", "peak");
+        if (idx < litCount) {
+          el.classList.add(idx >= 13 ? "peak" : "lit");
+        }
+      });
+      const db = clamped <= 0.001 ? -60 : (-24 + clamped * 23.5).toFixed(1);
+      document.getElementById("meterDb").textContent = `${db > 0 ? "+" : ""}${db}`;
+    }
+
+    function getDialValue(id) {
+      return parseFloat(document.getElementById(id).dataset.val || "0");
+    }
+
+    function updateRingVisual(id, isHero, isSignedPlus = false) {
+      const el = document.getElementById(id);
+      const min = parseFloat(el.dataset.min);
+      const max = parseFloat(el.dataset.max);
+      const step = parseFloat(el.dataset.step || "1");
+      let val = parseFloat(el.dataset.val);
+      val = Math.max(min, Math.min(max, Math.round(val / step) * step));
+      el.dataset.val = String(val);
+
+      const ratio = (val - min) / (max - min);
+      const formatted = step < 1
+        ? (isSignedPlus && val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1))
+        : (isSignedPlus && val > 0 ? `+${Math.round(val)}` : String(Math.round(val)));
+
+      if (isHero) {
+        const arcId = id === "pitchDial" ? "pitchArc" : "formantArc";
+        const textId = id === "pitchDial" ? "pitchValText" : "formantValText";
+        const circ = 377;
+        document.getElementById(arcId).setAttribute("stroke-dashoffset", String(circ * (1 - ratio * 0.85)));
+        document.getElementById(textId).textContent = formatted;
+      } else {
+        el.textContent = formatted;
+        const glow = 8 + ratio * 16;
+        el.style.boxShadow = `0 0 ${glow}px rgba(56, 214, 255, ${(0.18 + ratio * 0.42).toFixed(2)})`;
+      }
+    }
+
+    function setupDragDial(id, isHero, isSignedPlus = false, onChange = null) {
+      const el = document.getElementById(id);
+      let startY = 0;
+      let startVal = 0;
+
+      el.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        startY = e.clientY;
+        startVal = parseFloat(el.dataset.val);
+        el.setPointerCapture(e.pointerId);
+      });
+
+      el.addEventListener("pointermove", (e) => {
+        if (!el.hasPointerCapture(e.pointerId)) return;
+        const min = parseFloat(el.dataset.min);
+        const max = parseFloat(el.dataset.max);
+        const span = max - min;
+        const delta = ((startY - e.clientY) / 130) * span;
+        el.dataset.val = String(startVal + delta);
+        updateRingVisual(id, isHero, isSignedPlus);
+
+        if (id === "pitchDial" && linkedMode) {
+          const fEl = document.getElementById("formantDial");
+          const fMin = parseFloat(fEl.dataset.min);
+          const fMax = parseFloat(fEl.dataset.max);
+          fEl.dataset.val = String(Math.max(fMin, Math.min(fMax, (startVal + delta) * 0.45)));
+          updateRingVisual("formantDial", true, true);
+        }
+        if (onChange) onChange();
+      });
+    }
+
+    function applyPreset(idx) {
+      const p = PRESETS[idx];
       if (!p) return;
       rootSelect.value = String(p.root);
       scaleSelect.value = String(p.scaleIdx);
-      corrSlider.value = String(p.corr);
-      melismaSlider.value = String(p.melisma);
-      speedSlider.value = String(p.speed);
-      vibSlider.value = String(p.vib);
-      syncKnobLabels();
-      document.getElementById("activePresetLabel").innerHTML = `Preset: <strong>${p.name}</strong>`;
+      voiceCents = [...p.voiceCents];
+      activeSlot = 0;
+
+      document.getElementById("pitchDial").dataset.val = String(p.pitch);
+      document.getElementById("formantDial").dataset.val = String(p.formant);
+      document.getElementById("driveKnob").dataset.val = String(p.drive);
+      document.getElementById("widenerKnob").dataset.val = String(p.widener);
+      document.getElementById("mixKnob").dataset.val = String(p.mix);
+      document.getElementById("gainKnob").dataset.val = String(p.gain);
+
+      refreshAllKnobs();
+      renderVoicesRail();
       renderPiano();
-      drawCanvas();
+      updateHud();
+      drawMainCanvas();
     }
 
-    function syncKnobLabels() {
-      document.getElementById("corrVal").textContent = corrSlider.value + "%";
-      document.getElementById("melismaVal").textContent = melismaSlider.value + "%";
-      document.getElementById("speedVal").textContent = speedSlider.value + "%";
-      document.getElementById("vibVal").textContent = vibSlider.value + "%";
+    function refreshAllKnobs() {
+      updateRingVisual("pitchDial", true, true);
+      updateRingVisual("formantDial", true, true);
+      updateRingVisual("driveKnob", false, false);
+      updateRingVisual("widenerKnob", false, false);
+      updateRingVisual("mixKnob", false, false);
+      updateRingVisual("gainKnob", false, true);
     }
 
-    function getScaleInfoForPitchClass(pitchClass, root, scale) {
-      const relSemi = (pitchClass - root + 12) % 12;
+    function renderVoicesRail() {
+      voicesRail.innerHTML = "";
+      for (let i = 0; i < 5; i++) {
+        const btn = document.createElement("div");
+        btn.className = "voice-slot" + (i === activeSlot ? " active" : "");
+        const c = voiceCents[i] || 0;
+        btn.innerHTML = `<span>${i}</span><span class="voice-cent">${c > 0 ? "+" + c + "c" : "0c"}</span>`;
+        btn.addEventListener("click", () => {
+          activeSlot = i;
+          renderVoicesRail();
+          const root = parseInt(rootSelect.value, 10);
+          const baseMidi = 60 + root + (voiceCents[i] || 0) / 100;
+          const freq = 440 * Math.pow(2, (baseMidi - 69) / 12);
+          playAudio(freq, 0.34);
+          hudState.inHz = freq;
+          hudState.targetHz = freq;
+          hudState.commaC = voiceCents[i] || 0;
+          updateHud();
+        });
+        voicesRail.appendChild(btn);
+      }
+    }
+
+    function getScaleDegreeInfo(pitchClass, root, scale) {
+      const rel = (pitchClass - root + 12) % 12;
       for (const c of scale.cents) {
-        const nearestSemi = Math.round(c / 100) % 12;
-        if (nearestSemi === relSemi) {
+        const semi = Math.round(c / 100) % 12;
+        if (semi === rel) {
           const micro = Math.round(c - Math.round(c / 100) * 100);
           return { inScale: true, micro };
         }
@@ -648,158 +946,140 @@
       return { inScale: false, micro: 0 };
     }
 
-    function midiToFreq(midiFloat) {
-      return 440 * Math.pow(2, (midiFloat - 69) / 12);
-    }
-
-    function snapToScaleMidi(midiFloat, root, scale, corrRatio) {
+    function snapMidi(midiFloat, root, scale, amount = 0.9) {
       const rootMidi = 60 + root;
       const centsFromRoot = (midiFloat - rootMidi) * 100;
-      const octBase = Math.floor(centsFromRoot / 1200) * 1200;
-      const inOct = centsFromRoot - octBase;
+      const oct = Math.floor(centsFromRoot / 1200) * 1200;
+      const inOct = centsFromRoot - oct;
 
       let best = scale.cents[0];
-      let bestDist = Infinity;
+      let bestD = Infinity;
       for (const c of scale.cents) {
         const d = Math.abs(inOct - c);
-        if (d < bestDist) {
-          bestDist = d;
-          best = c;
-        }
+        if (d < bestD) { bestD = d; best = c; }
       }
-      if (Math.abs(inOct - 1200) < bestDist) {
-        best = 1200;
-      }
+      if (Math.abs(inOct - 1200) < bestD) best = 1200;
 
-      const targetMidi = rootMidi + (octBase + best) / 100;
-      return midiFloat + (targetMidi - midiFloat) * corrRatio;
+      const targetMidi = rootMidi + (oct + best) / 100;
+      return midiFloat + (targetMidi - midiFloat) * amount;
     }
 
-    function playNoteTone(freq, duration = 0.36) {
+    function renderPiano() {
+      pianoOverlay.innerHTML = "";
+      const root = parseInt(rootSelect.value, 10);
+      const scale = SCALES[parseInt(scaleSelect.value, 10)];
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+      // flex-direction: column-reverse renders index 0 at bottom
+      for (let offset = 0; offset < 24; offset++) {
+        const midi = 60 + offset;
+        const pc = midi % 12;
+        const isBlack = [1, 3, 6, 8, 10].includes(pc);
+        const info = getScaleDegreeInfo(pc, root, scale);
+
+        const el = document.createElement("div");
+        el.className = "p-key " + (isBlack ? "black" : "white");
+        if (info.inScale) {
+          el.classList.add(Math.abs(info.micro) >= 10 ? "in-comma" : "in-scale");
+        }
+
+        const tag = info.inScale && Math.abs(info.micro) >= 10
+          ? `${info.micro > 0 ? "+" : ""}${info.micro}c`
+          : "";
+        el.innerHTML = `<span>${names[pc]}</span><span>${tag}</span>`;
+
+        el.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          const rawM = midi + info.micro / 100;
+          const pitchShift = getDialValue("pitchDial");
+          const snappedM = snapMidi(rawM + pitchShift, root, scale, bypassed ? 0 : 0.92);
+          const f = 440 * Math.pow(2, (snappedM - 69) / 12);
+          hudState.inHz = 440 * Math.pow(2, (rawM - 69) / 12);
+          hudState.targetHz = f;
+          hudState.commaC = info.micro;
+          updateHud();
+          playAudio(f, 0.35);
+        });
+
+        pianoOverlay.appendChild(el);
+      }
+    }
+
+    function playAudio(freq, dur = 0.35) {
       if (!audioCtx) {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         audioCtx = new Ctx();
       }
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
 
       const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
-      const lfo = audioCtx.createOscillator();
-      const lfoGain = audioCtx.createGain();
-      const mainGain = audioCtx.createGain();
+      const subOsc = audioCtx.createOscillator();
+      const filter = audioCtx.createBiquadFilter();
+      const gain = audioCtx.createGain();
 
-      const vibAmount = (parseInt(vibSlider.value, 10) / 100) * 7.5; // Hz depth
-      osc.type = "triangle";
+      const drive = getDialValue("driveKnob") / 100;
+      const widener = getDialValue("widenerKnob") / 100;
+      const mix = getDialValue("mixKnob") / 100;
+      const outGainDb = getDialValue("gainKnob");
+      const lpFreq = parseFloat(document.getElementById("lpRange").value);
+
+      osc.type = drive > 0.35 ? "sawtooth" : "triangle";
       osc.frequency.setValueAtTime(freq, now);
 
-      lfo.type = "sine";
-      lfo.frequency.setValueAtTime(5.4, now);
-      lfoGain.gain.setValueAtTime(vibAmount, now);
+      subOsc.type = "sine";
+      subOsc.frequency.setValueAtTime(freq * (1 + widener * 0.012), now);
 
-      lfo.connect(lfoGain);
-      lfoGain.connect(osc.frequency);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(lpFreq, now);
+      filter.Q.setValueAtTime(1.2 + drive * 4.5, now);
 
-      mainGain.gain.setValueAtTime(0.0008, now);
-      mainGain.gain.exponentialRampToValueAtTime(0.15, now + 0.025);
-      mainGain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+      const amp = Math.min(0.25, 0.14 * mix * Math.pow(10, outGainDb / 24));
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.002, amp), now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0005, now + dur);
 
-      osc.connect(mainGain);
-      mainGain.connect(audioCtx.destination);
+      osc.connect(filter);
+      subOsc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
 
-      lfo.start(now);
       osc.start(now);
-      lfo.stop(now + duration + 0.03);
-      osc.stop(now + duration + 0.03);
+      subOsc.start(now);
+      osc.stop(now + dur + 0.03);
+      subOsc.stop(now + dur + 0.03);
+
+      setMeterLevel(0.55 + mix * 0.35);
+      setTimeout(() => setMeterLevel(0.08), dur * 1000);
     }
 
-    function renderPiano() {
-      pianoPane.innerHTML = "";
+    function updateHud() {
+      const scale = SCALES[parseInt(scaleSelect.value, 10)];
+      document.getElementById("hudIn").textContent = `${hudState.inHz.toFixed(1)} Hz`;
+      document.getElementById("hudTarget").textContent = `${hudState.targetHz.toFixed(1)} Hz`;
+      document.getElementById("hudComma").textContent = `${hudState.commaC > 0 ? "+" : ""}${hudState.commaC}c`;
+      document.getElementById("hudScale").textContent = scale.name;
+      document.getElementById("hudSegs").textContent = String(segments.length);
+    }
+
+    function getMelodyMidiAt(xn) {
       const root = parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-      const totalKeys = 24; // C4 (60) .. B5 (83)
-
-      for (let i = 0; i < totalKeys; i++) {
-        const noteOffset = totalKeys - 1 - i;
-        const midi = 60 + noteOffset;
-        const pitchClass = midi % 12;
-        const octave = Math.floor(midi / 12) - 1;
-        const isBlack = [1, 3, 6, 8, 10].includes(pitchClass);
-        const info = getScaleInfoForPitchClass(pitchClass, root, scale);
-
-        const keyEl = document.createElement("div");
-        keyEl.className = "piano-key " + (isBlack ? "key-black" : "key-white");
-        if (info.inScale) {
-          keyEl.classList.add(Math.abs(info.micro) >= 10 ? "key-in-comma" : "key-in-scale");
-        }
-        if (activeKeyMidi === midi) {
-          keyEl.classList.add("key-playing");
-        }
-
-        const commaTag = info.inScale && Math.abs(info.micro) >= 10
-          ? `${info.micro > 0 ? "+" : ""}${info.micro}c`
-          : "";
-
-        keyEl.innerHTML = `<span>${noteNames[pitchClass]}${octave}</span><span>${commaTag}</span>`;
-
-        const triggerKey = () => {
-          activeKeyMidi = midi;
-          const rawMidi = midi + info.micro / 100;
-          const corrRatio = parseInt(corrSlider.value, 10) / 100;
-          const correctedMidi = snapToScaleMidi(rawMidi, root, scale, corrRatio);
-          const inHz = midiToFreq(rawMidi);
-          const outHz = midiToFreq(correctedMidi);
-
-          liveInputHz = inHz;
-          liveTargetHz = outHz;
-          liveOffsetCents = Math.round((correctedMidi - rawMidi) * 100);
-          updateTelemetry();
-          renderPiano();
-          playNoteTone(outHz, 0.38);
-
-          setTimeout(() => {
-            if (activeKeyMidi === midi) {
-              activeKeyMidi = null;
-              renderPiano();
-            }
-          }, 260);
-        };
-
-        keyEl.addEventListener("pointerdown", (e) => {
-          e.preventDefault();
-          triggerKey();
-        });
-
-        pianoPane.appendChild(keyEl);
-      }
+      const degIdx = Math.min(scale.cents.length - 1, Math.floor(xn * scale.cents.length));
+      const baseM = 60 + root + scale.cents[degIdx] / 100;
+      const ornament = 0.65 * Math.sin(xn * Math.PI * 10);
+      return baseM + ornament;
     }
 
-    function updateTelemetry() {
-      const sign = liveOffsetCents > 0 ? "+" : "";
-      document.getElementById("telemetryText").innerHTML =
-        `GİRİŞ: <strong>${liveInputHz.toFixed(1)} Hz</strong> &nbsp;|&nbsp; ` +
-        `HƏDƏF: <strong>${liveTargetHz.toFixed(1)} Hz</strong> &nbsp;|&nbsp; ` +
-        `SƏPƏ: <strong>${sign}${liveOffsetCents}c</strong>`;
-      document.getElementById("segCount").textContent = String(segments.length);
-    }
-
-    function getBaseMelodyMidi(xNorm) {
-      // Expressive vocal/mugham contour across normalized X [0..1]
-      const melisma = parseInt(melismaSlider.value, 10) / 100;
-      const baseContour = 64 + 6.5 * Math.sin(xNorm * Math.PI * 2.2) + 2.5 * Math.cos(xNorm * Math.PI * 4.5);
-      const ornament = melisma * 1.15 * Math.sin(xNorm * Math.PI * 15);
-      return baseContour + ornament;
-    }
-
-    function getSegmentAtX(xNorm) {
+    function getSegAt(xn) {
       for (let i = 0; i < segments.length; i++) {
-        if (xNorm >= segments[i].startX && xNorm <= segments[i].endX) {
-          return i;
-        }
+        if (xn >= segments[i].startX && xn <= segments[i].endX) return i;
       }
       return segments.length - 1;
+    }
+
+    function midiToY(m, h) {
+      return h - ((m - 59) / 25) * h;
     }
 
     function resizeCanvas() {
@@ -808,17 +1088,10 @@
       canvas.width = Math.max(1, Math.floor(rect.width * dpr));
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawCanvas();
+      drawMainCanvas();
     }
 
-    function midiToY(midiVal, height) {
-      const minMidi = 59;
-      const maxMidi = 84;
-      const norm = (midiVal - minMidi) / (maxMidi - minMidi);
-      return height - norm * height;
-    }
-
-    function drawCanvas() {
+    function drawMainCanvas() {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       if (!w || !h) return;
@@ -827,249 +1100,288 @@
 
       const root = parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const corrRatio = parseInt(corrSlider.value, 10) / 100;
+      const pitchShift = getDialValue("pitchDial");
+      const formantShift = getDialValue("formantDial");
+      const widener = getDialValue("widenerKnob") / 100;
 
-      // Horizontal pitch guide bands (24 semitones)
-      const totalRows = 24;
-      const rowH = h / totalRows;
+      // Subtle grid
+      ctx.strokeStyle = "rgba(56, 214, 255, 0.06)";
+      ctx.lineWidth = 1;
+      for (let gx = 1; gx < 12; gx++) {
+        const x = (gx / 12) * w;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let gy = 1; gy < 8; gy++) {
+        const y = (gy / 8) * h;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
 
-      for (let i = 0; i < totalRows; i++) {
-        const midi = 83 - i;
-        const pitchClass = midi % 12;
-        const info = getScaleInfoForPitchClass(pitchClass, root, scale);
-        const y = i * rowH;
+      // Luminous harmonic ribbons inspired by studio pitch/harmony engine
+      const ribbons = [
+        { amp: 0.14 + widener * 0.08, freq: 2.2, phase: wavePhase, color: "rgba(56, 214, 255, 0.42)", lw: 2.2 },
+        { amp: 0.17 + widener * 0.1, freq: 3.1, phase: -wavePhase * 0.85, color: "rgba(158, 240, 255, 0.34)", lw: 1.8 },
+        { amp: 0.11 + Math.abs(formantShift) * 0.008, freq: 4.4, phase: wavePhase * 1.3, color: "rgba(255, 176, 32, 0.28)", lw: 1.6 }
+      ];
 
-        if (info.inScale) {
-          ctx.fillStyle = Math.abs(info.micro) >= 10
-            ? "rgba(245, 158, 11, 0.08)"
-            : "rgba(56, 189, 248, 0.06)";
-          ctx.fillRect(0, y, w, rowH);
+      ribbons.forEach((rb) => {
+        ctx.save();
+        ctx.strokeStyle = rb.color;
+        ctx.lineWidth = rb.lw;
+        ctx.shadowColor = rb.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 6) {
+          const xn = x / w;
+          const env = Math.sin(xn * Math.PI);
+          const y = h * 0.5 + Math.sin(xn * Math.PI * 2 * rb.freq + rb.phase) * h * rb.amp * env;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
         }
-
-        ctx.strokeStyle = "#1a2230";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
         ctx.stroke();
-      }
+        ctx.restore();
+      });
 
-      // Vertical beat/time grid
-      const cols = 16;
-      for (let c = 1; c < cols; c++) {
-        const x = (c / cols) * w;
-        ctx.strokeStyle = c % 4 === 0 ? "#243044" : "#161d29";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, h);
-        ctx.stroke();
-      }
-
-      // Raw vocal line (muted gray)
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.45)";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      const steps = 180;
-      for (let s = 0; s <= steps; s++) {
-        const xn = 0.04 + (s / steps) * 0.92;
-        const rawM = getBaseMelodyMidi(xn);
-        const px = xn * w;
-        const py = midiToY(rawM, h);
-        if (s === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      // Corrected line per segment
+      // Editable pitch curve segments
       segments.forEach((seg, idx) => {
         ctx.save();
-        ctx.strokeStyle = seg.selected ? "#38bdf8" : "#0284c7";
-        ctx.lineWidth = seg.selected ? 3 : 2.2;
+        ctx.strokeStyle = seg.selected ? "#9ef0ff" : "#38d6ff";
+        ctx.lineWidth = seg.selected ? 3.2 : 2.2;
+        ctx.shadowColor = "#38d6ff";
+        ctx.shadowBlur = seg.selected ? 12 : 6;
         ctx.beginPath();
 
-        const segSteps = Math.max(12, Math.floor(((seg.endX - seg.startX) / 0.92) * steps));
-        for (let k = 0; k <= segSteps; k++) {
-          const xn = seg.startX + (k / segSteps) * (seg.endX - seg.startX);
-          const shiftedMidi = getBaseMelodyMidi(xn) + seg.offsetCents / 100;
-          const snappedMidi = snapToScaleMidi(shiftedMidi, root, scale, corrRatio);
+        const steps = 60;
+        for (let s = 0; s <= steps; s++) {
+          const xn = seg.startX + (s / steps) * (seg.endX - seg.startX);
+          const rawM = getMelodyMidiAt(xn);
+          const shifted = rawM + pitchShift + seg.offsetCents / 100;
+          const finalM = bypassed ? rawM : snapMidi(shifted, root, scale, 0.9);
           const px = xn * w;
-          const py = midiToY(snappedMidi, h);
-          if (k === 0) ctx.moveTo(px, py);
+          const py = midiToY(finalM, h);
+          if (s === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         }
         ctx.stroke();
 
-        // Draw split marker between segments
         if (idx > 0) {
-          const splitX = seg.startX * w;
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.65)";
+          const sx = seg.startX * w;
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = "rgba(255, 176, 32, 0.7)";
           ctx.setLineDash([4, 4]);
-          ctx.lineWidth = 1.2;
-          ctx.beginPath();
-          ctx.moveTo(splitX, 0);
-          ctx.lineTo(splitX, h);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, h); ctx.stroke();
           ctx.setLineDash([]);
         }
         ctx.restore();
       });
 
-      // Playhead cursor if running
-      if (activePlayheadX !== null) {
-        const px = activePlayheadX * w;
-        ctx.strokeStyle = "#10b981";
+      if (playheadX !== null) {
+        const px = playheadX * w;
+        ctx.save();
+        ctx.strokeStyle = "#ffb020";
         ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(px, 0);
-        ctx.lineTo(px, h);
-        ctx.stroke();
+        ctx.shadowColor = "#ffb020";
+        ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
+        ctx.restore();
       }
     }
 
-    // Canvas Pointer Interaction (Split or Drag Pitch Offset)
+    // Canvas interaction
     canvas.addEventListener("pointerdown", (e) => {
       const rect = canvas.getBoundingClientRect();
-      const xNorm = Math.max(0.04, Math.min(0.96, (e.clientX - rect.left) / rect.width));
-      const segIdx = getSegmentAtX(xNorm);
-      if (segIdx < 0) return;
-
-      segments.forEach((s, i) => { s.selected = i === segIdx; });
+      const xn = Math.max(0.02, Math.min(0.98, (e.clientX - rect.left) / rect.width));
+      const idx = getSegAt(xn);
+      if (idx < 0) return;
+      segments.forEach((s, i) => { s.selected = i === idx; });
 
       if (editMode === "cut") {
-        const target = segments[segIdx];
-        if (xNorm - target.startX > 0.05 && target.endX - xNorm > 0.05) {
-          const rightPart = {
-            startX: xNorm,
-            endX: target.endX,
-            offsetCents: target.offsetCents,
-            selected: true
-          };
-          target.endX = xNorm;
-          target.selected = false;
-          segments.splice(segIdx + 1, 0, rightPart);
+        const cur = segments[idx];
+        if (xn - cur.startX > 0.05 && cur.endX - xn > 0.05) {
+          const right = { startX: xn, endX: cur.endX, offsetCents: cur.offsetCents, selected: true };
+          cur.endX = xn;
+          cur.selected = false;
+          segments.splice(idx + 1, 0, right);
         }
-        updateTelemetry();
-        drawCanvas();
+        updateHud();
+        drawMainCanvas();
         return;
       }
 
-      draggingSegIndex = segIdx;
+      dragSegIdx = idx;
       dragStartY = e.clientY;
-      dragStartOffset = segments[segIdx].offsetCents;
+      dragStartOffset = segments[idx].offsetCents;
       canvas.setPointerCapture(e.pointerId);
-      updateTelemetry();
-      drawCanvas();
+      updateHud();
+      drawMainCanvas();
     });
 
     canvas.addEventListener("pointermove", (e) => {
-      if (draggingSegIndex < 0) return;
-      const seg = segments[draggingSegIndex];
-      const deltaY = dragStartY - e.clientY;
-      // ~6px per 10 cents
-      const nextOffset = Math.max(-600, Math.min(600, Math.round((dragStartOffset + deltaY * 1.8) / 5) * 5));
-      seg.offsetCents = nextOffset;
+      if (dragSegIdx < 0) return;
+      const seg = segments[dragSegIdx];
+      const dy = dragStartY - e.clientY;
+      seg.offsetCents = Math.max(-600, Math.min(600, Math.round((dragStartOffset + dy * 2) / 5) * 5));
 
       const root = parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const corrRatio = parseInt(corrSlider.value, 10) / 100;
       const midX = (seg.startX + seg.endX) * 0.5;
-      const rawMidi = getBaseMelodyMidi(midX);
-      const corrMidi = snapToScaleMidi(rawMidi + seg.offsetCents / 100, root, scale, corrRatio);
-
-      liveInputHz = midiToFreq(rawMidi);
-      liveTargetHz = midiToFreq(corrMidi);
-      liveOffsetCents = Math.round((corrMidi - rawMidi) * 100);
-      updateTelemetry();
-      drawCanvas();
+      const rawM = getMelodyMidiAt(midX);
+      const finalM = snapMidi(rawM + getDialValue("pitchDial") + seg.offsetCents / 100, root, scale, 0.9);
+      hudState.inHz = 440 * Math.pow(2, (rawM - 69) / 12);
+      hudState.targetHz = 440 * Math.pow(2, (finalM - 69) / 12);
+      hudState.commaC = Math.round((finalM - rawM) * 100);
+      updateHud();
+      drawMainCanvas();
     });
 
     canvas.addEventListener("pointerup", () => {
-      draggingSegIndex = -1;
+      dragSegIdx = -1;
     });
 
-    // Mode & Action buttons
-    modePitchBtn.addEventListener("click", () => {
+    // Buttons & controls
+    document.getElementById("btnPitchMode").addEventListener("click", () => {
       editMode = "pitch";
-      modePitchBtn.classList.add("btn-active");
-      modeCutBtn.classList.remove("btn-active");
+      document.getElementById("btnPitchMode").classList.add("active");
+      document.getElementById("btnCutMode").classList.remove("active");
     });
 
-    modeCutBtn.addEventListener("click", () => {
+    document.getElementById("btnCutMode").addEventListener("click", () => {
       editMode = "cut";
-      modeCutBtn.classList.add("btn-active");
-      modePitchBtn.classList.remove("btn-active");
+      document.getElementById("btnCutMode").classList.add("active");
+      document.getElementById("btnPitchMode").classList.remove("active");
     });
 
-    resetBtn.addEventListener("click", () => {
-      segments = [{ startX: 0.04, endX: 0.96, offsetCents: 0, selected: true }];
-      activePlayheadX = null;
-      liveInputHz = 0;
-      liveTargetHz = 0;
-      liveOffsetCents = 0;
-      updateTelemetry();
-      drawCanvas();
+    document.getElementById("btnReset").addEventListener("click", () => {
+      segments = [{ startX: 0.06, endX: 0.96, offsetCents: 0, selected: true }];
+      document.getElementById("pitchDial").dataset.val = "0";
+      document.getElementById("formantDial").dataset.val = "0";
+      refreshAllKnobs();
+      updateHud();
+      drawMainCanvas();
     });
 
-    playTestBtn.addEventListener("click", () => {
+    document.getElementById("btnTest").addEventListener("click", () => {
       const root = parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const corrRatio = parseInt(corrSlider.value, 10) / 100;
+      const pitchShift = getDialValue("pitchDial");
+      const count = 10;
 
-      const notesCount = 12;
-      const stepMs = 230;
-
-      for (let i = 0; i < notesCount; i++) {
+      for (let i = 0; i < count; i++) {
         setTimeout(() => {
-          const xn = 0.04 + (i / (notesCount - 1)) * 0.92;
-          activePlayheadX = xn;
-          const seg = segments[getSegmentAtX(xn)] || segments[0];
-          const rawMidi = getBaseMelodyMidi(xn);
-          const shiftedMidi = rawMidi + seg.offsetCents / 100;
-          const corrMidi = snapToScaleMidi(shiftedMidi, root, scale, corrRatio);
+          const xn = 0.06 + (i / (count - 1)) * 0.9;
+          playheadX = xn;
+          const seg = segments[getSegAt(xn)] || segments[0];
+          const rawM = getMelodyMidiAt(xn);
+          const finalM = bypassed ? rawM : snapMidi(rawM + pitchShift + seg.offsetCents / 100, root, scale, 0.9);
+          const inHz = 440 * Math.pow(2, (rawM - 69) / 12);
+          const outHz = 440 * Math.pow(2, (finalM - 69) / 12);
 
-          liveInputHz = midiToFreq(rawMidi);
-          liveTargetHz = midiToFreq(corrMidi);
-          liveOffsetCents = Math.round((corrMidi - rawMidi) * 100);
+          hudState.inHz = inHz;
+          hudState.targetHz = outHz;
+          hudState.commaC = Math.round((finalM - rawM) * 100);
+          updateHud();
+          playAudio(outHz, 0.24);
+          drawMainCanvas();
 
-          updateTelemetry();
-          drawCanvas();
-          playNoteTone(liveTargetHz, 0.25);
-
-          if (i === notesCount - 1) {
-            setTimeout(() => {
-              activePlayheadX = null;
-              drawCanvas();
-            }, 320);
+          if (i === count - 1) {
+            setTimeout(() => { playheadX = null; drawMainCanvas(); }, 280);
           }
-        }, i * stepMs);
+        }, i * 220);
       }
     });
 
-    [corrSlider, melismaSlider, speedSlider, vibSlider].forEach((el) => {
-      el.addEventListener("input", () => {
-        syncKnobLabels();
-        drawCanvas();
-      });
+    document.getElementById("linkToggle").addEventListener("click", () => {
+      linkedMode = !linkedMode;
+      document.getElementById("linkLed").classList.toggle("off", !linkedMode);
     });
 
-    presetSelect.addEventListener("change", (e) => {
-      applyPreset(parseInt(e.target.value, 10));
+    document.getElementById("btnBypass").addEventListener("click", (e) => {
+      bypassed = !bypassed;
+      e.target.textContent = bypassed ? "Bypass" : "Active";
+      e.target.classList.toggle("gold-active", !bypassed);
+      drawMainCanvas();
     });
 
-    rootSelect.addEventListener("change", () => {
+    function captureBank() {
+      return {
+        presetIdx: presetSelect.value,
+        root: rootSelect.value,
+        scale: scaleSelect.value,
+        pitch: document.getElementById("pitchDial").dataset.val,
+        formant: document.getElementById("formantDial").dataset.val,
+        drive: document.getElementById("driveKnob").dataset.val,
+        widener: document.getElementById("widenerKnob").dataset.val,
+        mix: document.getElementById("mixKnob").dataset.val,
+        gain: document.getElementById("gainKnob").dataset.val,
+        segments: JSON.parse(JSON.stringify(segments))
+      };
+    }
+
+    function restoreBank(st) {
+      if (!st) return;
+      presetSelect.value = st.presetIdx;
+      rootSelect.value = st.root;
+      scaleSelect.value = st.scale;
+      document.getElementById("pitchDial").dataset.val = st.pitch;
+      document.getElementById("formantDial").dataset.val = st.formant;
+      document.getElementById("driveKnob").dataset.val = st.drive;
+      document.getElementById("widenerKnob").dataset.val = st.widener;
+      document.getElementById("mixKnob").dataset.val = st.mix;
+      document.getElementById("gainKnob").dataset.val = st.gain;
+      segments = JSON.parse(JSON.stringify(st.segments));
+      refreshAllKnobs();
       renderPiano();
-      drawCanvas();
+      updateHud();
+      drawMainCanvas();
+    }
+
+    document.getElementById("abA").addEventListener("click", () => {
+      slotStates[slotBank] = captureBank();
+      slotBank = "A";
+      document.getElementById("abA").classList.add("active");
+      document.getElementById("abB").classList.remove("active");
+      if (slotStates.A) restoreBank(slotStates.A);
     });
 
-    scaleSelect.addEventListener("change", () => {
-      renderPiano();
-      drawCanvas();
+    document.getElementById("abB").addEventListener("click", () => {
+      slotStates[slotBank] = captureBank();
+      slotBank = "B";
+      document.getElementById("abB").classList.add("active");
+      document.getElementById("abA").classList.remove("active");
+      if (slotStates.B) restoreBank(slotStates.B);
+      else {
+        presetSelect.value = "1";
+        applyPreset(1);
+      }
     });
+
+    document.getElementById("hpRange").addEventListener("input", (e) => {
+      document.getElementById("hpBadge").textContent = `HP ${e.target.value}Hz`;
+    });
+
+    document.getElementById("lpRange").addEventListener("input", (e) => {
+      const v = parseInt(e.target.value, 10);
+      document.getElementById("lpBadge").textContent = v >= 1000 ? `LP ${(v / 1000).toFixed(1)}k` : `LP ${v}Hz`;
+    });
+
+    presetSelect.addEventListener("change", (e) => applyPreset(parseInt(e.target.value, 10)));
+    rootSelect.addEventListener("change", () => { renderPiano(); updateHud(); drawMainCanvas(); });
+    scaleSelect.addEventListener("change", () => { renderPiano(); updateHud(); drawMainCanvas(); });
+
+    setupDragDial("pitchDial", true, true, drawMainCanvas);
+    setupDragDial("formantDial", true, true, drawMainCanvas);
+    setupDragDial("driveKnob", false, false, drawMainCanvas);
+    setupDragDial("widenerKnob", false, false, drawMainCanvas);
+    setupDragDial("mixKnob", false, false, drawMainCanvas);
+    setupDragDial("gainKnob", false, true, drawMainCanvas);
 
     window.addEventListener("resize", resizeCanvas);
 
-    // Init with first preset
+    // Animate subtle light waves
+    setInterval(() => {
+      wavePhase += 0.055;
+      drawMainCanvas();
+    }, 33);
+
     presetSelect.value = "0";
     applyPreset(0);
     resizeCanvas();
