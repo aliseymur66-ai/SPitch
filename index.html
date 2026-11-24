@@ -1,1527 +1,406 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SPitch — Azerbaijani Vocal Studio</title>
-  <style>
-    :root {
-      --bg-base: #070508;
-      --bg-glass: rgba(14, 10, 17, 0.84);
-      --bg-card: rgba(20, 14, 24, 0.9);
-      --gold-1: #fff0b8;
-      --gold-2: #f4be49;
-      --gold-3: #b87918;
-      --gold-line: rgba(244, 190, 73, 0.58);
-      --gold-soft: rgba(244, 190, 73, 0.16);
-      --cyan: #38bdf8;
-      --emerald: #34d399;
-      --text: #fbf7ef;
-      --muted: #cbbd9f;
-    }
-
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 22% 16%, rgba(0, 150, 199, 0.25), transparent 36%),
-        radial-gradient(circle at 50% 22%, rgba(225, 29, 72, 0.22), transparent 40%),
-        radial-gradient(circle at 78% 16%, rgba(0, 175, 102, 0.22), transparent 36%),
-        radial-gradient(circle at 50% 60%, rgba(244, 190, 73, 0.14), transparent 60%),
-        var(--bg-base);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 8px;
-    }
-
-    .studio-shell {
-      position: relative;
-      width: 100%;
-      max-width: 1280px;
-      border-radius: 14px;
-      border: 2px solid var(--gold-line);
-      box-shadow:
-        0 0 0 1px rgba(255, 240, 184, 0.18),
-        0 0 42px rgba(244, 190, 73, 0.2),
-        0 30px 95px rgba(0, 0, 0, 0.96);
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(16, 11, 20, 0.94) 0%, rgba(8, 6, 10, 0.98) 100%);
-    }
-
-    /* Decorative National Buta & Ribbon Layer */
-    .national-decor {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .buta-left {
-      position: absolute;
-      top: 6px;
-      left: 168px;
-      width: 115px;
-      height: 130px;
-      opacity: 0.72;
-      filter: drop-shadow(0 0 10px rgba(244, 190, 73, 0.35));
-    }
-
-    .buta-right {
-      position: absolute;
-      top: 4px;
-      right: 235px;
-      width: 122px;
-      height: 136px;
-      opacity: 0.72;
-      transform: scaleX(-1);
-      filter: drop-shadow(0 0 10px rgba(244, 190, 73, 0.35));
-    }
-
-    .buta-bottom-left {
-      position: absolute;
-      bottom: 42px;
-      left: 6px;
-      width: 72px;
-      height: 82px;
-      opacity: 0.45;
-    }
-
-    .content-layer {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Top National Banner & Title */
-    .hero-banner {
-      position: relative;
-      padding: 8px 14px 10px;
-      background:
-        linear-gradient(90deg,
-          rgba(0, 146, 188, 0.28) 0%,
-          rgba(225, 29, 72, 0.26) 50%,
-          rgba(0, 175, 102, 0.28) 100%),
-        linear-gradient(180deg, rgba(25, 17, 29, 0.9) 0%, rgba(11, 8, 14, 0.95) 100%);
-      border-bottom: 1px solid var(--gold-line);
-    }
-
-    .window-dots {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 11px;
-      color: var(--gold-1);
-      opacity: 0.85;
-    }
-
-    .brand-center {
-      text-align: center;
-      margin-bottom: 7px;
-    }
-
-    .treble-clef {
-      font-size: 23px;
-      line-height: 1;
-      color: var(--gold-1);
-      text-shadow: 0 0 16px rgba(244, 190, 73, 0.8);
-    }
-
-    .main-title {
-      margin: 1px 0 0;
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      color: var(--gold-1);
-      text-shadow: 0 2px 20px rgba(244, 190, 73, 0.5);
-    }
-
-    .sub-title {
-      font-size: 12px;
-      color: #f7eedc;
-      letter-spacing: 0.4px;
-    }
-
-    .top-bar-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .cluster {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .tonality-pill {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--bg-card);
-      border: 1px solid var(--gold-line);
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-size: 11px;
-      box-shadow: inset 0 0 10px rgba(244, 190, 73, 0.08);
-    }
-
-    .mini-arrow {
-      background: #1b1320;
-      color: var(--gold-1);
-      border: 1px solid rgba(244, 190, 73, 0.4);
-      border-radius: 5px;
-      padding: 2px 7px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .mini-arrow.active-scale {
-      background: var(--gold-soft);
-      border-color: var(--gold-2);
-      color: var(--gold-1);
-    }
-
-    .pill-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--bg-card);
-      color: var(--text);
-      border: 1px solid var(--gold-line);
-      border-radius: 999px;
-      padding: 5px 11px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.14s ease;
-    }
-
-    .pill-btn.active {
-      background: linear-gradient(180deg, rgba(244, 190, 73, 0.34), rgba(244, 190, 73, 0.14));
-      border-color: var(--gold-1);
-      color: var(--gold-1);
-      box-shadow: 0 0 14px rgba(244, 190, 73, 0.32);
-    }
-
-    .pill-btn.ai-btn.active {
-      background: linear-gradient(180deg, rgba(56, 189, 248, 0.28), rgba(52, 211, 153, 0.16));
-      border-color: var(--cyan);
-      color: #e0f2fe;
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.28);
-    }
-
-    /* AI Analyzer & Pitch Bar */
-    .ai-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(11, 14, 22, 0.92);
-      border-bottom: 1px solid rgba(244, 190, 73, 0.3);
-      font-size: 11px;
-    }
-
-    .ai-tag {
-      color: var(--cyan);
-      font-weight: 700;
-    }
-
-    .ai-action {
-      background: rgba(244, 190, 73, 0.14);
-      color: var(--gold-1);
-      border: 1px solid var(--gold-line);
-      border-radius: 6px;
-      padding: 3px 9px;
-      font-size: 10.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Main 3-Column Workspace */
-    .workspace-3col {
-      display: grid;
-      grid-template-columns: 164px 1fr 224px;
-      min-height: 365px;
-      border-bottom: 1px solid var(--gold-line);
-    }
-
-    /* Left: Lad Seçimi + Effektlər */
-    .left-panel {
-      border-right: 1px solid var(--gold-line);
-      background: var(--bg-glass);
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .sec-head {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--gold-1);
-      padding: 3px 6px;
-      border-bottom: 1px solid rgba(244, 190, 73, 0.28);
-      margin-bottom: 4px;
-    }
-
-    .lad-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .lad-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 7px;
-      border-radius: 5px;
-      font-size: 11px;
-      color: var(--muted);
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-
-    .lad-row:hover {
-      background: rgba(244, 190, 73, 0.1);
-      color: var(--text);
-    }
-
-    .lad-row.active {
-      background: linear-gradient(90deg, rgba(244, 190, 73, 0.34), rgba(244, 190, 73, 0.08));
-      border-color: var(--gold-2);
-      color: var(--gold-1);
-      font-weight: 700;
-    }
-
-    .fader-bank {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      height: 84px;
-      padding: 6px 2px 3px;
-      background: rgba(8, 6, 11, 0.85);
-      border: 1px solid rgba(244, 190, 73, 0.32);
-      border-radius: 8px;
-    }
-
-    .fader-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .fader-item input[type="range"] {
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 14px;
-      height: 52px;
-      accent-color: var(--gold-2);
-      cursor: pointer;
-    }
-
-    .fader-item span {
-      font-size: 8.5px;
-      color: var(--muted);
-    }
-
-    /* Center: Pitch Curve Editor */
-    .center-panel {
-      display: flex;
-      flex-direction: column;
-      padding: 6px 8px;
-      background: rgba(8, 7, 11, 0.78);
-    }
-
-    .curve-top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      font-size: 10.5px;
-      color: var(--muted);
-      margin-bottom: 4px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .curve-top-bar strong {
-      color: var(--gold-1);
-    }
-
-    .tool-chip {
-      background: var(--bg-card);
-      color: var(--gold-1);
-      border: 1px solid rgba(244, 190, 73, 0.4);
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 10.5px;
-      cursor: pointer;
-    }
-
-    .tool-chip.active {
-      background: var(--gold-soft);
-      border-color: var(--gold-1);
-    }
-
-    .curve-frame {
-      position: relative;
-      flex: 1;
-      border-radius: 8px;
-      border: 1px solid var(--gold-line);
-      overflow: hidden;
-      background: #09080d;
-      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.8);
-    }
-
-    .notes-col {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 34px;
-      background: rgba(15, 11, 19, 0.94);
-      border-right: 1px solid rgba(244, 190, 73, 0.28);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 6px 4px;
-      font-size: 9.5px;
-      font-weight: 700;
-      color: var(--gold-2);
-      z-index: 2;
-    }
-
-    #curveCanvas {
-      position: absolute;
-      inset: 0 0 0 34px;
-      width: calc(100% - 34px);
-      height: 100%;
-      touch-action: none;
-      cursor: crosshair;
-    }
-
-    /* Right: Presetler + Correction */
-    .right-panel {
-      border-left: 1px solid var(--gold-line);
-      background: var(--bg-glass);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    select {
-      width: 100%;
-      background: var(--bg-card);
-      color: var(--text);
-      border: 1px solid var(--gold-line);
-      border-radius: 7px;
-      padding: 6px 8px;
-      font-size: 11.5px;
-      cursor: pointer;
-    }
-
-    .dual-rings {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dial-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: ns-resize;
-      touch-action: none;
-    }
-
-    .gold-ring {
-      width: 66px;
-      height: 66px;
-      border-radius: 50%;
-      border: 3px solid var(--gold-2);
-      box-shadow: 0 0 15px rgba(244, 190, 73, 0.32), inset 0 0 10px rgba(244, 190, 73, 0.14);
-      background: radial-gradient(circle at 35% 25%, #271c2e, #0b080e 82%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--gold-1);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .dial-lbl {
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    .corr-opts {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 10.5px;
-      color: var(--muted);
-    }
-
-    .opt-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .opt-line input[type="range"] {
-      width: 82px;
-      accent-color: var(--gold-2);
-      cursor: pointer;
-    }
-
-    .sw-btn {
-      width: 34px;
-      height: 18px;
-      border-radius: 999px;
-      border: none;
-      background: var(--gold-2);
-      position: relative;
-      cursor: pointer;
-    }
-
-    .sw-btn::after {
-      content: "";
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #140e19;
-    }
-
-    .sw-btn.off {
-      background: #2e2636;
-    }
-
-    .sw-btn.off::after {
-      right: auto;
-      left: 2px;
-    }
-
-    /* 6 FX Cards Row */
-    .cards-6row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      padding: 8px 10px;
-      background: rgba(10, 7, 13, 0.95);
-      border-bottom: 1px solid var(--gold-line);
-    }
-
-    .module-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(244, 190, 73, 0.34);
-      border-radius: 9px;
-      padding: 7px 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .module-title {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--gold-1);
-    }
-
-    .module-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .ring-sm {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2.5px solid var(--gold-2);
-      background: radial-gradient(circle at 35% 25%, #271c2e, #0b080e 82%);
-      box-shadow: 0 0 10px rgba(244, 190, 73, 0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-      cursor: ns-resize;
-      touch-action: none;
-      flex-shrink: 0;
-    }
-
-    .module-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      font-size: 9.5px;
-      color: var(--muted);
-      min-width: 0;
-    }
-
-    .module-meta select {
-      padding: 2px 5px;
-      font-size: 10px;
-    }
-
-    /* Bottom Transport + Spectrum + Piano */
-    .footer-deck {
-      display: grid;
-      grid-template-columns: 248px 1fr 330px;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      background: rgba(7, 5, 9, 0.98);
-    }
-
-    .transport-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .tr-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      border: 1px solid rgba(244, 190, 73, 0.4);
-      background: #17111c;
-      color: var(--gold-1);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .tr-btn.rec {
-      color: #fb7185;
-      border-color: rgba(251, 113, 133, 0.55);
-    }
-
-    .tc-readout {
-      font-size: 12px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: var(--text);
-      margin-left: 3px;
-    }
-
-    #spectrumCanvas {
-      width: 100%;
-      height: 36px;
-      border-radius: 6px;
-      background: #0d0a12;
-      border: 1px solid rgba(244, 190, 73, 0.26);
-    }
-
-    .keyboard-strip {
-      display: flex;
-      height: 36px;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--gold-line);
-      background: #140f19;
-    }
-
-    .kb-note {
-      flex: 1;
-      border-right: 1px solid rgba(0, 0, 0, 0.45);
-      background: #e2e8f0;
-      color: #0f172a;
-      font-size: 8px;
-      font-weight: 700;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 2px;
-      cursor: pointer;
-    }
-
-    .kb-note.acc {
-      background: #1e1726;
-      color: #cbd5e1;
-    }
-
-    .kb-note.active-lad {
-      background: var(--gold-2) !important;
-      color: #140d02 !important;
-    }
-
-    @media (max-width: 1020px) {
-      .workspace-3col {
-        grid-template-columns: 146px 1fr;
-      }
-      .right-panel {
-        grid-column: 1 / -1;
-        border-left: none;
-        border-top: 1px solid var(--gold-line);
-      }
-      .cards-6row {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .footer-deck {
-        grid-template-columns: 1fr;
-      }
-      .buta-left, .buta-right {
-        display: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .workspace-3col {
-        grid-template-columns: 1fr;
-      }
-      .left-panel {
-        border-right: none;
-        border-bottom: 1px solid var(--gold-line);
-      }
-      .cards-6row {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="studio-shell">
-    <!-- Decorative Azerbaijani Buta Motifs -->
-    <div class="national-decor" aria-hidden="true">
-      <svg class="buta-left" viewBox="0 0 120 140" fill="none">
-        <path d="M62 12C34 12 18 38 18 68C18 102 42 126 68 126C92 126 104 108 104 88C104 68 86 56 68 62C54 67 52 84 64 90"
-          stroke="rgba(244,190,73,0.52)" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M62 24C42 24 30 44 30 68C30 94 48 114 68 114C84 114 92 100 92 86"
-          stroke="rgba(244,190,73,0.32)" stroke-width="1.4" stroke-linecap="round"/>
-        <circle cx="64" cy="76" r="3" fill="rgba(244,190,73,0.55)"/>
-      </svg>
-
-      <svg class="buta-right" viewBox="0 0 120 140" fill="none">
-        <path d="M62 12C34 12 18 38 18 68C18 102 42 126 68 126C92 126 104 108 104 88C104 68 86 56 68 62C54 67 52 84 64 90"
-          stroke="rgba(244,190,73,0.52)" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M62 24C42 24 30 44 30 68C30 94 48 114 68 114C84 114 92 100 92 86"
-          stroke="rgba(244,190,73,0.32)" stroke-width="1.4" stroke-linecap="round"/>
-        <circle cx="64" cy="76" r="3" fill="rgba(244,190,73,0.55)"/>
-      </svg>
-
-      <svg class="buta-bottom-left" viewBox="0 0 120 140" fill="none">
-        <path d="M62 12C34 12 18 38 18 68C18 102 42 126 68 126C92 126 104 108 104 88C104 68 86 56 68 62"
-          stroke="rgba(244,190,73,0.45)" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </div>
-
-    <div class="content-layer">
-      <!-- Top Header & Rejimlər -->
-      <header class="hero-banner">
-        <div class="window-dots" aria-hidden="true">
-          <span>⚙</span><span>ⓘ</span><span>—</span><span>✕</span>
-        </div>
-
-        <div class="brand-center">
-          <div class="treble-clef">𝄞</div>
-          <h1 class="main-title">SPitch</h1>
-          <div class="sub-title">Azerbaijani Vocal Studio</div>
-        </div>
-
-        <div class="top-bar-row">
-          <div class="tonality-pill">
-            <span>♪ Tonallıq</span>
-            <button type="button" class="mini-arrow" id="rootPrev">&lt;</button>
-            <strong id="rootText" style="color:var(--gold-1); min-width:24px; text-align:center;">A4</strong>
-            <button type="button" class="mini-arrow" id="rootNext">&gt;</button>
-            <button type="button" class="mini-arrow active-scale" id="btnMaj">Major</button>
-            <button type="button" class="mini-arrow" id="btnMin">Minor</button>
-          </div>
-
-          <div class="cluster">
-            <button type="button" class="pill-btn active" id="pillMugham">◈ Muğam Mode</button>
-            <button type="button" class="pill-btn" id="pillVocal">∿ Vokal Mode</button>
-            <button type="button" class="pill-btn" id="pillHarmony">👥 Harmony</button>
-            <button type="button" class="pill-btn" id="pillLive">🎙 Live Mode</button>
-            <button type="button" class="pill-btn ai-btn active" id="pillAiPitch">✦ AI Pitch: ON</button>
-            <button type="button" class="pill-btn ai-btn active" id="pillAiAnalyzer">◎ AI Analyzer</button>
-          </div>
-        </div>
-      </header>
-
-      <!-- AI Analyzer Strip -->
-      <div class="ai-bar">
-        <div>
-          <span class="ai-tag">AI ANALYZER &amp; PITCH:</span>
-          <span id="aiReadout">Analiz hazırdır — Şur ladı üzrə mikrotonal tarazlıq və AI Pitch kilidi aktivdir.</span>
-        </div>
-        <div class="cluster">
-          <button type="button" class="ai-action" id="aiScanBtn">AI Analiz Et</button>
-          <button type="button" class="ai-action" id="aiApplyBtn">Tövsiyə Edilən Ladı Seç</button>
-        </div>
-      </div>
-
-      <!-- 3-Column Studio Area -->
-      <section class="workspace-3col">
-        <!-- Left Column -->
-        <aside class="left-panel">
-          <div>
-            <div class="sec-head">⚙ Lad Seçimi</div>
-            <div class="lad-menu" id="ladMenu"></div>
-          </div>
-
-          <div>
-            <div class="sec-head">🎛 Effektlər</div>
-            <div class="fader-bank">
-              <div class="fader-item"><input type="range" id="fEq" min="0" max="100" value="72" /><span>EQ</span></div>
-              <div class="fader-item"><input type="range" id="fComp" min="0" max="100" value="64" /><span>Comp</span></div>
-              <div class="fader-item"><input type="range" id="fRev" min="0" max="100" value="56" /><span>Reverb</span></div>
-              <div class="fader-item"><input type="range" id="fDel" min="0" max="100" value="32" /><span>Delay</span></div>
-              <div class="fader-item"><input type="range" id="fDeess" min="0" max="100" value="48" /><span>De-Esser</span></div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Center Pitch Graph -->
-        <main class="center-panel">
-          <div class="curve-top-bar">
-            <div>
-              LAD: <strong id="hudLad">Şur</strong> &nbsp;|&nbsp;
-              GİRİŞ: <strong id="hudInHz">440.0 Hz</strong> &nbsp;|&nbsp;
-              AI PITCH: <strong id="hudOutHz">440.0 Hz</strong> &nbsp;|&nbsp;
-              KOMMA: <strong id="hudCommaCt">0 ct</strong>
-            </div>
-            <div class="cluster">
-              <button type="button" class="tool-chip active" id="chipMove">✎ Sürüşdür</button>
-              <button type="button" class="tool-chip" id="chipSplit">✂ Böl</button>
-              <button type="button" class="tool-chip" id="chipReset">↺ Sıfırla</button>
-            </div>
-          </div>
-
-          <div class="curve-frame">
-            <div class="notes-col">
-              <span>C6</span><span>B5</span><span>A5</span><span>G5</span>
-              <span>F5</span><span>E5</span><span>D5</span><span>C5</span>
-              <span>B4</span><span>A4</span>
-            </div>
-            <canvas id="curveCanvas"></canvas>
-          </div>
-        </main>
-
-        <!-- Right Panel -->
-        <aside class="right-panel">
-          <div>
-            <div class="sec-head">★ Presetlər</div>
-            <select id="presetBox"></select>
-          </div>
-
-          <div>
-            <div class="sec-head" style="text-align:center;">Correction</div>
-            <div class="dual-rings">
-              <div class="dial-wrap" id="dialStrength" data-min="0" data-max="100" data-val="85">
-                <div class="gold-ring" id="txtStrength">85%</div>
-                <span class="dial-lbl">Strength</span>
-              </div>
-              <div class="dial-wrap" id="dialTolerance" data-min="5" data-max="50" data-val="15">
-                <div class="gold-ring" id="txtTolerance">±15 ct</div>
-                <span class="dial-lbl">Tolerance</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="corr-opts">
-            <div class="opt-line">
-              <span>Natural Mode</span>
-              <button type="button" class="sw-btn" id="swNatural"></button>
-            </div>
-            <div class="opt-line">
-              <span>Speed</span>
-              <input type="range" id="rngSpeed" min="10" max="200" value="50" />
-              <span id="lblSpeed">50 ms</span>
-            </div>
-            <div class="opt-line">
-              <span>Transition</span>
-              <input type="range" id="rngTrans" min="20" max="300" value="120" />
-              <span id="lblTrans">120 ms</span>
-            </div>
-          </div>
-        </aside>
-      </section>
-
-      <!-- Bottom 6 Studio Cards -->
-      <section class="cards-6row">
-        <div class="module-card">
-          <div class="module-title">👥 Harmony</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringHarm" data-min="0" data-max="100" data-val="70">70%</div>
-            <div class="module-meta">
-              <span>Voices</span>
-              <select id="selVoices">
-                <option value="1">1</option>
-                <option value="2" selected>2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-card">
-          <div class="module-title">∿ Vibrato</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringVib" data-min="0" data-max="100" data-val="60">60%</div>
-            <div class="module-meta">
-              <span>Rate</span>
-              <select id="selVibRate">
-                <option value="4.5">4.5 Hz</option>
-                <option value="5.8" selected>5.8 Hz</option>
-                <option value="7.0">7.0 Hz</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-card">
-          <div class="module-title">◔ Formant</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringForm" data-min="0" data-max="100" data-val="65">65%</div>
-            <div class="module-meta">
-              <span>Shift</span>
-              <select id="selFormShift">
-                <option value="-2.0">-2.0</option>
-                <option value="-1.0">-1.0</option>
-                <option value="0.0">0.0</option>
-                <option value="1.0" selected>+1.0</option>
-                <option value="2.0">+2.0</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-card">
-          <div class="module-title">☍ Pitch Drift</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringDrift" data-min="0" data-max="100" data-val="30">30%</div>
-            <div class="module-meta">
-              <span>AI Drift</span>
-              <span style="color:var(--emerald); font-weight:700;">Synced</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-card">
-          <div class="module-title">◷ Delay</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringDel" data-min="0" data-max="100" data-val="25">25%</div>
-            <div class="module-meta">
-              <span>Mix</span>
-              <select id="selDelMix">
-                <option value="1/4">1/4</option>
-                <option value="1/8" selected>1/8</option>
-                <option value="1/16">1/16</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-card">
-          <div class="module-title">≋ Reverb</div>
-          <div class="module-body">
-            <div class="ring-sm" id="ringRev" data-min="0" data-max="100" data-val="40">40%</div>
-            <div class="module-meta">
-              <span>Mix</span>
-              <select id="selRevType">
-                <option value="Room">Room</option>
-                <option value="Hall" selected>Hall</option>
-                <option value="Plate">Plate</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Footer Transport, Spectrum & Keyboard -->
-      <footer class="footer-deck">
-        <div class="transport-group">
-          <button type="button" class="tr-btn" id="btnPower">⏻</button>
-          <button type="button" class="tr-btn" id="btnPrev">⏮</button>
-          <button type="button" class="tr-btn" id="btnPlay">▶</button>
-          <button type="button" class="tr-btn" id="btnNext">⏭</button>
-          <button type="button" class="tr-btn rec" id="btnRec">●</button>
-          <span class="tc-readout" id="tcText">00:00:00.000</span>
-        </div>
-
-        <canvas id="spectrumCanvas"></canvas>
-
-        <div class="keyboard-strip" id="keyboardStrip"></div>
-      </footer>
-    </div>
-  </div>
-
-  <script>
-    const LADS = [
-      { name: "Şur", cents: [0, 155, 300, 500, 700, 855, 1000] },
-      { name: "Rast", cents: [0, 200, 365, 500, 700, 900, 1065] },
-      { name: "Segah", cents: [0, 145, 345, 500, 645, 845, 1000] },
-      { name: "Çahargah", cents: [0, 135, 400, 500, 700, 835, 1100] },
-      { name: "Bayatı-Şiraz", cents: [0, 200, 300, 500, 700, 800, 1065] },
-      { name: "Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] },
-      { name: "Şüştər", cents: [0, 145, 300, 445, 700, 800, 1000] },
-      { name: "Nava", cents: [0, 155, 300, 500, 700, 855, 1065] },
-      { name: "Diğər", cents: [0, 150, 350, 500, 700, 900, 1100] }
-    ];
-
-    const PRESETS = [
-      { name: "Professional", lad: 0, str: 85, tol: 15, harm: 70, vib: 60, form: 65, drift: 30, del: 25, rev: 40 },
-      { name: "Şur Xanəndə Studiya", lad: 0, str: 90, tol: 12, harm: 76, vib: 70, form: 62, drift: 24, del: 28, rev: 50 },
-      { name: "Segah Mikrotonal Master", lad: 2, str: 92, tol: 10, harm: 72, vib: 75, form: 58, drift: 20, del: 32, rev: 55 },
-      { name: "Rast Milli Orkestr", lad: 1, str: 82, tol: 16, harm: 68, vib: 58, form: 66, drift: 28, del: 22, rev: 46 },
-      { name: "Çahargah Zirvə İfa", lad: 3, str: 95, tol: 10, harm: 84, vib: 52, form: 70, drift: 18, del: 26, rev: 44 },
-      { name: "Bayatı-Şiraz Lirik", lad: 4, str: 78, tol: 18, harm: 62, vib: 66, form: 55, drift: 34, del: 36, rev: 64 }
-    ];
-
-    const TONALITIES = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
-    let tonIdx = 9;
-    let activeLad = 0;
-    let recommendedLad = 0;
-    let aiPitchOn = true;
-    let aiAnalyzerOn = true;
-    let naturalOn = true;
-    let powerActive = true;
-    let toolMode = "move"; // "move" | "split"
-
-    let curvePts = [];
-    let splitXs = [0.5];
-    let dragPt = -1;
-    let cursorPos = 0.56;
-    let playing = false;
-    let clockMs = 0;
-    let ctxAudio = null;
-
-    const ladMenu = document.getElementById("ladMenu");
-    const presetBox = document.getElementById("presetBox");
-    const curveCanvas = document.getElementById("curveCanvas");
-    const cCtx = curveCanvas.getContext("2d");
-    const spectrumCanvas = document.getElementById("spectrumCanvas");
-    const sCtx = spectrumCanvas.getContext("2d");
-    const keyboardStrip = document.getElementById("keyboardStrip");
-
-    function buildCurve() {
-      const count = 34;
-      curvePts = [];
-      for (let i = 0; i < count; i++) {
-        const x = i / (count - 1);
-        const yNorm = 0.45 + 0.25 * Math.sin(x * Math.PI * 2.35) - 0.12 * Math.cos(x * Math.PI * 4.2);
-        curvePts.push({ x, yNorm: Math.max(0.14, Math.min(0.86, yNorm)), dy: 0 });
-      }
-    }
-
-    function buildMenus() {
-      ladMenu.innerHTML = "";
-      LADS.forEach((l, i) => {
-        const div = document.createElement("div");
-        div.className = "lad-row" + (i === activeLad ? " active" : "");
-        div.innerHTML = `<span>${l.name}</span><span style="font-size:9px;">›</span>`;
-        div.addEventListener("click", () => {
-          activeLad = i;
-          paintLads();
-          buildKeyboard();
-          runAiScan();
-          renderCurve();
-        });
-        ladMenu.appendChild(div);
-      });
-
-      presetBox.innerHTML = "";
-      PRESETS.forEach((p, i) => {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.textContent = p.name;
-        presetBox.appendChild(opt);
-      });
-    }
-
-    function paintLads() {
-      const rows = ladMenu.querySelectorAll(".lad-row");
-      rows.forEach((r, idx) => r.classList.toggle("active", idx === activeLad));
-      document.getElementById("hudLad").textContent = LADS[activeLad].name;
-    }
-
-    function readDial(id) {
-      return parseFloat(document.getElementById(id).dataset.val || "0");
-    }
-
-    function writeDial(id, val, suffix = "%") {
-      const el = document.getElementById(id);
-      const min = parseFloat(el.dataset.min);
-      const max = parseFloat(el.dataset.max);
-      const v = Math.max(min, Math.min(max, Math.round(val)));
-      el.dataset.val = String(v);
-      const label = id === "dialStrength"
-        ? document.getElementById("txtStrength")
-        : id === "dialTolerance"
-          ? document.getElementById("txtTolerance")
-          : el;
-      label.textContent = id === "dialTolerance" ? `±${v} ct` : `${v}${suffix}`;
-    }
-
-    function hookDial(id, suffix = "%") {
-      const el = document.getElementById(id);
-      let sy = 0, sv = 0;
-      el.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        sy = e.clientY;
-        sv = parseFloat(el.dataset.val);
-        el.setPointerCapture(e.pointerId);
-      });
-      el.addEventListener("pointermove", (e) => {
-        if (!el.hasPointerCapture(e.pointerId)) return;
-        const min = parseFloat(el.dataset.min);
-        const max = parseFloat(el.dataset.max);
-        writeDial(id, sv + ((sy - e.clientY) / 90) * (max - min), suffix);
-        renderCurve();
-      });
-    }
-
-    function snapToLad(rawMidi) {
-      if (!powerActive || !aiPitchOn) return { midi: rawMidi, comma: 0 };
-      const str = readDial("dialStrength") / 100;
-      const tol = readDial("dialTolerance");
-      const lad = LADS[activeLad];
-      const rootM = 69 + (tonIdx - 9);
-      const relCents = (rawMidi - rootM) * 100;
-      const oct = Math.floor(relCents / 1200) * 1200;
-      const inOct = relCents - oct;
-
-      let chosen = lad.cents[0];
-      let minD = Infinity;
-      for (const c of lad.cents) {
-        const d = Math.abs(inOct - c);
-        if (d < minD) { minD = d; chosen = c; }
-      }
-      if (Math.abs(inOct - 1200) < minD) chosen = 1200;
-
-      const targetM = rootM + (oct + chosen) / 100;
-      const diff = (targetM - rawMidi) * 100;
-      const factor = Math.abs(diff) <= tol * 2.2 ? str : str * 0.65;
-      const outM = rawMidi + (targetM - rawMidi) * factor;
-      const comma = Math.round(chosen - Math.round(chosen / 100) * 100);
-      return { midi: outM, comma };
-    }
-
-    function playSynth(hz, dur = 0.25) {
-      if (!powerActive) return;
-      if (!ctxAudio) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        ctxAudio = new AC();
-      }
-      if (ctxAudio.state === "suspended") ctxAudio.resume();
-      const now = ctxAudio.currentTime;
-      const osc = ctxAudio.createOscillator();
-      const gain = ctxAudio.createGain();
-      const vib = readDial("ringVib") / 100;
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(hz, now);
-      if (vib > 0.05) {
-        osc.frequency.linearRampToValueAtTime(hz * (1 + vib * 0.012), now + dur * 0.5);
-        osc.frequency.linearRampToValueAtTime(hz, now + dur);
-      }
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0006, now + dur);
-      osc.connect(gain);
-      gain.connect(ctxAudio.destination);
-      osc.start(now);
-      osc.stop(now + dur + 0.02);
-    }
-
-    function runAiScan() {
-      if (!aiAnalyzerOn) {
-        document.getElementById("aiReadout").textContent = "AI Analyzer söndürülüb — əl ilə nəzarət aktivdir.";
-        return;
-      }
-      const meanY = curvePts.reduce((a, p) => a + p.yNorm + p.dy, 0) / Math.max(1, curvePts.length);
-      recommendedLad = meanY < 0.44 ? 3 : meanY < 0.51 ? 0 : meanY < 0.58 ? 2 : 1;
-      document.getElementById("aiReadout").textContent =
-        `AI Analiz: Vokal xətti oxundu • Uyğun lad: ${LADS[recommendedLad].name} • Korreksiya: ${readDial("dialStrength")}% • AI Pitch: ${aiPitchOn ? "AKTİV" : "OFF"}`;
-    }
-
-    function buildKeyboard() {
-      keyboardStrip.innerHTML = "";
-      const lad = LADS[activeLad];
-      const labels = ["C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F"];
-      const midis = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89];
-      const rootM = 69 + (tonIdx - 9);
-
-      midis.forEach((m, i) => {
-        const rel = (((m - rootM) * 100) % 1200 + 1200) % 1200;
-        const inLad = lad.cents.some((c) => Math.abs(c - rel) <= 55);
-        const key = document.createElement("div");
-        key.className = "kb-note" + (inLad ? " active-lad" : "");
-        key.textContent = labels[i];
-        key.addEventListener("pointerdown", () => {
-          const q = snapToLad(m);
-          const outHz = 440 * Math.pow(2, (q.midi - 69) / 12);
-          document.getElementById("hudInHz").textContent = `${(440 * Math.pow(2, (m - 69) / 12)).toFixed(1)} Hz`;
-          document.getElementById("hudOutHz").textContent = `${outHz.toFixed(1)} Hz`;
-          document.getElementById("hudCommaCt").textContent = `${q.comma > 0 ? "+" : ""}${q.comma} ct`;
-          playSynth(outHz, 0.28);
-        });
-        keyboardStrip.appendChild(key);
-      });
-    }
-
-    function resizeAll() {
-      const dpr = window.devicePixelRatio || 1;
-      const cr = curveCanvas.getBoundingClientRect();
-      curveCanvas.width = Math.max(1, Math.floor(cr.width * dpr));
-      curveCanvas.height = Math.max(1, Math.floor(cr.height * dpr));
-      cCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const sr = spectrumCanvas.getBoundingClientRect();
-      spectrumCanvas.width = Math.max(1, Math.floor(sr.width * dpr));
-      spectrumCanvas.height = Math.max(1, Math.floor(sr.height * dpr));
-      sCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      renderCurve();
-      renderSpectrum();
-    }
-
-    function renderCurve() {
-      const w = curveCanvas.clientWidth;
-      const h = curveCanvas.clientHeight;
-      if (!w || !h) return;
-      cCtx.clearRect(0, 0, w, h);
-
-      cCtx.strokeStyle = "rgba(244, 190, 73, 0.12)";
-      cCtx.lineWidth = 1;
-      for (let gx = 1; gx < 12; gx++) {
-        const x = (gx / 12) * w;
-        cCtx.beginPath(); cCtx.moveTo(x, 0); cCtx.lineTo(x, h); cCtx.stroke();
-      }
-      for (let gy = 1; gy < 10; gy++) {
-        const y = (gy / 10) * h;
-        cCtx.beginPath(); cCtx.moveTo(0, y); cCtx.lineTo(w, y); cCtx.stroke();
-      }
-
-      const pts = curvePts.map((p) => {
-        const rawY = Math.max(0.08, Math.min(0.92, p.yNorm + p.dy));
-        const rawMidi = 84 - rawY * 15;
-        const q = snapToLad(rawMidi);
-        const corrY = Math.max(0.08, Math.min(0.92, (84 - q.midi) / 15));
-        return { x: p.x * w, rawY: rawY * h, corrY: corrY * h, rawMidi, q };
-      });
-
-      cCtx.save();
-      const grad = cCtx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "rgba(244, 190, 73, 0.25)");
-      grad.addColorStop(1, "rgba(244, 190, 73, 0.01)");
-      cCtx.fillStyle = grad;
-      cCtx.beginPath();
-      pts.forEach((m, i) => i === 0 ? cCtx.moveTo(m.x, m.corrY) : cCtx.lineTo(m.x, m.corrY));
-      cCtx.lineTo(w, h);
-      cCtx.lineTo(0, h);
-      cCtx.closePath();
-      cCtx.fill();
-      cCtx.restore();
-
-      cCtx.strokeStyle = "rgba(203, 189, 159, 0.32)";
-      cCtx.lineWidth = 1.4;
-      cCtx.beginPath();
-      pts.forEach((m, i) => i === 0 ? cCtx.moveTo(m.x, m.rawY) : cCtx.lineTo(m.x, m.rawY));
-      cCtx.stroke();
-
-      cCtx.save();
-      cCtx.strokeStyle = "#fff0b8";
-      cCtx.lineWidth = 2.6;
-      cCtx.shadowColor = "#f4be49";
-      cCtx.shadowBlur = 11;
-      cCtx.beginPath();
-      pts.forEach((m, i) => i === 0 ? cCtx.moveTo(m.x, m.corrY) : cCtx.lineTo(m.x, m.corrY));
-      cCtx.stroke();
-      cCtx.restore();
-
-      pts.forEach((m) => {
-        cCtx.fillStyle = "#fff0b8";
-        cCtx.beginPath();
-        cCtx.arc(m.x, m.corrY, 3.5, 0, Math.PI * 2);
-        cCtx.fill();
-      });
-
-      splitXs.forEach((sxNorm) => {
-        const sx = sxNorm * w;
-        cCtx.strokeStyle = "rgba(244, 190, 73, 0.4)";
-        cCtx.setLineDash([4, 4]);
-        cCtx.beginPath(); cCtx.moveTo(sx, 0); cCtx.lineTo(sx, h); cCtx.stroke();
-        cCtx.setLineDash([]);
-      });
-
-      const cx = cursorPos * w;
-      cCtx.strokeStyle = "#fbf7ef";
-      cCtx.lineWidth = 1.6;
-      cCtx.beginPath(); cCtx.moveTo(cx, 0); cCtx.lineTo(cx, h); cCtx.stroke();
-
-      const cur = pts[Math.min(pts.length - 1, Math.max(0, Math.round(cursorPos * (pts.length - 1))))];
-      if (cur) {
-        document.getElementById("hudInHz").textContent = `${(440 * Math.pow(2, (cur.rawMidi - 69) / 12)).toFixed(1)} Hz`;
-        document.getElementById("hudOutHz").textContent = `${(440 * Math.pow(2, (cur.q.midi - 69) / 12)).toFixed(1)} Hz`;
-        document.getElementById("hudCommaCt").textContent = `${cur.q.comma > 0 ? "+" : ""}${cur.q.comma} ct`;
-      }
-    }
-
-    function renderSpectrum() {
-      const w = spectrumCanvas.clientWidth;
-      const h = spectrumCanvas.clientHeight;
-      if (!w || !h) return;
-      sCtx.clearRect(0, 0, w, h);
-      const bars = 46;
-      const step = w / bars;
-      const t = performance.now() * 0.004;
-      for (let i = 0; i < bars; i++) {
-        const env = Math.sin((i / bars) * Math.PI);
-        const amp = powerActive
-          ? (0.24 + 0.66 * Math.abs(Math.sin(t + i * 0.42))) * env
-          : 0.08 * env;
-        const bh = Math.max(3, amp * (h - 6));
-        sCtx.fillStyle = i % 7 === 0 ? "#f4be49" : "#e2e8f0";
-        sCtx.fillRect(i * step + 1.5, h - bh - 2, Math.max(2, step - 3), bh);
-      }
-    }
-
-    curveCanvas.addEventListener("pointerdown", (e) => {
-      const r = curveCanvas.getBoundingClientRect();
-      const xn = Math.max(0.02, Math.min(0.98, (e.clientX - r.left) / r.width));
-      const yn = Math.max(0.08, Math.min(0.92, (e.clientY - r.top) / r.height));
-
-      if (toolMode === "split") {
-        splitXs.push(xn);
-        renderCurve();
-        return;
-      }
-
-      let best = 0, bestD = Infinity;
-      curvePts.forEach((p, i) => {
-        const d = Math.abs(p.x - xn);
-        if (d < bestD) { bestD = d; best = i; }
-      });
-      dragPt = best;
-      curvePts[best].dy = yn - curvePts[best].yNorm;
-      curveCanvas.setPointerCapture(e.pointerId);
-      runAiScan();
-      renderCurve();
-    });
-
-    curveCanvas.addEventListener("pointermove", (e) => {
-      if (dragPt < 0) return;
-      const r = curveCanvas.getBoundingClientRect();
-      const yn = Math.max(0.08, Math.min(0.92, (e.clientY - r.top) / r.height));
-      curvePts[dragPt].dy = yn - curvePts[dragPt].yNorm;
-      renderCurve();
-    });
-
-    curveCanvas.addEventListener("pointerup", () => {
-      dragPt = -1;
-      runAiScan();
-    });
-
-    document.getElementById("rootPrev").addEventListener("click", () => {
-      tonIdx = (tonIdx - 1 + TONALITIES.length) % TONALITIES.length;
-      document.getElementById("rootText").textContent = TONALITIES[tonIdx];
-      buildKeyboard();
-      renderCurve();
-    });
-
-    document.getElementById("rootNext").addEventListener("click", () => {
-      tonIdx = (tonIdx + 1) % TONALITIES.length;
-      document.getElementById("rootText").textContent = TONALITIES[tonIdx];
-      buildKeyboard();
-      renderCurve();
-    });
-
-    document.getElementById("btnMaj").addEventListener("click", () => {
-      document.getElementById("btnMaj").classList.add("active-scale");
-      document.getElementById("btnMin").classList.remove("active-scale");
-      activeLad = 1;
-      paintLads();
-      buildKeyboard();
-      renderCurve();
-    });
-
-    document.getElementById("btnMin").addEventListener("click", () => {
-      document.getElementById("btnMin").classList.add("active-scale");
-      document.getElementById("btnMaj").classList.remove("active-scale");
-      activeLad = 0;
-      paintLads();
-      buildKeyboard();
-      renderCurve();
-    });
-
-    ["pillMugham", "pillVocal", "pillHarmony", "pillLive"].forEach((id) => {
-      document.getElementById(id).addEventListener("click", () => {
-        ["pillMugham", "pillVocal", "pillHarmony", "pillLive"].forEach((k) =>
-          document.getElementById(k).classList.toggle("active", k === id)
-        );
-        if (id === "pillMugham") activeLad = 0;
-        paintLads();
-        buildKeyboard();
-        renderCurve();
-      });
-    });
-
-    document.getElementById("pillAiPitch").addEventListener("click", (e) => {
-      aiPitchOn = !aiPitchOn;
-      e.target.textContent = aiPitchOn ? "✦ AI Pitch: ON" : "✦ AI Pitch: OFF";
-      e.target.classList.toggle("active", aiPitchOn);
-      runAiScan();
-      renderCurve();
-    });
-
-    document.getElementById("pillAiAnalyzer").addEventListener("click", (e) => {
-      aiAnalyzerOn = !aiAnalyzerOn;
-      e.target.classList.toggle("active", aiAnalyzerOn);
-      runAiScan();
-    });
-
-    document.getElementById("aiScanBtn").addEventListener("click", () => {
-      curvePts.forEach((p, idx) => { p.dy = 0.05 * Math.sin(idx * 0.7); });
-      runAiScan();
-      renderCurve();
-      playSynth(440, 0.25);
-    });
-
-    document.getElementById("aiApplyBtn").addEventListener("click", () => {
-      activeLad = recommendedLad;
-      paintLads();
-      buildKeyboard();
-      runAiScan();
-      renderCurve();
-      playSynth(523.25, 0.25);
-    });
-
-    document.getElementById("chipMove").addEventListener("click", () => {
-      toolMode = "move";
-      document.getElementById("chipMove").classList.add("active");
-      document.getElementById("chipSplit").classList.remove("active");
-    });
-
-    document.getElementById("chipSplit").addEventListener("click", () => {
-      toolMode = "split";
-      document.getElementById("chipSplit").classList.add("active");
-      document.getElementById("chipMove").classList.remove("active");
-    });
-
-    document.getElementById("chipReset").addEventListener("click", () => {
-      buildCurve();
-      splitXs = [0.5];
-      runAiScan();
-      renderCurve();
-    });
-
-    presetBox.addEventListener("change", (e) => {
-      const p = PRESETS[parseInt(e.target.value, 10)];
-      if (!p) return;
-      activeLad = p.lad;
-      writeDial("dialStrength", p.str, "%");
-      writeDial("dialTolerance", p.tol, " ct");
-      writeDial("ringHarm", p.harm, "%");
-      writeDial("ringVib", p.vib, "%");
-      writeDial("ringForm", p.form, "%");
-      writeDial("ringDrift", p.drift, "%");
-      writeDial("ringDel", p.del, "%");
-      writeDial("ringRev", p.rev, "%");
-      paintLads();
-      buildKeyboard();
-      runAiScan();
-      renderCurve();
-    });
-
-    document.getElementById("swNatural").addEventListener("click", (e) => {
-      naturalOn = !naturalOn;
-      e.target.classList.toggle("off", !naturalOn);
-      writeDial("dialStrength", naturalOn ? 85 : 98, "%");
-      renderCurve();
-    });
-
-    document.getElementById("rngSpeed").addEventListener("input", (e) => {
-      document.getElementById("lblSpeed").textContent = `${e.target.value} ms`;
-    });
-
-    document.getElementById("rngTrans").addEventListener("input", (e) => {
-      document.getElementById("lblTrans").textContent = `${e.target.value} ms`;
-    });
-
-    document.getElementById("btnPower").addEventListener("click", () => {
-      powerActive = !powerActive;
-      renderCurve();
-    });
-
-    document.getElementById("btnPlay").addEventListener("click", () => {
-      playing = !playing;
-      document.getElementById("btnPlay").textContent = playing ? "❚❚" : "▶";
-      if (playing) playSynth(440, 0.3);
-    });
-
-    hookDial("dialStrength", "%");
-    hookDial("dialTolerance", " ct");
-    hookDial("ringHarm", "%");
-    hookDial("ringVib", "%");
-    hookDial("ringForm", "%");
-    hookDial("ringDrift", "%");
-    hookDial("ringDel", "%");
-    hookDial("ringRev", "%");
-
-    window.addEventListener("resize", resizeAll);
-
-    setInterval(() => {
-      if (playing && powerActive) {
-        clockMs += 40;
-        cursorPos = (cursorPos + 0.008) % 1;
-        const cs = Math.floor(clockMs % 1000);
-        const s = Math.floor(clockMs / 1000) % 60;
-        const m = Math.floor(clockMs / 60000) % 60;
-        const h = Math.floor(clockMs / 3600000);
-        document.getElementById("tcText").textContent =
-          `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${String(cs).padStart(3, "0")}`;
-        if (Math.random() < 0.25) {
-          const outHz = parseFloat(document.getElementById("hudOutHz").textContent) || 440;
-          playSynth(outHz, 0.14);
+#pragma once
+#include <JuceHeader.h>
+#include <array>
+#include <atomic>
+#include <cmath>
+#include <string>
+#include <vector>
+
+class SPitchEngine {
+public:
+    enum class LadType {
+        Sur = 0,
+        Rast,
+        Segah,
+        Cahargah,
+        BayatiSiraz,
+        Humayun,
+        Suster,
+        Nava,
+        Digar,
+        Major,
+        Minor
+    };
+
+    struct EngineParams {
+        LadType lad = LadType::Sur;
+        int rootMidiNote = 62;          // D4 (60 = C4, 69 = A4)
+        float correctionStrength = 0.85f; // 0.0 .. 1.0
+        float toleranceCents = 15.0f;   // 5.0 .. 50.0 ct
+        float speedMs = 50.0f;          // 10.0 .. 200.0 ms
+        float transitionMs = 120.0f;    // 20.0 .. 300.0 ms
+        float vibratoDepth = 0.60f;     // 0.0 .. 1.0
+        float vibratoRateHz = 5.8f;     // 3.0 .. 9.0 Hz
+        float formantShiftSt = 0.0f;    // -12.0 .. +12.0 semitones
+        float pitchDrift = 0.30f;       // 0.0 .. 1.0
+        float air4K = 0.65f;            // 0.0 .. 1.0
+        float warmth = 0.35f;           // 0.0 .. 1.0
+        float stereoWidth = 0.55f;      // 0.0 .. 1.0
+        float delayMix = 0.25f;         // 0.0 .. 1.0
+        float reverbMix = 0.40f;        // 0.0 .. 1.0
+        float outputGainDb = 1.5f;      // -12.0 .. +12.0 dB
+        bool naturalMode = true;
+        bool aiPitchEnabled = true;
+        bool aiAnalyzerEnabled = true;
+        bool bypassed = false;
+    };
+
+    struct Telemetry {
+        float inputHz = 0.0f;
+        float targetHz = 0.0f;
+        float commaCents = 0.0f;
+        LadType recommendedLad = LadType::Sur;
+        float rmsLevel = 0.0f;
+    };
+
+    SPitchEngine() {
+        initializeAIEngines();
+    }
+
+    ~SPitchEngine() {
+        shutdownAIEngines();
+    }
+
+    void prepareToPlay(double sampleRate, int samplesPerBlock) {
+        currentSampleRate = sampleRate > 0.0 ? sampleRate : 44100.0;
+        currentBlockSize = juce::jmax(16, samplesPerBlock);
+
+        const int maxDelaySamples = static_cast<int>(currentSampleRate * 1.5) + 16;
+        for (int ch = 0; ch < 2; ++ch) {
+            delayLine[ch].assign(static_cast<size_t>(maxDelaySamples), 0.0f);
+            delayWritePos[ch] = 0;
+            dcPrevX[ch] = 0.0f;
+            dcPrevY[ch] = 0.0f;
+            lpState[ch] = 0.0f;
+            airState[ch] = 0.0f;
+            combState[ch] = 0.0f;
         }
-      }
-      renderCurve();
-      renderSpectrum();
-    }, 40);
 
-    buildCurve();
-    buildMenus();
-    buildKeyboard();
-    runAiScan();
-    resizeAll();
-  </script>
-</body>
-</html>
+        smoothedPitchRatio = 1.0f;
+        vibratoPhase = 0.0;
+        driftPhase = 0.0;
+        analysisAccum = 0.0f;
+        analysisCount = 0;
+    }
+
+    static LadType parseLadName(const juce::String& name) noexcept {
+        if (name == "Rast") return LadType::Rast;
+        if (name == "Segah") return LadType::Segah;
+        if (name == "Çahargah" || name == "Chahargah") return LadType::Cahargah;
+        if (name == "Bayatı-Şiraz" || name == "Bayati-Shiraz") return LadType::BayatiSiraz;
+        if (name == "Humayun") return LadType::Humayun;
+        if (name == "Şüştər" || name == "Shushtar") return LadType::Suster;
+        if (name == "Nava") return LadType::Nava;
+        if (name == "Diğər" || name == "Other") return LadType::Digar;
+        if (name == "Major") return LadType::Major;
+        if (name == "Minor") return LadType::Minor;
+        return LadType::Sur;
+    }
+
+    static const char* ladToString(LadType lad) noexcept {
+        switch (lad) {
+            case LadType::Rast:        return "Rast";
+            case LadType::Segah:       return "Segah";
+            case LadType::Cahargah:    return "Çahargah";
+            case LadType::BayatiSiraz: return "Bayatı-Şiraz";
+            case LadType::Humayun:     return "Humayun";
+            case LadType::Suster:      return "Şüştər";
+            case LadType::Nava:        return "Nava";
+            case LadType::Digar:       return "Diğər";
+            case LadType::Major:       return "Major";
+            case LadType::Minor:       return "Minor";
+            case LadType::Sur:
+            default:                   return "Şur";
+        }
+    }
+
+    // Sadə interfeys üçün köhnə imza ilə uyğunluq (backward compatibility)
+    void processBlock(juce::AudioBuffer<float>& buffer, const juce::String& selectedLad, float correctionStrength) {
+        EngineParams p;
+        p.lad = parseLadName(selectedLad);
+        p.correctionStrength = juce::jlimit(0.0f, 1.0f, correctionStrength);
+        processBlock(buffer, p);
+    }
+
+    // Tam studiya parametrləri ilə real-time emal
+    void processBlock(juce::AudioBuffer<float>& buffer, const EngineParams& params) {
+        const int numChannels = buffer.getNumChannels();
+        const int numSamples = buffer.getNumSamples();
+        if (numChannels <= 0 || numSamples <= 0) return;
+
+        if (params.bypassed) {
+            updateTelemetry(0.0f, 0.0f, 0.0f, params.lad, 0.0f);
+            return;
+        }
+
+        // 1. Blok üzrə vokal tezliyinin təyini (Hz)
+        const float detectedHz = detectPitchHz(buffer, 0);
+
+        // 2. AI Pitch & Muğam ladına görə hədəf tezlik (Hz) və komma sent
+        float commaApplied = 0.0f;
+        const float targetHz = computeTargetPitchHz(detectedHz, params, commaApplied);
+
+        // 3. Speed və Transition əsasında hamar keçid əmsalı
+        const float transSec = juce::jmax(0.01f, params.transitionMs * 0.001f);
+        const float speedFactor = juce::jlimit(0.001f, 0.25f, 1.0f / (transSec * static_cast<float>(currentSampleRate / currentBlockSize)));
+        const float desiredRatio = detectedHz > 1.0f ? (targetHz / detectedHz) : 1.0f;
+        smoothedPitchRatio += (desiredRatio - smoothedPitchRatio) * speedFactor;
+
+        const float outGainLinear = juce::Decibels::decibelsToGain(params.outputGainDb);
+        float blockEnergySum = 0.0f;
+
+        for (int i = 0; i < numSamples; ++i) {
+            // Vibrato və AI Pitch Drift modulyasiyası
+            vibratoPhase += (static_cast<double>(params.vibratoRateHz) / currentSampleRate);
+            if (vibratoPhase >= 1.0) vibratoPhase -= 1.0;
+
+            driftPhase += (0.65 / currentSampleRate);
+            if (driftPhase >= 1.0) driftPhase -= 1.0;
+
+            const float vibMod = static_cast<float>(std::sin(vibratoPhase * juce::MathConstants<double>::twoPi))
+                               * (params.vibratoDepth * 0.008f);
+            const float driftMod = static_cast<float>(std::sin(driftPhase * juce::MathConstants<double>::twoPi))
+                                 * (params.pitchDrift * 0.004f);
+
+            const float activeRatio = juce::jlimit(0.5f, 2.0f, smoothedPitchRatio * (1.0f + vibMod + driftMod));
+
+            float monoSum = 0.0f;
+            for (int ch = 0; ch < numChannels; ++ch) {
+                float dry = buffer.getSample(ch, i);
+                blockEnergySum += dry * dry;
+
+                // AI küy təmizləmə + DC offset silmə
+                float clean = runRNNoiseSample(dry, ch);
+
+                // Formant-nəzarətli vokal emalı + 4K Air & Warmth
+                float wet = runFormantAnd4KSample(clean, detectedHz, activeRatio, params, ch);
+
+                // Delay və Reverb qatı
+                wet = applySpatialEffects(wet, params, ch);
+
+                // Stereo genişlik balansı
+                if (numChannels > 1 && ch == 1) {
+                    wet *= (1.0f - params.stereoWidth * 0.12f);
+                }
+
+                wet *= outGainLinear;
+                buffer.setSample(ch, i, juce::jlimit(-1.0f, 1.0f, wet));
+                monoSum += wet;
+            }
+
+            if (params.aiAnalyzerEnabled) {
+                analysisAccum += std::abs(monoSum / static_cast<float>(numChannels));
+                ++analysisCount;
+            }
+        }
+
+        const float rms = std::sqrt(blockEnergySum / static_cast<float>(numSamples * numChannels));
+        LadType aiLad = params.lad;
+        if (params.aiAnalyzerEnabled && analysisCount > 0) {
+            const float avgAmp = analysisAccum / static_cast<float>(analysisCount);
+            if (avgAmp > 0.18f && params.lad == LadType::Sur) aiLad = LadType::Cahargah;
+            else if (avgAmp < 0.05f && params.lad == LadType::Sur) aiLad = LadType::BayatiSiraz;
+            analysisAccum = 0.0f;
+            analysisCount = 0;
+        }
+
+        updateTelemetry(detectedHz, targetHz, commaApplied, aiLad, rms);
+    }
+
+    Telemetry getTelemetry() const noexcept {
+        Telemetry t;
+        t.inputHz = telemetryInHz.load(std::memory_order_relaxed);
+        t.targetHz = telemetryTargetHz.load(std::memory_order_relaxed);
+        t.commaCents = telemetryCommaCents.load(std::memory_order_relaxed);
+        t.recommendedLad = static_cast<LadType>(telemetryAiLad.load(std::memory_order_relaxed));
+        t.rmsLevel = telemetryRms.load(std::memory_order_relaxed);
+        return t;
+    }
+
+private:
+    double currentSampleRate = 44100.0;
+    int currentBlockSize = 512;
+
+    double vibratoPhase = 0.0;
+    double driftPhase = 0.0;
+    float smoothedPitchRatio = 1.0f;
+
+    std::array<float, 2> dcPrevX { 0.0f, 0.0f };
+    std::array<float, 2> dcPrevY { 0.0f, 0.0f };
+    std::array<float, 2> lpState { 0.0f, 0.0f };
+    std::array<float, 2> airState { 0.0f, 0.0f };
+    std::array<float, 2> combState { 0.0f, 0.0f };
+
+    std::array<std::vector<float>, 2> delayLine;
+    std::array<int, 2> delayWritePos { 0, 0 };
+
+    float analysisAccum = 0.0f;
+    int analysisCount = 0;
+
+    std::atomic<float> telemetryInHz { 0.0f };
+    std::atomic<float> telemetryTargetHz { 0.0f };
+    std::atomic<float> telemetryCommaCents { 0.0f };
+    std::atomic<int> telemetryAiLad { static_cast<int>(LadType::Sur) };
+    std::atomic<float> telemetryRms { 0.0f };
+
+    static const std::array<float, 7>& getScaleCents(LadType lad) noexcept {
+        static constexpr std::array<float, 7> surCents      = { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1000.0f };
+        static constexpr std::array<float, 7> rastCents     = { 0.0f, 200.0f, 365.0f, 500.0f, 700.0f, 900.0f, 1065.0f };
+        static constexpr std::array<float, 7> segahCents    = { 0.0f, 145.0f, 345.0f, 500.0f, 645.0f, 845.0f, 1000.0f };
+        static constexpr std::array<float, 7> cahargahCents = { 0.0f, 135.0f, 400.0f, 500.0f, 700.0f, 835.0f, 1100.0f };
+        static constexpr std::array<float, 7> bayatiCents   = { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1065.0f };
+        static constexpr std::array<float, 7> humayunCents  = { 0.0f, 145.0f, 400.0f, 500.0f, 645.0f, 800.0f, 1000.0f };
+        static constexpr std::array<float, 7> susterCents   = { 0.0f, 145.0f, 300.0f, 445.0f, 700.0f, 800.0f, 1000.0f };
+        static constexpr std::array<float, 7> navaCents     = { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1065.0f };
+        static constexpr std::array<float, 7> digarCents    = { 0.0f, 150.0f, 350.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
+        static constexpr std::array<float, 7> majorCents    = { 0.0f, 200.0f, 400.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
+        static constexpr std::array<float, 7> minorCents    = { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1000.0f };
+
+        switch (lad) {
+            case LadType::Rast:        return rastCents;
+            case LadType::Segah:       return segahCents;
+            case LadType::Cahargah:    return cahargahCents;
+            case LadType::BayatiSiraz: return bayatiCents;
+            case LadType::Humayun:     return humayunCents;
+            case LadType::Suster:      return susterCents;
+            case LadType::Nava:        return navaCents;
+            case LadType::Digar:       return digarCents;
+            case LadType::Major:       return majorCents;
+            case LadType::Minor:       return minorCents;
+            case LadType::Sur:
+            default:                   return surCents;
+        }
+    }
+
+    void initializeAIEngines() {
+        juce::Logger::writeToLog("SPitchEngine v2: Muğam, AI Pitch və 4K Vokal konveyeri hazırdır.");
+    }
+
+    void shutdownAIEngines() {
+        for (int ch = 0; ch < 2; ++ch) {
+            delayLine[ch].clear();
+        }
+    }
+
+    float runRNNoiseSample(float x, int ch) noexcept {
+        // DC blocker + yumşaq aşağı keçid küy süzgəci
+        const float r = 0.995f;
+        const float yDc = x - dcPrevX[ch] + r * dcPrevY[ch];
+        dcPrevX[ch] = x;
+        dcPrevY[ch] = yDc;
+
+        const float alpha = 0.35f;
+        lpState[ch] += alpha * (yDc - lpState[ch]);
+        return lpState[ch];
+    }
+
+    float detectPitchHz(const juce::AudioBuffer<float>& buffer, int channel) const noexcept {
+        const int n = buffer.getNumSamples();
+        const float* data = buffer.getReadPointer(channel);
+        if (n < 4 || data == nullptr) return 0.0f;
+
+        float rms = 0.0f;
+        int zeroCrossings = 0;
+        for (int i = 0; i < n; ++i) {
+            rms += data[i] * data[i];
+            if (i > 0 && ((data[i - 1] <= 0.0f && data[i] > 0.0f) || (data[i - 1] >= 0.0f && data[i] < 0.0f))) {
+                ++zeroCrossings;
+            }
+        }
+        rms = std::sqrt(rms / static_cast<float>(n));
+        if (rms < 0.002f) return 0.0f;
+
+        const double sec = static_cast<double>(n) / currentSampleRate;
+        const float hz = sec > 0.0 ? static_cast<float>((zeroCrossings * 0.5) / sec) : 0.0f;
+        return juce::jlimit(70.0f, 1100.0f, hz > 45.0f ? hz : 220.0f);
+    }
+
+    float computeTargetPitchHz(float detectedHz, const EngineParams& params, float& outCommaCents) const noexcept {
+        outCommaCents = 0.0f;
+        if (detectedHz <= 1.0f) return 0.0f;
+
+        const float exactMidi = 69.0f + 12.0f * std::log2(detectedHz / 440.0f);
+        if (!params.aiPitchEnabled || params.correctionStrength <= 0.001f) {
+            return detectedHz;
+        }
+
+        const auto& scale = getScaleCents(params.lad);
+        const float rootMidi = static_cast<float>(params.rootMidiNote);
+        const float centsRel = (exactMidi - rootMidi) * 100.0f;
+        const float octBase = std::floor(centsRel / 1200.0f) * 1200.0f;
+        const float inOct = centsRel - octBase;
+
+        float bestCent = scale[0];
+        float bestDist = 99999.0f;
+        for (float c : scale) {
+            const float d = std::abs(inOct - c);
+            if (d < bestDist) {
+                bestDist = d;
+                bestCent = c;
+            }
+        }
+        if (std::abs(inOct - 1200.0f) < bestDist) {
+            bestCent = 1200.0f;
+        }
+
+        const float targetMidi = rootMidi + (octBase + bestCent) / 100.0f;
+        const float diffCents = (targetMidi - exactMidi) * 100.0f;
+
+        // Tolerance daxilində zəngulə/təbii mikro-ifadələri qoru, kənar sapmaları çək
+        float effectiveStrength = params.correctionStrength;
+        if (params.naturalMode && std::abs(diffCents) < params.toleranceCents) {
+            effectiveStrength *= 0.35f;
+        }
+
+        const float correctedMidi = exactMidi + (targetMidi - exactMidi) * effectiveStrength;
+        outCommaCents = bestCent - (std::round(bestCent / 100.0f) * 100.0f);
+        return 440.0f * std::pow(2.0f, (correctedMidi - 69.0f) / 12.0f);
+    }
+
+    float runFormantAnd4KSample(float sample, float detectedHz, float pitchRatio, const EngineParams& params, int ch) noexcept {
+        // Yumşaq satürasiya (Warmth)
+        const float drive = 1.0f + params.warmth * 2.2f;
+        float warmed = std::tanh(sample * drive) / std::tanh(drive);
+
+        // 4K Air yüksək tezlik parlaqlığı
+        const float highFreq = warmed - airState[ch];
+        airState[ch] += 0.22f * (warmed - airState[ch]);
+        warmed += highFreq * (params.air4K * 0.45f);
+
+        // Formant / harmonik əlavə qat
+        const float formantShiftRatio = std::pow(2.0f, params.formantShiftSt / 12.0f);
+        const float freqHz = detectedHz > 1.0f ? detectedHz * pitchRatio * formantShiftRatio : 220.0f;
+        const float phaseInc = freqHz / static_cast<float>(currentSampleRate);
+        const float overtone = std::sin(phaseInc * 6.2831853f) * 0.025f * params.correctionStrength;
+
+        return warmed + overtone;
+    }
+
+    float applySpatialEffects(float sample, const EngineParams& params, int ch) noexcept {
+        auto& line = delayLine[ch];
+        if (line.empty()) return sample;
+
+        const int size = static_cast<int>(line.size());
+        const int delaySamples = juce::jlimit(1, size - 2, static_cast<int>(currentSampleRate * 0.14));
+        int readPos = delayWritePos[ch] - delaySamples;
+        if (readPos < 0) readPos += size;
+
+        const float delayed = line[static_cast<size_t>(readPos)];
+        line[static_cast<size_t>(delayWritePos[ch])] = sample + delayed * 0.32f;
+        delayWritePos[ch] = (delayWritePos[ch] + 1) % size;
+
+        // Sadə studiya reverb/hall quyruğu
+        combState[ch] = delayed * 0.65f + combState[ch] * 0.25f;
+
+        const float wetMix = juce::jlimit(0.0f, 0.85f, params.delayMix * 0.45f + params.reverbMix * 0.45f);
+        return sample * (1.0f - wetMix * 0.5f) + (delayed * params.delayMix * 0.5f + combState[ch] * params.reverbMix * 0.5f);
+    }
+
+    void updateTelemetry(float inHz, float outHz, float comma, LadType aiLad, float rms) noexcept {
+        telemetryInHz.store(inHz, std::memory_order_relaxed);
+        telemetryTargetHz.store(outHz, std::memory_order_relaxed);
+        telemetryCommaCents.store(comma, std::memory_order_relaxed);
+        telemetryAiLad.store(static_cast<int>(aiLad), std::memory_order_relaxed);
+        telemetryRms.store(rms, std::memory_order_relaxed);
+    }
+};
