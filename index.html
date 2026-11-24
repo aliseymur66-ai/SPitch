@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPitch — Studio Pitch & Mugham Engine</title>
+  <title>SPitch Pro — Mugham, Melisma & Vocal Slice Engine</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
-      background: #090b0e;
-      color: #e6e9ef;
+      background: #07090c;
+      color: #e8ecf2;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       justify-content: center;
@@ -17,202 +17,258 @@
       min-height: 100vh;
       padding: 10px;
     }
-    .plugin-window {
+    .daw-frame {
       width: 100%;
-      max-width: 980px;
-      background: #0d0f12;
-      border: 1px solid #262d3a;
-      border-radius: 10px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+      max-width: 1020px;
+      background: #0d1015;
+      border: 1px solid #2a3342;
+      border-radius: 12px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85);
       overflow: hidden;
     }
-    .top-bar {
+    .header-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       padding: 12px 16px;
-      background: linear-gradient(180deg, #181d26 0%, #12161d 100%);
-      border-bottom: 1px solid #242b38;
+      background: linear-gradient(180deg, #1b212c 0%, #12161e 100%);
+      border-bottom: 1px solid #262f3d;
     }
-    .brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; color: #f0f3f8; }
-    .brand p { margin: 2px 0 0; font-size: 10px; letter-spacing: 1.1px; color: #8c96a8; }
-    .controls-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-    select, button {
-      background: #0e1116;
-      color: #e6e9ef;
-      border: 1px solid #2d3544;
+    .logo-wrap { display: flex; align-items: baseline; gap: 10px; }
+    .logo-wrap h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.6px; color: #f5f7fa; }
+    .pro-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(77, 163, 255, 0.16);
+      border: 1px solid rgba(77, 163, 255, 0.45);
+      color: #79b8ff;
+    }
+    .sub-tag { width: 100%; font-size: 10px; letter-spacing: 1.3px; color: #8c96a8; margin-top: -6px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      background: #10141c;
+      border-bottom: 1px solid #222a38;
+    }
+    select, .tool-btn {
+      background: #161b25;
+      color: #e6ebf2;
+      border: 1px solid #2e384b;
       border-radius: 6px;
-      padding: 6px 9px;
+      padding: 6px 10px;
       font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
       outline: none;
     }
-    button.primary {
-      background: #1d293a;
+    .tool-btn.active {
+      background: #1f3550;
       border-color: #4da3ff;
-      color: #dcebff;
-      font-weight: 600;
-      cursor: pointer;
+      color: #9ecbff;
     }
-    button.toggle-on {
-      background: #173a2a;
-      border-color: #36c97e;
-      color: #b7f7d4;
-      font-weight: 600;
-      cursor: pointer;
+    .tool-btn.accent {
+      background: #19382c;
+      border-color: #36c38c;
+      color: #98f0cd;
     }
-    button.toggle-off {
-      background: #2a191d;
-      border-color: #c95665;
-      color: #f7c7ce;
-      font-weight: 600;
-      cursor: pointer;
+    .tool-btn.danger {
+      background: #381c22;
+      border-color: #e05a6d;
+      color: #ff9aa8;
     }
-    .knobs { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .knob-box { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: #9aa4b5; }
-    .knob-box input[type="range"] { width: 72px; accent-color: #4da3ff; cursor: pointer; }
-    .knob-val { font-size: 11px; color: #e6e9ef; font-variant-numeric: tabular-nums; }
+    .divider { width: 1px; height: 22px; background: #262f3d; margin: 0 2px; }
 
-    .body-area {
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      height: 440px;
+    .controls-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
     }
-    .piano-col {
-      background: #11151c;
-      border-right: 1px solid #242b38;
-      padding: 8px;
+    .param-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 78px;
+    }
+    .param-title { font-size: 9px; font-weight: 700; letter-spacing: 0.7px; color: #9aa5b8; }
+    .param-box input[type="range"] { width: 76px; margin: 4px 0; accent-color: #4da3ff; cursor: pointer; }
+    .param-val { font-size: 11px; font-weight: 600; color: #e8ecf2; font-variant-numeric: tabular-nums; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 162px 1fr;
+      height: 455px;
+    }
+    .piano-panel {
+      background: #11151d;
+      border-right: 1px solid #242c3b;
+      padding: 6px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow: hidden;
     }
-    .key-row {
-      position: relative;
+    .p-key {
       height: calc(100% / 24 - 1px);
       display: flex;
       align-items: center;
-      border-radius: 3px;
       cursor: pointer;
-      font-size: 10px;
-      font-weight: 600;
     }
-    .key-shape {
+    .p-shape {
       height: 100%;
       border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 6px;
+      font-size: 10px;
+      font-weight: 600;
     }
-    .key-white { width: 100%; background: #c9d1dc; color: #12161d; }
-    .key-black { width: 68%; background: #1a202b; color: #9aa4b5; border: 1px solid #2c3545; }
-    .key-active { background: #4da3ff !important; color: #0b0e13 !important; }
-    .key-comma { background: #d49b35 !important; color: #0b0e13 !important; }
+    .w-key { width: 100%; background: #cbd3de; color: #11161f; }
+    .b-key { width: 66%; background: #1a202c; color: #9aa5b8; border: 1px solid #2d3748; }
+    .in-scale { background: #4da3ff !important; color: #090c10 !important; }
+    .in-comma { background: #d99b26 !important; color: #090c10 !important; }
 
-    .monitor-col {
-      position: relative;
-      background: #0e1218;
-      padding: 10px 12px;
+    .editor-panel {
       display: flex;
       flex-direction: column;
+      background: #0c0f14;
+      padding: 10px 12px;
+      gap: 8px;
     }
-    .readout {
+    .status-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 8px;
       align-items: center;
-      font-size: 12px;
-      color: #c6d0df;
-      margin-bottom: 8px;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #c2ccdc;
       font-variant-numeric: tabular-nums;
     }
-    canvas {
+    .legend { display: flex; gap: 12px; font-size: 10.5px; color: #9aa5b8; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+
+    .canvas-wrap {
+      position: relative;
       flex: 1;
-      width: 100%;
-      background: #121720;
-      border: 1px solid #232a37;
+      border: 1px solid #232b3a;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #111620;
+    }
+    canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+
+    .slice-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      background: #131822;
+      border: 1px solid #232c3b;
       border-radius: 6px;
-      touch-action: none;
+      font-size: 11px;
+      color: #b7c2d4;
     }
     @media (max-width: 720px) {
-      .body-area { grid-template-columns: 106px 1fr; height: 400px; }
+      .workspace { grid-template-columns: 118px 1fr; height: 420px; }
     }
   </style>
 </head>
 <body>
-  <div class="plugin-window">
-    <div class="top-bar">
-      <div class="brand">
+  <div class="daw-frame">
+    <div class="header-bar">
+      <div class="logo-wrap">
         <h1>SPitch</h1>
-        <p>STUDIO PITCH & MUGHAM ENGINE</p>
+        <span class="pro-badge">PRO MUGHAM & SLICE</span>
       </div>
 
-      <div class="controls-row">
-        <button id="autoPitchBtn" class="toggle-on" type="button">AUTO PITCH: ON</button>
-
-        <select id="presetSelect" title="Presetlər">
-          <option value="custom">Preset: Seçilməyib</option>
-          <option value="shur_vocal">Şur Xanəndə / Vokal (Re)</option>
-          <option value="segah_lyrical">Segah Lirik Vokal (Mi)</option>
-          <option value="rast_clean">Rast Təmiz Vokal (Do)</option>
-          <option value="pop_tight">Müasir Pop Dəqiq (La Minor)</option>
-          <option value="natural_soft">Təbii Əl İşi / Yumşaq</option>
-        </select>
-
-        <select id="rootSelect">
-          <option value="0">C (Do)</option>
-          <option value="1">C#</option>
-          <option value="2" selected>D (Re)</option>
-          <option value="3">D#</option>
-          <option value="4">E (Mi)</option>
-          <option value="5">F (Fa)</option>
-          <option value="6">F#</option>
-          <option value="7">G (Sol)</option>
-          <option value="8">G#</option>
-          <option value="9">A (Lya)</option>
-          <option value="10">A#</option>
-          <option value="11">B (Si)</option>
-        </select>
-
-        <select id="scaleSelect"></select>
-        <button id="demoBtn" class="primary" type="button">Səs Sınağı</button>
-      </div>
-
-      <div class="knobs">
-        <div class="knob-box">
-          <span>CORRECTION</span>
-          <input id="corrRange" type="range" min="0" max="100" value="90" />
-          <span class="knob-val" id="corrVal">90%</span>
+      <div class="controls-strip">
+        <div class="param-box">
+          <span class="param-title">CORRECTION</span>
+          <input id="corrInput" type="range" min="0" max="100" value="85" />
+          <span class="param-val" id="corrVal">85%</span>
         </div>
-        <div class="knob-box">
-          <span>SPEED</span>
-          <input id="speedRange" type="range" min="1" max="100" value="40" />
-          <span class="knob-val" id="speedVal">40%</span>
+        <div class="param-box">
+          <span class="param-title">MELISMA (BOĞAZ)</span>
+          <input id="melismaInput" type="range" min="0" max="100" value="80" />
+          <span class="param-val" id="melismaVal">80%</span>
         </div>
-        <div class="knob-box">
-          <span>VIBRATO</span>
-          <input id="vibRange" type="range" min="0" max="100" value="75" />
-          <span class="knob-val" id="vibVal">75%</span>
+        <div class="param-box">
+          <span class="param-title">MILLISM (KOMMA)</span>
+          <input id="millismInput" type="range" min="0" max="100" value="75" />
+          <span class="param-val" id="millismVal">75%</span>
         </div>
-        <div class="knob-box">
-          <span>MANUAL CENT</span>
-          <input id="manualCentRange" type="range" min="-100" max="100" value="0" />
-          <span class="knob-val" id="manualCentVal">0c</span>
+        <div class="param-box">
+          <span class="param-title">VIBRATO</span>
+          <input id="vibInput" type="range" min="0" max="100" value="70" />
+          <span class="param-val" id="vibVal">70%</span>
         </div>
       </div>
+
+      <div class="sub-tag">STUDIO VOCAL PITCH, MICROTONAL MUGHAM & AUDIO SLICE ENGINE</div>
     </div>
 
-    <div class="body-area">
-      <div class="piano-col" id="pianoCol"></div>
-      <div class="monitor-col">
-        <div class="readout">
-          <span id="freqInfo">INPUT: 0.0 Hz | TARGET: 0.0 Hz</span>
-          <span id="modeInfo">Rejim: Avto-Pitch + Muğam: Şur</span>
+    <div class="toolbar">
+      <select id="rootSelect">
+        <option value="0">Mayə: C (Do)</option>
+        <option value="1">Mayə: C#</option>
+        <option value="2" selected>Mayə: D (Re)</option>
+        <option value="3">Mayə: D#</option>
+        <option value="4">Mayə: E (Mi)</option>
+        <option value="5">Mayə: F (Fa)</option>
+        <option value="6">Mayə: F#</option>
+        <option value="7">Mayə: G (Sol)</option>
+        <option value="8">Mayə: G#</option>
+        <option value="9">Mayə: A (Lya)</option>
+        <option value="10">Mayə: A#</option>
+        <option value="11">Mayə: B (Si)</option>
+      </select>
+
+      <select id="scaleSelect"></select>
+
+      <div class="divider"></div>
+
+      <button id="modeEditBtn" class="tool-btn active" type="button">Əl ilə Düzəliş</button>
+      <button id="modeCutBtn" class="tool-btn" type="button">✂ Qayçı (Kəs / Böl)</button>
+      <button id="deleteSliceBtn" class="tool-btn danger" type="button">Seçiləni Sil</button>
+      <button id="resetSlicesBtn" class="tool-btn" type="button">Birləşdir / Sıfırla</button>
+
+      <div class="divider"></div>
+
+      <button id="playPhraseBtn" class="tool-btn accent" type="button">▶ Muğam / Boğaz Sınağı</button>
+    </div>
+
+    <div class="workspace">
+      <div class="piano-panel" id="pianoPanel"></div>
+
+      <div class="editor-panel">
+        <div class="status-row">
+          <span id="hzReadout">INPUT: 0.0 Hz | TARGET: 0.0 Hz | OFFSET: +0c</span>
+          <div class="legend">
+            <span><i class="dot" style="background:#7d889c;"></i>Xam Boğaz/Səs</span>
+            <span><i class="dot" style="background:#4da3ff;"></i>Təmizlənmiş Xətt</span>
+            <span><i class="dot" style="background:#d99b26;"></i>Kommalı Pərdə</span>
+          </div>
         </div>
-        <canvas id="pitchCanvas"></canvas>
+
+        <div class="canvas-wrap">
+          <canvas id="proCanvas"></canvas>
+        </div>
+
+        <div class="slice-bar">
+          <span id="sliceStatus">Fraqment: 1 hissə | Rejim: Xətt üzərinə toxunub kəsə və ya sürükləyə bilərsən</span>
+          <span id="scaleNameReadout">Muğam: Şur</span>
+        </div>
       </div>
     </div>
   </div>
@@ -234,61 +290,54 @@
       { name: "Muğam: Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] }
     ];
 
-    const PRESETS = {
-      shur_vocal: { autoPitch: true, root: 2, scale: 7, corr: 85, speed: 45, vib: 85, cent: 0 },
-      segah_lyrical: { autoPitch: true, root: 4, scale: 8, corr: 80, speed: 35, vib: 90, cent: 0 },
-      rast_clean: { autoPitch: true, root: 0, scale: 6, corr: 88, speed: 50, vib: 80, cent: 0 },
-      pop_tight: { autoPitch: true, root: 9, scale: 3, corr: 96, speed: 80, vib: 45, cent: 0 },
-      natural_soft: { autoPitch: false, root: 2, scale: 7, corr: 50, speed: 25, vib: 95, cent: 0 }
-    };
-
-    const scaleSelect = document.getElementById("scaleSelect");
     const rootSelect = document.getElementById("rootSelect");
-    const presetSelect = document.getElementById("presetSelect");
-    const autoPitchBtn = document.getElementById("autoPitchBtn");
-    const pianoCol = document.getElementById("pianoCol");
-    const canvas = document.getElementById("pitchCanvas");
+    const scaleSelect = document.getElementById("scaleSelect");
+    const pianoPanel = document.getElementById("pianoPanel");
+    const canvas = document.getElementById("proCanvas");
     const ctx = canvas.getContext("2d");
 
-    SCALES.forEach((s, idx) => {
-      const opt = document.createElement("option");
-      opt.value = idx;
-      opt.textContent = s.name;
-      if (idx === 7) opt.selected = true;
-      scaleSelect.appendChild(opt);
+    SCALES.forEach((s, i) => {
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = s.name;
+      if (i === 7) op.selected = true;
+      scaleSelect.appendChild(op);
     });
 
+    let toolMode = "edit"; // "edit" | "cut"
     let audioCtx = null;
-    let autoPitchEnabled = true;
-    let activeHz = 0;
-    let targetHz = 0;
-    let history = [];
-    let manualPoints = [];
-    let isDraggingCanvas = false;
 
-    function updateAutoButton() {
-      if (autoPitchEnabled) {
-        autoPitchBtn.textContent = "AUTO PITCH: ON";
-        autoPitchBtn.className = "toggle-on";
-      } else {
-        autoPitchBtn.textContent = "AUTO PITCH: OFF";
-        autoPitchBtn.className = "toggle-off";
+    // Vokal cümləsi nümunəsi (boğaz / nəğmə bəzəkləri ilə)
+    function createInitialPoints() {
+      const pts = [];
+      const count = 90;
+      for (let i = 0; i < count; i++) {
+        const t = i / (count - 1);
+        // Muğam vari nəğmə və boğaz bəzəyi
+        const baseMidi = 62 + Math.sin(t * Math.PI * 2.2) * 4.5 + Math.cos(t * Math.PI * 5) * 0.85;
+        const bogaz = Math.sin(t * Math.PI * 19) * 0.45 * Math.exp(-Math.pow((t - 0.55) * 4, 2));
+        const rawMidi = baseMidi + bogaz;
+        pts.push({
+          xNorm: t,
+          rawMidi,
+          manualShift: 0
+        });
       }
-      updateReadout();
+      return pts;
     }
 
-    function updateReadout() {
-      const scaleName = SCALES[parseInt(scaleSelect.value, 10)].name;
-      const modeText = autoPitchEnabled ? "Avto-Pitch" : "Əllə Nəzarət";
-      document.getElementById("modeInfo").textContent = `Rejim: ${modeText} | ${scaleName}`;
-      document.getElementById("freqInfo").textContent =
-        `INPUT: ${activeHz.toFixed(1)} Hz  |  TARGET: ${targetHz.toFixed(1)} Hz`;
-    }
+    let points = createInitialPoints();
+    let cuts = [0.33, 0.67]; // Qayçı ilə bölünmüş hissə sərhədləri
+    let selectedSegment = 0;
+    let draggingPointIdx = -1;
+    let liveHz = 0;
+    let targetHz = 0;
+    let liveOffsetCents = 0;
 
-    function playTone(freq, duration = 0.35) {
+    function playHz(freq, dur = 0.22) {
       if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
       }
       if (audioCtx.state === "suspended") audioCtx.resume();
       const osc = audioCtx.createOscillator();
@@ -296,56 +345,67 @@
       osc.type = "triangle";
       osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
       gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.14, audioCtx.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0008, audioCtx.currentTime + duration);
+      gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0008, audioCtx.currentTime + dur);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + duration + 0.02);
+      osc.stop(audioCtx.currentTime + dur + 0.02);
     }
 
-    function computeTargetFreq(inputFreq) {
-      const manualCent = parseInt(document.getElementById("manualCentRange").value, 10);
-      const manualFactor = Math.pow(2, manualCent / 1200);
-
-      if (!autoPitchEnabled) {
-        return inputFreq * manualFactor;
+    function getSegmentIndex(xNorm) {
+      let idx = 0;
+      for (const c of cuts) {
+        if (xNorm >= c) idx++;
       }
+      return idx;
+    }
+
+    function computePointMidi(pt) {
+      const corr = parseInt(document.getElementById("corrInput").value, 10) / 100;
+      const melisma = parseInt(document.getElementById("melismaInput").value, 10) / 100;
+      const millism = parseInt(document.getElementById("millismInput").value, 10) / 100;
+      const vib = parseInt(document.getElementById("vibInput").value, 10) / 100;
 
       const rootMidi = 60 + parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const corr = parseInt(document.getElementById("corrRange").value, 10) / 100;
-      const exactMidi = 69 + 12 * Math.log2(inputFreq / 440);
-      const centsFromRoot = (exactMidi - rootMidi) * 100;
+
+      const centsFromRoot = (pt.rawMidi - rootMidi) * 100;
       const octShift = Math.floor(centsFromRoot / 1200) * 1200;
       const inOct = centsFromRoot - octShift;
 
-      let closest = scale.cents[0];
+      let closestCent = scale.cents[0];
       let minDiff = 9999;
       for (const c of scale.cents) {
         const d = Math.abs(inOct - c);
-        if (d < minDiff) { minDiff = d; closest = c; }
+        if (d < minDiff) { minDiff = d; closestCent = c; }
       }
-      if (Math.abs(inOct - 1200) < minDiff) closest = 1200;
+      if (Math.abs(inOct - 1200) < minDiff) closestCent = 1200;
 
-      const targetMidi = rootMidi + (octShift + closest) / 100;
-      const snappedFreq = 440 * Math.pow(2, (targetMidi - 69) / 12);
-      const ratio = 1 + (snappedFreq / inputFreq - 1) * corr;
-      return inputFreq * ratio * manualFactor;
+      // Boğaz / nəğmə və kommalı millizmi qoruma payı
+      const preserveRatio = Math.max(0, 1 - corr * (1 - melisma * 0.55));
+      const scaleMidi = rootMidi + (octShift + closestCent) / 100;
+
+      // Kommalı pərdədirsə millizm nəzarəti ilə incə ifadəni saxla
+      const microDelta = ((closestCent % 100) / 100) * (millism - 0.5) * 0.25;
+      const vibInfluence = Math.sin(pt.xNorm * Math.PI * 36) * 0.06 * (vib / 100);
+
+      const blended = pt.rawMidi * preserveRatio + scaleMidi * (1 - preserveRatio) + pt.manualShift + microDelta + vibInfluence;
+      return blended;
     }
 
     function renderPiano() {
-      pianoCol.innerHTML = "";
+      pianoPanel.innerHTML = "";
       const root = parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      const numKeys = 24;
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
-      for (let i = 0; i < numKeys; i++) {
-        const noteIdx = numKeys - 1 - i;
+      for (let i = 0; i < 24; i++) {
+        const noteIdx = 23 - i;
         const midi = 60 + noteIdx;
-        const pitchClass = noteIdx % 12;
-        const isBlack = [1, 3, 6, 8, 10].includes(pitchClass);
-        const relSemi = (pitchClass - root + 12) % 12;
+        const pc = noteIdx % 12;
+        const isBlack = [1, 3, 6, 8, 10].includes(pc);
+        const relSemi = (pc - root + 12) % 12;
 
         let inScale = false;
         let microCent = 0;
@@ -359,169 +419,171 @@
         }
 
         const row = document.createElement("div");
-        row.className = "key-row";
-
+        row.className = "p-key";
         const shape = document.createElement("div");
-        shape.className = "key-shape " + (isBlack ? "key-black" : "key-white");
-        if (inScale) {
-          shape.classList.add(Math.abs(microCent) > 5 ? "key-comma" : "key-active");
-        }
+        shape.className = "p-shape " + (isBlack ? "b-key" : "w-key");
+        if (inScale) shape.classList.add(Math.abs(microCent) > 5 ? "in-comma" : "in-scale");
 
-        const freq = 440 * Math.pow(2, (midi + microCent / 100 - 69) / 12);
-        shape.innerHTML = `<span>${["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][pitchClass]}</span><span>${inScale && Math.abs(microCent) > 5 ? microCent + "c" : ""}</span>`;
+        const f = 440 * Math.pow(2, (midi + microCent / 100 - 69) / 12);
+        shape.innerHTML = `<span>${names[pc]}</span><span>${inScale && Math.abs(microCent) > 5 ? microCent + "c" : ""}</span>`;
         shape.addEventListener("pointerdown", () => {
-          activeHz = freq;
-          targetHz = computeTargetFreq(freq);
-          playTone(targetHz, 0.4);
-          updateReadout();
+          liveHz = f;
+          targetHz = f;
+          liveOffsetCents = microCent;
+          playHz(f, 0.35);
         });
-
         row.appendChild(shape);
-        pianoCol.appendChild(row);
+        pianoPanel.appendChild(row);
       }
-      updateReadout();
+      document.getElementById("scaleNameReadout").textContent = scale.name;
+    }
+
+    function midiToY(midi, h) {
+      return h - ((midi - 55) / 24) * h;
+    }
+
+    function yToMidi(y, h) {
+      return 55 + ((h - y) / h) * 24;
     }
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
-      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function addManualPointFromPointer(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-      const y = Math.max(8, Math.min(rect.height - 8, e.clientY - rect.top));
-      const normY = 1 - y / rect.height;
-      const midi = 58 + normY * 28;
-      const freq = 440 * Math.pow(2, (midi - 69) / 12);
-      activeHz = freq;
-      targetHz = computeTargetFreq(freq);
-      manualPoints.push({ x, y });
-      if (manualPoints.length > 60) manualPoints.shift();
-      playTone(targetHz, 0.25);
-      updateReadout();
-    }
-
-    canvas.addEventListener("pointerdown", (e) => {
-      isDraggingCanvas = true;
-      addManualPointFromPointer(e);
-    });
-    canvas.addEventListener("pointermove", (e) => {
-      if (isDraggingCanvas) addManualPointFromPointer(e);
-    });
-    window.addEventListener("pointerup", () => { isDraggingCanvas = false; });
-
-    function drawLoop() {
+    function drawEditor() {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
 
-      ctx.strokeStyle = "#1c222e";
+      // Şəbəkə
+      ctx.strokeStyle = "#1a212e";
       ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 36) {
+      for (let x = 0; x < w; x += 40) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
       }
-      for (let y = 0; y < h; y += 28) {
+      for (let m = 56; m <= 78; m++) {
+        const y = midiToY(m, h);
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
       }
 
-      if (activeHz > 0) {
-        const tarMidi = 69 + 12 * Math.log2(targetHz / 440);
-        const yTar = Math.max(10, Math.min(h - 10, h - ((tarMidi - 58) / 28) * h));
-        history.push(yTar);
-        if (history.length > 140) history.shift();
-      }
+      // Seçilmiş fraqmentin fon işıqlanması
+      const bounds = [0, ...cuts.slice().sort((a, b) => a - b), 1];
+      const segStart = bounds[selectedSegment] ?? 0;
+      const segEnd = bounds[selectedSegment + 1] ?? 1;
+      ctx.fillStyle = "rgba(77, 163, 255, 0.06)";
+      ctx.fillRect(segStart * w, 0, (segEnd - segStart) * w, h);
 
-      if (history.length > 1) {
-        ctx.strokeStyle = "#4da3ff";
-        ctx.lineWidth = 2;
+      // Qayçı kəsim xətləri
+      cuts.forEach(c => {
+        const cx = c * w;
+        ctx.strokeStyle = "#f26d7d";
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        history.forEach((yVal, idx) => {
-          const x = (idx / 139) * w;
-          if (idx === 0) ctx.moveTo(x, yVal);
-          else ctx.lineTo(x, yVal);
-        });
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, h);
         ctx.stroke();
-      }
-
-      manualPoints.forEach((pt) => {
-        ctx.fillStyle = "#d49b35";
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.setLineDash([]);
       });
 
-      requestAnimationFrame(drawLoop);
+      // Xam boğaz / səs xətti
+      ctx.strokeStyle = "rgba(145, 158, 180, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      points.forEach((pt, i) => {
+        const x = pt.xNorm * w;
+        const y = midiToY(pt.rawMidi, h);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Düzəldilmiş / muğam xətti
+      ctx.strokeStyle = "#4da3ff";
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      points.forEach((pt, i) => {
+        const x = pt.xNorm * w;
+        const y = midiToY(computePointMidi(pt), h);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      const totalParts = cuts.length + 1;
+      document.getElementById("sliceStatus").textContent =
+        `Fraqment: ${totalParts} hissə (Seçilən: #${selectedSegment + 1}) | Rejim: ${toolMode === "cut" ? "✂ QAYÇI (Kəsmək üçün toxun)" : "Əl ilə Düzəliş"}`;
+      document.getElementById("hzReadout").textContent =
+        `INPUT: ${liveHz.toFixed(1)} Hz  |  TARGET: ${targetHz.toFixed(1)} Hz  |  OFFSET: ${liveOffsetCents >= 0 ? "+" : ""}${liveOffsetCents}c`;
+
+      requestAnimationFrame(drawEditor);
     }
 
-    autoPitchBtn.addEventListener("click", () => {
-      autoPitchEnabled = !autoPitchEnabled;
-      presetSelect.value = "custom";
-      if (activeHz > 0) targetHz = computeTargetFreq(activeHz);
-      updateAutoButton();
-    });
+    canvas.addEventListener("pointerdown", e => {
+      const rect = canvas.getBoundingClientRect();
+      const xNorm = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const y = e.clientY - rect.top;
+      const h = canvas.clientHeight;
 
-    presetSelect.addEventListener("change", (e) => {
-      const p = PRESETS[e.target.value];
-      if (!p) return;
-      autoPitchEnabled = p.autoPitch;
-      rootSelect.value = String(p.root);
-      scaleSelect.value = String(p.scale);
-      document.getElementById("corrRange").value = String(p.corr);
-      document.getElementById("speedRange").value = String(p.speed);
-      document.getElementById("vibRange").value = String(p.vib);
-      document.getElementById("manualCentRange").value = String(p.cent);
-      document.getElementById("corrVal").textContent = p.corr + "%";
-      document.getElementById("speedVal").textContent = p.speed + "%";
-      document.getElementById("vibVal").textContent = p.vib + "%";
-      document.getElementById("manualCentVal").textContent = p.cent + "c";
-      updateAutoButton();
-      renderPiano();
-      if (activeHz > 0) {
-        targetHz = computeTargetFreq(activeHz);
-        updateReadout();
+      if (toolMode === "cut") {
+        cuts.push(xNorm);
+        cuts.sort((a, b) => a - b);
+        selectedSegment = getSegmentIndex(xNorm);
+        playHz(440 * Math.pow(2, (yToMidi(y, h) - 69) / 12), 0.12);
+        return;
       }
-    });
 
-    document.getElementById("corrRange").addEventListener("input", e => {
-      document.getElementById("corrVal").textContent = e.target.value + "%";
-      if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); }
-    });
-    document.getElementById("speedRange").addEventListener("input", e => {
-      document.getElementById("speedVal").textContent = e.target.value + "%";
-    });
-    document.getElementById("vibRange").addEventListener("input", e => {
-      document.getElementById("vibVal").textContent = e.target.value + "%";
-    });
-    document.getElementById("manualCentRange").addEventListener("input", e => {
-      document.getElementById("manualCentVal").textContent = e.target.value + "c";
-      if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); }
-    });
+      selectedSegment = getSegmentIndex(xNorm);
 
-    rootSelect.addEventListener("change", () => { renderPiano(); if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); } });
-    scaleSelect.addEventListener("change", () => { renderPiano(); if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); } });
-
-    document.getElementById("demoBtn").addEventListener("click", () => {
-      const rootMidi = 60 + parseInt(rootSelect.value, 10);
-      const scale = SCALES[parseInt(scaleSelect.value, 10)];
-      scale.cents.forEach((c, idx) => {
-        setTimeout(() => {
-          const f = 440 * Math.pow(2, (rootMidi + c / 100 - 69) / 12);
-          activeHz = f * 1.03;
-          targetHz = computeTargetFreq(activeHz);
-          playTone(targetHz, 0.28);
-          updateReadout();
-        }, idx * 240);
+      // Ən yaxın nöqtəni tap
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      points.forEach((pt, idx) => {
+        const d = Math.abs(pt.xNorm - xNorm);
+        if (d < bestDist) { bestDist = d; bestIdx = idx; }
       });
+
+      draggingPointIdx = bestIdx;
+      const targetMidi = yToMidi(y, h);
+      points[bestIdx].manualShift = targetMidi - points[bestIdx].rawMidi;
+      const f = 440 * Math.pow(2, (targetMidi - 69) / 12);
+      liveHz = 440 * Math.pow(2, (points[bestIdx].rawMidi - 69) / 12);
+      targetHz = f;
+      liveOffsetCents = Math.round((targetMidi - points[bestIdx].rawMidi) * 100);
+      playHz(f, 0.2);
     });
 
-    window.addEventListener("resize", resizeCanvas);
-    updateAutoButton();
-    renderPiano();
-    resizeCanvas();
-    drawLoop();
-  </script>
-</body>
-</html>
+    canvas.addEventListener("pointermove", e => {
+      if (draggingPointIdx < 0 || toolMode !== "edit") return;
+      const rect = canvas.getBoundingClientRect();
+      const y = Math.max(0, Math.min(canvas.clientHeight, e.clientY - rect.top));
+      const targetMidi = yToMidi(y, canvas.clientHeight);
+      points[draggingPointIdx].manualShift = targetMidi - points[draggingPointIdx].rawMidi;
+      targetHz = 440 * Math.pow(2, (targetMidi - 69) / 12);
+      liveOffsetCents = Math.round((targetMidi - points[draggingPointIdx].rawMidi) * 100);
+    });
+
+    window.addEventListener("pointerup", () => { draggingPointIdx = -1; });
+
+    document.getElementById("modeEditBtn").addEventListener("click", () => {
+      toolMode = "edit";
+      document.getElementById("modeEditBtn").classList.add("active");
+      document.getElementById("modeCutBtn").classList.remove("active");
+    });
+
+    document.getElementById("modeCutBtn").addEventListener("click", () => {
+      toolMode = "cut";
+      document.getElementById("modeCutBtn").classList.add("active");
+      document.getElementById("modeEditBtn").classList.remove("active");
+    });
+
+    document.getElementById("deleteSliceBtn").addEventListener("click", () => {
+      const bounds = [0, ...cuts.slice().sort((a, b) => a - b), 1];
+      const s = bounds[selectedSegment] ?? 0;
+      const e = bounds[selectedSegment + 1] ?? 1;
+      points = points.filter(pt => pt.xNorm < s || pt.xNorm > e);
+      if (cuts.length > 0)
