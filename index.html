@@ -15,11 +15,11 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 12px;
+      padding: 10px;
     }
     .plugin-window {
       width: 100%;
-      max-width: 920px;
+      max-width: 980px;
       background: #0d0f12;
       border: 1px solid #262d3a;
       border-radius: 10px;
@@ -31,40 +31,53 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      padding: 14px 18px;
+      gap: 12px;
+      padding: 12px 16px;
       background: linear-gradient(180deg, #181d26 0%, #12161d 100%);
       border-bottom: 1px solid #242b38;
     }
-    .brand h1 { margin: 0; font-size: 21px; letter-spacing: 0.5px; color: #f0f3f8; }
-    .brand p { margin: 2px 0 0; font-size: 10px; letter-spacing: 1.2px; color: #8c96a8; }
-    .selectors { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; color: #f0f3f8; }
+    .brand p { margin: 2px 0 0; font-size: 10px; letter-spacing: 1.1px; color: #8c96a8; }
+    .controls-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     select, button {
       background: #0e1116;
       color: #e6e9ef;
       border: 1px solid #2d3544;
       border-radius: 6px;
-      padding: 7px 10px;
+      padding: 6px 9px;
       font-size: 12px;
       outline: none;
     }
-    button {
+    button.primary {
       background: #1d293a;
       border-color: #4da3ff;
       color: #dcebff;
       font-weight: 600;
       cursor: pointer;
     }
-    button:active { background: #293c56; }
-    .knobs { display: flex; gap: 16px; align-items: center; }
-    .knob-box { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: #9aa4b5; }
-    .knob-box input[type="range"] { width: 76px; accent-color: #4da3ff; cursor: pointer; }
+    button.toggle-on {
+      background: #173a2a;
+      border-color: #36c97e;
+      color: #b7f7d4;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.toggle-off {
+      background: #2a191d;
+      border-color: #c95665;
+      color: #f7c7ce;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .knobs { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .knob-box { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: #9aa4b5; }
+    .knob-box input[type="range"] { width: 72px; accent-color: #4da3ff; cursor: pointer; }
     .knob-val { font-size: 11px; color: #e6e9ef; font-variant-numeric: tabular-nums; }
 
     .body-area {
       display: grid;
-      grid-template-columns: 148px 1fr;
-      height: 430px;
+      grid-template-columns: 140px 1fr;
+      height: 440px;
     }
     .piano-col {
       background: #11151c;
@@ -92,7 +105,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 6px;
-      transition: transform 0.06s ease;
     }
     .key-white { width: 100%; background: #c9d1dc; color: #12161d; }
     .key-black { width: 68%; background: #1a202b; color: #9aa4b5; border: 1px solid #2c3545; }
@@ -102,13 +114,15 @@
     .monitor-col {
       position: relative;
       background: #0e1218;
-      padding: 12px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
     }
     .readout {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
+      gap: 8px;
       align-items: center;
       font-size: 12px;
       color: #c6d0df;
@@ -123,8 +137,8 @@
       border-radius: 6px;
       touch-action: none;
     }
-    @media (max-width: 680px) {
-      .body-area { grid-template-columns: 112px 1fr; height: 390px; }
+    @media (max-width: 720px) {
+      .body-area { grid-template-columns: 106px 1fr; height: 400px; }
     }
   </style>
 </head>
@@ -136,7 +150,18 @@
         <p>STUDIO PITCH & MUGHAM ENGINE</p>
       </div>
 
-      <div class="selectors">
+      <div class="controls-row">
+        <button id="autoPitchBtn" class="toggle-on" type="button">AUTO PITCH: ON</button>
+
+        <select id="presetSelect" title="Presetlər">
+          <option value="custom">Preset: Seçilməyib</option>
+          <option value="shur_vocal">Şur Xanəndə / Vokal (Re)</option>
+          <option value="segah_lyrical">Segah Lirik Vokal (Mi)</option>
+          <option value="rast_clean">Rast Təmiz Vokal (Do)</option>
+          <option value="pop_tight">Müasir Pop Dəqiq (La Minor)</option>
+          <option value="natural_soft">Təbii Əl İşi / Yumşaq</option>
+        </select>
+
         <select id="rootSelect">
           <option value="0">C (Do)</option>
           <option value="1">C#</option>
@@ -153,7 +178,7 @@
         </select>
 
         <select id="scaleSelect"></select>
-        <button id="demoBtn" type="button">Səs Sınağı</button>
+        <button id="demoBtn" class="primary" type="button">Səs Sınağı</button>
       </div>
 
       <div class="knobs">
@@ -172,6 +197,11 @@
           <input id="vibRange" type="range" min="0" max="100" value="75" />
           <span class="knob-val" id="vibVal">75%</span>
         </div>
+        <div class="knob-box">
+          <span>MANUAL CENT</span>
+          <input id="manualCentRange" type="range" min="-100" max="100" value="0" />
+          <span class="knob-val" id="manualCentVal">0c</span>
+        </div>
       </div>
     </div>
 
@@ -180,7 +210,7 @@
       <div class="monitor-col">
         <div class="readout">
           <span id="freqInfo">INPUT: 0.0 Hz | TARGET: 0.0 Hz</span>
-          <span id="scaleInfo">Muğam: Şur</span>
+          <span id="modeInfo">Rejim: Avto-Pitch + Muğam: Şur</span>
         </div>
         <canvas id="pitchCanvas"></canvas>
       </div>
@@ -204,8 +234,18 @@
       { name: "Muğam: Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] }
     ];
 
+    const PRESETS = {
+      shur_vocal: { autoPitch: true, root: 2, scale: 7, corr: 85, speed: 45, vib: 85, cent: 0 },
+      segah_lyrical: { autoPitch: true, root: 4, scale: 8, corr: 80, speed: 35, vib: 90, cent: 0 },
+      rast_clean: { autoPitch: true, root: 0, scale: 6, corr: 88, speed: 50, vib: 80, cent: 0 },
+      pop_tight: { autoPitch: true, root: 9, scale: 3, corr: 96, speed: 80, vib: 45, cent: 0 },
+      natural_soft: { autoPitch: false, root: 2, scale: 7, corr: 50, speed: 25, vib: 95, cent: 0 }
+    };
+
     const scaleSelect = document.getElementById("scaleSelect");
     const rootSelect = document.getElementById("rootSelect");
+    const presetSelect = document.getElementById("presetSelect");
+    const autoPitchBtn = document.getElementById("autoPitchBtn");
     const pianoCol = document.getElementById("pianoCol");
     const canvas = document.getElementById("pitchCanvas");
     const ctx = canvas.getContext("2d");
@@ -219,9 +259,31 @@
     });
 
     let audioCtx = null;
+    let autoPitchEnabled = true;
     let activeHz = 0;
     let targetHz = 0;
     let history = [];
+    let manualPoints = [];
+    let isDraggingCanvas = false;
+
+    function updateAutoButton() {
+      if (autoPitchEnabled) {
+        autoPitchBtn.textContent = "AUTO PITCH: ON";
+        autoPitchBtn.className = "toggle-on";
+      } else {
+        autoPitchBtn.textContent = "AUTO PITCH: OFF";
+        autoPitchBtn.className = "toggle-off";
+      }
+      updateReadout();
+    }
+
+    function updateReadout() {
+      const scaleName = SCALES[parseInt(scaleSelect.value, 10)].name;
+      const modeText = autoPitchEnabled ? "Avto-Pitch" : "Əllə Nəzarət";
+      document.getElementById("modeInfo").textContent = `Rejim: ${modeText} | ${scaleName}`;
+      document.getElementById("freqInfo").textContent =
+        `INPUT: ${activeHz.toFixed(1)} Hz  |  TARGET: ${targetHz.toFixed(1)} Hz`;
+    }
 
     function playTone(freq, duration = 0.35) {
       if (!audioCtx) {
@@ -242,7 +304,14 @@
       osc.stop(audioCtx.currentTime + duration + 0.02);
     }
 
-    function snapFreq(inputFreq) {
+    function computeTargetFreq(inputFreq) {
+      const manualCent = parseInt(document.getElementById("manualCentRange").value, 10);
+      const manualFactor = Math.pow(2, manualCent / 1200);
+
+      if (!autoPitchEnabled) {
+        return inputFreq * manualFactor;
+      }
+
       const rootMidi = 60 + parseInt(rootSelect.value, 10);
       const scale = SCALES[parseInt(scaleSelect.value, 10)];
       const corr = parseInt(document.getElementById("corrRange").value, 10) / 100;
@@ -262,7 +331,7 @@
       const targetMidi = rootMidi + (octShift + closest) / 100;
       const snappedFreq = 440 * Math.pow(2, (targetMidi - 69) / 12);
       const ratio = 1 + (snappedFreq / inputFreq - 1) * corr;
-      return inputFreq * ratio;
+      return inputFreq * ratio * manualFactor;
     }
 
     function renderPiano() {
@@ -302,14 +371,15 @@
         shape.innerHTML = `<span>${["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][pitchClass]}</span><span>${inScale && Math.abs(microCent) > 5 ? microCent + "c" : ""}</span>`;
         shape.addEventListener("pointerdown", () => {
           activeHz = freq;
-          targetHz = snapFreq(freq);
+          targetHz = computeTargetFreq(freq);
           playTone(targetHz, 0.4);
+          updateReadout();
         });
 
         row.appendChild(shape);
         pianoCol.appendChild(row);
       }
-      document.getElementById("scaleInfo").textContent = scale.name;
+      updateReadout();
     }
 
     function resizeCanvas() {
@@ -318,6 +388,30 @@
       canvas.height = rect.height * window.devicePixelRatio;
       ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
     }
+
+    function addManualPointFromPointer(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+      const y = Math.max(8, Math.min(rect.height - 8, e.clientY - rect.top));
+      const normY = 1 - y / rect.height;
+      const midi = 58 + normY * 28;
+      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+      activeHz = freq;
+      targetHz = computeTargetFreq(freq);
+      manualPoints.push({ x, y });
+      if (manualPoints.length > 60) manualPoints.shift();
+      playTone(targetHz, 0.25);
+      updateReadout();
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      isDraggingCanvas = true;
+      addManualPointFromPointer(e);
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (isDraggingCanvas) addManualPointFromPointer(e);
+    });
+    window.addEventListener("pointerup", () => { isDraggingCanvas = false; });
 
     function drawLoop() {
       const w = canvas.clientWidth;
@@ -334,11 +428,9 @@
       }
 
       if (activeHz > 0) {
-        const rawMidi = 69 + 12 * Math.log2(activeHz / 440);
         const tarMidi = 69 + 12 * Math.log2(targetHz / 440);
-        const yRaw = h - ((rawMidi - 58) / 28) * h;
-        const yTar = h - ((tarMidi - 58) / 28) * h;
-        history.push({ yRaw: Math.max(10, Math.min(h - 10, yRaw)), yTar: Math.max(10, Math.min(h - 10, yTar)) });
+        const yTar = Math.max(10, Math.min(h - 10, h - ((tarMidi - 58) / 28) * h));
+        history.push(yTar);
         if (history.length > 140) history.shift();
       }
 
@@ -346,21 +438,56 @@
         ctx.strokeStyle = "#4da3ff";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        history.forEach((pt, idx) => {
+        history.forEach((yVal, idx) => {
           const x = (idx / 139) * w;
-          if (idx === 0) ctx.moveTo(x, pt.yTar);
-          else ctx.lineTo(x, pt.yTar);
+          if (idx === 0) ctx.moveTo(x, yVal);
+          else ctx.lineTo(x, yVal);
         });
         ctx.stroke();
       }
 
-      document.getElementById("freqInfo").textContent =
-        `INPUT: ${activeHz.toFixed(1)} Hz  |  TARGET: ${targetHz.toFixed(1)} Hz`;
+      manualPoints.forEach((pt) => {
+        ctx.fillStyle = "#d49b35";
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
       requestAnimationFrame(drawLoop);
     }
 
+    autoPitchBtn.addEventListener("click", () => {
+      autoPitchEnabled = !autoPitchEnabled;
+      presetSelect.value = "custom";
+      if (activeHz > 0) targetHz = computeTargetFreq(activeHz);
+      updateAutoButton();
+    });
+
+    presetSelect.addEventListener("change", (e) => {
+      const p = PRESETS[e.target.value];
+      if (!p) return;
+      autoPitchEnabled = p.autoPitch;
+      rootSelect.value = String(p.root);
+      scaleSelect.value = String(p.scale);
+      document.getElementById("corrRange").value = String(p.corr);
+      document.getElementById("speedRange").value = String(p.speed);
+      document.getElementById("vibRange").value = String(p.vib);
+      document.getElementById("manualCentRange").value = String(p.cent);
+      document.getElementById("corrVal").textContent = p.corr + "%";
+      document.getElementById("speedVal").textContent = p.speed + "%";
+      document.getElementById("vibVal").textContent = p.vib + "%";
+      document.getElementById("manualCentVal").textContent = p.cent + "c";
+      updateAutoButton();
+      renderPiano();
+      if (activeHz > 0) {
+        targetHz = computeTargetFreq(activeHz);
+        updateReadout();
+      }
+    });
+
     document.getElementById("corrRange").addEventListener("input", e => {
       document.getElementById("corrVal").textContent = e.target.value + "%";
+      if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); }
     });
     document.getElementById("speedRange").addEventListener("input", e => {
       document.getElementById("speedVal").textContent = e.target.value + "%";
@@ -368,8 +495,13 @@
     document.getElementById("vibRange").addEventListener("input", e => {
       document.getElementById("vibVal").textContent = e.target.value + "%";
     });
-    rootSelect.addEventListener("change", renderPiano);
-    scaleSelect.addEventListener("change", renderPiano);
+    document.getElementById("manualCentRange").addEventListener("input", e => {
+      document.getElementById("manualCentVal").textContent = e.target.value + "c";
+      if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); }
+    });
+
+    rootSelect.addEventListener("change", () => { renderPiano(); if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); } });
+    scaleSelect.addEventListener("change", () => { renderPiano(); if (activeHz > 0) { targetHz = computeTargetFreq(activeHz); updateReadout(); } });
 
     document.getElementById("demoBtn").addEventListener("click", () => {
       const rootMidi = 60 + parseInt(rootSelect.value, 10);
@@ -378,13 +510,15 @@
         setTimeout(() => {
           const f = 440 * Math.pow(2, (rootMidi + c / 100 - 69) / 12);
           activeHz = f * 1.03;
-          targetHz = snapFreq(activeHz);
+          targetHz = computeTargetFreq(activeHz);
           playTone(targetHz, 0.28);
+          updateReadout();
         }, idx * 240);
       });
     });
 
     window.addEventListener("resize", resizeCanvas);
+    updateAutoButton();
     renderPiano();
     resizeCanvas();
     drawLoop();
