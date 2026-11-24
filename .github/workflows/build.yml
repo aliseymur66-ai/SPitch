@@ -1,0 +1,31 @@
+name: Build SPitch VST3
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout SPitch Code
+        uses: actions/checkout@v4
+
+      - name: Download JUCE 8
+        run: |
+          git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build VST3 Plugin
+        run: |
+          cmake --build build --config Release --target SPitch_VST3
+
+      - name: Upload Ready VST3 File
+        uses: actions/upload-artifact@v4
+        with:
+          name: SPitch-Windows-VST3
+          path: build/SPitch_artefacts/Release/VST3/SPitch.vst3
