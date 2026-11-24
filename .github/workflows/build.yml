@@ -1,34 +1,33 @@
-name: Build SPitch VST3
+name: Build SPitch Windows VST3
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  build_windows:
-    runs-on: windows-2022
+  build-windows-vst3:
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout SPitch Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Visual Studio Developer Environment
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Download JUCE 8
-        run: |
-          git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git
-
       - name: Configure CMake
-        run: |
-          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
 
-      - name: Build VST3 Plugin
-        run: |
-          cmake --build build --config Release --target SPitch_VST3
+      - name: Build SPitch VST3
+        run: cmake --build build --config Release --target SPitch_VST3
 
-      - name: Upload Ready VST3 File
+      - name: Package VST3 artifact
+        shell: pwsh
+        run: |
+          $vstPath = Get-ChildItem -Path "build" -Filter "SPitch.vst3" -Directory -Recurse | Select-Object -First 1
+          if (-not $vstPath) { throw "SPitch.vst3 tapilmadi!" }
+          Compress-Archive -Path $vstPath.FullName -DestinationPath "SPitch-Windows-VST3.zip" -Force
+
+      - name: Upload VST3 Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SPitch-Windows-VST3
-          path: build/SPitch_artefacts/Release/VST3/SPitch.vst3
+          path: SPitch-Windows-VST3.zip
