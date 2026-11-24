@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SPitch — Pro Vocal & Mugham Pitch Engine</title>
+  <title>SPitch — Azerbaijani Vocal Studio</title>
   <style>
     :root {
-      --bg-void: #05080d;
-      --bg-panel: #090e16;
-      --bg-surface: #111926;
-      --bg-hover: #182334;
-      --border: #1e2a3d;
-      --border-soft: #162030;
-      --cyan: #38d6ff;
-      --cyan-hi: #a5f3fc;
-      --cyan-glow: rgba(56, 214, 255, 0.28);
-      --gold: #f59e0b;
-      --gold-hi: #fde68a;
-      --emerald: #10b981;
-      --text: #f1f5f9;
-      --muted: #8494ad;
+      --bg-dark: #070609;
+      --bg-panel: rgba(14, 11, 16, 0.88);
+      --bg-card: rgba(22, 17, 24, 0.92);
+      --gold: #f5b942;
+      --gold-bright: #ffe08a;
+      --gold-dim: rgba(245, 185, 66, 0.16);
+      --cyan: #38bdf8;
+      --emerald: #34d399;
+      --crimson: #e11d48;
+      --az-blue: #0092bc;
+      --az-green: #00af66;
+      --border-gold: rgba(245, 185, 66, 0.42);
+      --text: #f8fafc;
+      --muted: #b8b0a2;
     }
 
     * {
@@ -33,1414 +33,1399 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 20% 20%, rgba(56, 214, 255, 0.11), transparent 45%),
-        radial-gradient(circle at 82% 25%, rgba(16, 185, 129, 0.06), transparent 45%),
-        radial-gradient(circle at 70% 88%, rgba(245, 158, 11, 0.06), transparent 48%),
-        var(--bg-void);
+        radial-gradient(circle at 22% 18%, rgba(0, 146, 188, 0.22), transparent 36%),
+        radial-gradient(circle at 50% 24%, rgba(225, 29, 72, 0.18), transparent 38%),
+        radial-gradient(circle at 78% 18%, rgba(0, 175, 102, 0.18), transparent 36%),
+        radial-gradient(circle at 50% 55%, rgba(245, 185, 66, 0.12), transparent 55%),
+        var(--bg-dark);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
+      padding: 8px;
     }
 
-    .daw-frame {
+    .studio-app {
       width: 100%;
-      max-width: 1200px;
-      background:
-        repeating-linear-gradient(
-          -45deg,
-          rgba(255, 255, 255, 0.01) 0px,
-          rgba(255, 255, 255, 0.01) 2px,
-          transparent 2px,
-          transparent 6px
-        ),
-        linear-gradient(180deg, #101824 0%, #080c13 100%);
-      border: 1px solid var(--border);
-      border-radius: 15px;
+      max-width: 1260px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border-gold);
       box-shadow:
-        0 32px 95px rgba(0, 0, 0, 0.94),
-        0 0 42px rgba(56, 214, 255, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        0 0 36px rgba(245, 185, 66, 0.16),
+        0 28px 90px rgba(0, 0, 0, 0.95);
       overflow: hidden;
+      background: linear-gradient(180deg, rgba(16, 12, 19, 0.94) 0%, rgba(9, 7, 11, 0.98) 100%);
     }
 
-    /* Header */
-    .top-strip {
+    /* Top Banner & Header */
+    .top-banner {
+      position: relative;
+      padding: 10px 16px 12px;
+      background:
+        linear-gradient(90deg,
+          rgba(0, 146, 188, 0.24) 0%,
+          rgba(225, 29, 72, 0.24) 50%,
+          rgba(0, 175, 102, 0.24) 100%),
+        linear-gradient(180deg, rgba(24, 17, 26, 0.92) 0%, rgba(11, 9, 14, 0.96) 100%);
+      border-bottom: 1px solid var(--border-gold);
+    }
+
+    .title-center {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .clef-mark {
+      font-size: 24px;
+      line-height: 1;
+      color: var(--gold-bright);
+      text-shadow: 0 0 16px rgba(245, 185, 66, 0.7);
+    }
+
+    .studio-title {
+      margin: 2px 0 0;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--gold-bright);
+      text-shadow: 0 2px 18px rgba(245, 185, 66, 0.45);
+    }
+
+    .studio-sub {
+      font-size: 11.5px;
+      color: #f3e8d2;
+      letter-spacing: 0.5px;
+      opacity: 0.92;
+    }
+
+    .top-controls-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 10px 16px;
-      background: linear-gradient(180deg, #151f2e 0%, #0c131d 100%);
-      border-bottom: 1px solid var(--border);
+      gap: 8px;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-right: 6px;
-    }
-
-    .brand-icon {
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9px;
-      background: rgba(56, 214, 255, 0.08);
-      border: 1px solid rgba(56, 214, 255, 0.35);
-      box-shadow: 0 0 16px rgba(56, 214, 255, 0.18);
-    }
-
-    .brand-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.05;
-    }
-
-    .brand-name {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      color: var(--text);
-    }
-
-    .brand-name em {
-      font-style: normal;
-      font-weight: 400;
-      color: var(--cyan);
-    }
-
-    .brand-sub {
-      font-size: 9px;
-      letter-spacing: 1.6px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .controls-row {
+    .group-cluster {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
     }
 
-    select, .ui-btn {
-      background: var(--bg-panel);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 6px 10px;
+    .tonality-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 4px 8px;
       font-size: 11.5px;
-      font-weight: 500;
+    }
+
+    .step-btn {
+      background: #1b1520;
+      color: var(--gold-bright);
+      border: 1px solid rgba(245, 185, 66, 0.35);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid rgba(245, 185, 66, 0.38);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.14s ease;
     }
 
-    select:hover, .ui-btn:hover {
-      background: var(--bg-hover);
-      border-color: rgba(56, 214, 255, 0.45);
+    .mode-pill.active {
+      background: linear-gradient(180deg, rgba(245, 185, 66, 0.32), rgba(245, 185, 66, 0.14));
+      border-color: var(--gold-bright);
+      color: var(--gold-bright);
+      box-shadow: 0 0 14px rgba(245, 185, 66, 0.32);
     }
 
-    .ui-btn.is-on {
-      background: rgba(56, 214, 255, 0.15);
+    .mode-pill.ai-pill.active {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.28), rgba(52, 211, 153, 0.16));
       border-color: var(--cyan);
-      color: var(--cyan-hi);
-      box-shadow: 0 0 12px rgba(56, 214, 255, 0.2);
+      color: #e0f2fe;
+      box-shadow: 0 0 14px rgba(56, 214, 255, 0.3);
     }
 
-    .ui-btn.is-auto {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.7);
-      color: #a7f3d0;
-    }
-
-    .ui-btn.is-gold {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.7);
-      color: var(--gold-hi);
-    }
-
-    .ab-switch {
-      display: flex;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      overflow: hidden;
-      background: var(--bg-panel);
-    }
-
-    .ab-btn {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 6px 9px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .ab-btn.active {
-      background: rgba(56, 214, 255, 0.16);
-      color: var(--cyan-hi);
-    }
-
-    /* Center Workspace */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 44px 1.28fr 340px;
-      min-height: 365px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, #05080e 0%, #0a111b 60%, #0f1928 100%);
-    }
-
-    .layers-col {
-      border-right: 1px solid var(--border);
-      background: rgba(7, 11, 18, 0.9);
-      padding: 7px 5px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 4px;
-    }
-
-    .layer-btn {
-      flex: 1;
-      border-radius: 6px;
-      border: 1px solid var(--border-soft);
-      background: #0c131f;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .layer-btn.active {
-      border-color: var(--cyan);
-      background: rgba(56, 214, 255, 0.14);
-      color: var(--cyan-hi);
-    }
-
-    .layer-cent {
-      font-size: 8.5px;
-      color: var(--gold);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .graph-col {
-      display: flex;
-      flex-direction: column;
-      padding: 10px 12px;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .hud-line {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .hud-line strong {
+    select, .g-btn {
+      background: var(--bg-card);
       color: var(--text);
+      border: 1px solid rgba(245, 185, 66, 0.35);
+      border-radius: 7px;
+      padding: 5px 9px;
+      font-size: 11.5px;
+      cursor: pointer;
     }
 
-    .c-cyan { color: var(--cyan-hi); }
-    .c-gold { color: var(--gold-hi); }
-    .c-ok { color: #6ee7b7; }
+    .g-btn:hover, select:hover {
+      border-color: var(--gold-bright);
+    }
 
-    .legend-row {
+    /* AI Analyzer Strip */
+    .ai-strip {
       display: flex;
       flex-wrap: wrap;
-      gap: 11px;
-      font-size: 10.5px;
-    }
-
-    .leg-item {
-      display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(12, 16, 24, 0.92);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+      font-size: 11px;
     }
 
-    .leg-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
+    .ai-badge {
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: 0.4px;
     }
 
-    .canvas-box {
-      position: relative;
-      flex: 1;
-      border-radius: 10px;
-      border: 1px solid rgba(56, 214, 255, 0.18);
-      background: radial-gradient(circle at 50% 50%, rgba(56, 214, 255, 0.06), rgba(5, 8, 13, 0.94) 78%);
-      overflow: hidden;
+    .ai-apply-btn {
+      background: rgba(56, 189, 248, 0.15);
+      color: #bae6fd;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    .mini-piano {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 64px;
-      background: rgba(7, 11, 18, 0.88);
-      border-right: 1px solid rgba(56, 214, 255, 0.22);
+    /* Main 3-Column Studio Grid */
+    .main-stage {
+      display: grid;
+      grid-template-columns: 162px 1fr 220px;
+      min-height: 365px;
+      border-bottom: 1px solid var(--border-gold);
+    }
+
+    /* Left Column: Lad Seçimi + Effektlər */
+    .left-dock {
+      border-right: 1px solid var(--border-gold);
+      background: rgba(13, 10, 16, 0.92);
+      padding: 8px;
       display: flex;
-      flex-direction: column-reverse;
-      padding: 3px;
-      gap: 1.5px;
-      z-index: 3;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .m-key {
-      flex: 1;
-      min-height: 0;
-      border-radius: 2px;
+    .dock-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(245, 185, 66, 0.22);
+      margin-bottom: 4px;
+    }
+
+    .lad-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lad-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 4px;
-      font-size: 8.5px;
-      font-weight: 700;
+      padding: 4px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      color: var(--muted);
       cursor: pointer;
       border: 1px solid transparent;
     }
 
-    .m-key.w {
-      width: 100%;
-      background: #cbd5e1;
-      color: #09101a;
+    .lad-item:hover {
+      background: rgba(245, 185, 66, 0.08);
+      color: var(--text);
     }
 
-    .m-key.b {
-      width: 72%;
-      background: #151f2e;
-      color: #8fa3bf;
-      border-color: #243247;
+    .lad-item.active {
+      background: linear-gradient(90deg, rgba(245, 185, 66, 0.28), rgba(245, 185, 66, 0.08));
+      border-color: var(--gold);
+      color: var(--gold-bright);
+      font-weight: 700;
     }
 
-    .m-key.scale-on {
-      background: var(--cyan) !important;
-      color: #041018 !important;
-      box-shadow: 0 0 8px rgba(56, 214, 255, 0.45);
+    .fx-faders {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 82px;
+      padding: 6px 2px 2px;
+      background: rgba(8, 6, 10, 0.8);
+      border: 1px solid rgba(245, 185, 66, 0.22);
+      border-radius: 8px;
     }
 
-    .m-key.comma-on {
-      background: var(--gold) !important;
-      color: #170f02 !important;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
+    .fx-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
 
-    #rollCanvas {
+    .fx-col input[type="range"] {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 14px;
+      height: 50px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .fx-col span {
+      font-size: 8.5px;
+      color: var(--muted);
+    }
+
+    /* Center Column: Note Labels + Interactive Pitch Graph */
+    .center-graph {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #09080c;
+      padding: 6px 8px;
+    }
+
+    .graph-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .graph-toolbar strong {
+      color: var(--gold-bright);
+    }
+
+    .graph-wrap {
+      position: relative;
+      flex: 1;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 185, 66, 0.28);
+      overflow: hidden;
+      background: #09080d;
+    }
+
+    .note-axis {
       position: absolute;
-      inset: 0 0 0 64px;
-      width: calc(100% - 64px);
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 34px;
+      background: rgba(14, 11, 17, 0.92);
+      border-right: 1px solid rgba(245, 185, 66, 0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--gold);
+      z-index: 2;
+    }
+
+    #pitchGraph {
+      position: absolute;
+      inset: 0 0 0 34px;
+      width: calc(100% - 34px);
       height: 100%;
       touch-action: none;
       cursor: crosshair;
     }
 
-    /* Right Hero Dials */
-    .dials-col {
-      border-left: 1px solid var(--border);
-      background: linear-gradient(165deg, rgba(18, 29, 44, 0.78) 0%, rgba(7, 12, 20, 0.96) 100%);
-      padding: 12px 14px;
+    /* Right Column: Presetler + Correction */
+    .right-dock {
+      border-left: 1px solid var(--border-gold);
+      background: rgba(13, 10, 16, 0.92);
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .corr-rings {
+      display: flex;
       justify-content: space-around;
+      align-items: center;
       gap: 8px;
     }
 
-    .hero-dial {
-      position: relative;
-      width: 138px;
-      height: 138px;
+    .ring-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      gap: 4px;
       cursor: ns-resize;
       touch-action: none;
     }
 
-    .hero-dial svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-      filter: drop-shadow(0 0 10px rgba(56, 214, 255, 0.24));
-    }
-
-    .hero-core {
-      position: absolute;
-      inset: 21px;
+    .ring-circle {
+      width: 66px;
+      height: 66px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 25%, #182538, #080d15 82%);
-      border: 1px solid rgba(56, 214, 255, 0.28);
-      box-shadow:
-        inset 0 2px 10px rgba(0, 0, 0, 0.9),
-        0 8px 18px rgba(0, 0, 0, 0.65);
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 14px rgba(245, 185, 66, 0.28);
+      background: radial-gradient(circle at 35% 25%, #231a29, #0b080e 80%);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      pointer-events: none;
-    }
-
-    .hero-num {
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 700;
+      color: var(--gold-bright);
       font-variant-numeric: tabular-nums;
-      line-height: 1.1;
     }
 
-    .hero-lbl {
+    .ring-sub {
       font-size: 10px;
       color: var(--muted);
-      margin-top: 3px;
     }
 
-    .link-chip {
+    .corr-sliders {
       display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 11px;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 10.5px;
       color: var(--muted);
-      cursor: pointer;
     }
 
-    .link-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 3px;
-      border: 1px solid var(--cyan);
-      background: var(--cyan);
-      box-shadow: 0 0 10px var(--cyan);
-    }
-
-    .link-dot.off {
-      background: transparent;
-      box-shadow: none;
-    }
-
-    /* Bottom Pro Vocal Strip */
-    .pro-strip {
-      padding: 10px 16px 12px;
-      background: linear-gradient(180deg, #0c131d 0%, #070b12 100%);
-    }
-
-    .pro-row {
+    .slider-row {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 6px;
     }
 
-    .mini-dial-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-width: 68px;
-    }
-
-    .mini-dial {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 25%, #19263a, #080d15 82%);
-      border: 2px solid rgba(56, 214, 255, 0.55);
-      box-shadow: 0 0 11px rgba(56, 214, 255, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--cyan-hi);
-      font-variant-numeric: tabular-nums;
-      cursor: ns-resize;
-      touch-action: none;
-    }
-
-    .mini-cap {
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    .eq-box {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      background: rgba(8, 13, 21, 0.85);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 11px;
-    }
-
-    .eq-tag {
-      padding: 3px 7px;
-      border-radius: 5px;
-      border: 1px solid rgba(56, 214, 255, 0.35);
-      background: #0c1522;
-      color: var(--cyan-hi);
-      font-size: 10px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .eq-sliders {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: 118px;
-    }
-
-    .eq-sliders input[type="range"] {
-      height: 4px;
-      accent-color: var(--cyan);
+    .slider-row input[type="range"] {
+      width: 84px;
+      accent-color: var(--gold);
       cursor: pointer;
     }
 
-    .out-meter {
+    .toggle-switch {
+      width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--gold);
+      position: relative;
+      cursor: pointer;
+      border: none;
+    }
+
+    .toggle-switch::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #120d16;
+      transition: all 0.14s ease;
+    }
+
+    .toggle-switch.off {
+      background: #2b2432;
+    }
+
+    .toggle-switch.off::after {
+      right: auto;
+      left: 2px;
+    }
+
+    /* Bottom Row: Harmony, Vibrato, Formant, Pitch Drift, Delay, Reverb */
+    .fx-modules-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(11, 9, 14, 0.95);
+      border-bottom: 1px solid var(--border-gold);
+    }
+
+    .fx-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(245, 185, 66, 0.28);
+      border-radius: 9px;
+      padding: 7px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .fx-card-head {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .fx-card-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .small-ring {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2.5px solid var(--gold);
+      background: radial-gradient(circle at 35% 25%, #231a29, #0b080e 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      cursor: ns-resize;
+      touch-action: none;
+      flex-shrink: 0;
+    }
+
+    .fx-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 9.5px;
+      color: var(--muted);
+      min-width: 0;
+    }
+
+    .fx-meta select {
+      padding: 2px 5px;
+      font-size: 10px;
+    }
+
+    /* Transport + Spectrum + Piano Keyboard */
+    .bottom-deck {
+      display: grid;
+      grid-template-columns: 250px 1fr 330px;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(8, 6, 10, 0.98);
+    }
+
+    .transport-bar {
       display: flex;
       align-items: center;
       gap: 7px;
-      font-size: 10.5px;
-      color: var(--muted);
+    }
+
+    .t-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(245, 185, 66, 0.35);
+      background: #17121c;
+      color: var(--gold-bright);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .t-btn.rec {
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.5);
+    }
+
+    .timecode {
+      font-size: 12px;
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
+      color: var(--text);
+      margin-left: 4px;
     }
 
-    .meter-leds {
-      display: flex;
-      gap: 2.5px;
-    }
-
-    .led-bar {
-      width: 4px;
-      height: 11px;
-      border-radius: 1.5px;
-      background: #182436;
-    }
-
-    .led-bar.on {
-      background: var(--cyan);
-      box-shadow: 0 0 6px rgba(56, 214, 255, 0.65);
-    }
-
-    .led-bar.hi {
-      background: var(--gold);
-      box-shadow: 0 0 6px rgba(245, 158, 11, 0.7);
-    }
-
-    .bottom-glow {
-      margin-top: 10px;
-      height: 2px;
+    #specCanvas {
       width: 100%;
-      background: linear-gradient(90deg, transparent 0%, rgba(56, 214, 255, 0.35) 22%, var(--cyan-hi) 50%, rgba(56, 214, 255, 0.35) 78%, transparent 100%);
-      box-shadow: 0 0 12px var(--cyan), 0 0 24px rgba(56, 214, 255, 0.55);
-      border-radius: 999px;
+      height: 36px;
+      border-radius: 6px;
+      background: #0d0a11;
+      border: 1px solid rgba(245, 185, 66, 0.22);
     }
 
-    @media (max-width: 920px) {
-      .main-grid {
-        grid-template-columns: 40px 1fr;
+    .bottom-piano {
+      display: flex;
+      height: 36px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(245, 185, 66, 0.38);
+      background: #130f18;
+    }
+
+    .bp-key {
+      flex: 1;
+      border-right: 1px solid rgba(0, 0, 0, 0.45);
+      background: #e2e8f0;
+      color: #0f172a;
+      font-size: 8px;
+      font-weight: 700;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2px;
+      cursor: pointer;
+    }
+
+    .bp-key.black {
+      background: #1e1824;
+      color: #cbd5e1;
+    }
+
+    .bp-key.scale-hit {
+      background: var(--gold) !important;
+      color: #140d02 !important;
+    }
+
+    @media (max-width: 1020px) {
+      .main-stage {
+        grid-template-columns: 145px 1fr;
       }
-      .dials-col {
+      .right-dock {
         grid-column: 1 / -1;
         border-left: none;
-        border-top: 1px solid var(--border);
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-around;
+        border-top: 1px solid var(--border-gold);
       }
-      .hero-dial {
-        width: 112px;
-        height: 112px;
+      .fx-modules-row {
+        grid-template-columns: repeat(3, 1fr);
       }
-      .hero-core {
-        inset: 17px;
-      }
-      .hero-num {
-        font-size: 16px;
+      .bottom-deck {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 600px) {
-      .mini-piano {
-        width: 50px;
+    @media (max-width: 640px) {
+      .main-stage {
+        grid-template-columns: 1fr;
       }
-      #rollCanvas {
-        left: 50px;
-        width: calc(100% - 50px);
+      .left-dock {
+        border-right: none;
+        border-bottom: 1px solid var(--border-gold);
+      }
+      .fx-modules-row {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <div class="daw-frame">
-    <!-- Top Header -->
-    <header class="top-strip">
-      <div class="brand-group">
-        <div class="brand-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M4 13C6.5 7 9.5 7 12 13C14.5 19 17.5 19 20 13" stroke="#9ef0ff" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="12" cy="13" r="2.3" fill="#f59e0b"/>
-          </svg>
-        </div>
-        <div class="brand-wordmark">
-          <span class="brand-name">S<em>Pitch</em></span>
-          <span class="brand-sub">4K Vocal &amp; Mugham Engine</span>
-        </div>
+  <div class="studio-app">
+    <!-- Top Banner & Controls -->
+    <header class="top-banner">
+      <div class="title-center">
+        <div class="clef-mark">𝄞</div>
+        <h1 class="studio-title">SPitch</h1>
+        <div class="studio-sub">Azerbaijani Vocal Studio</div>
       </div>
 
-      <div class="controls-row">
-        <select id="presetSel" title="Presetlər"></select>
-
-        <select id="rootSel" title="Mayə">
-          <option value="0">C (Do)</option>
-          <option value="1">C# / Db</option>
-          <option value="2" selected>D (Re)</option>
-          <option value="3">D# / Eb</option>
-          <option value="4">E (Mi)</option>
-          <option value="5">F (Fa)</option>
-          <option value="6">F# / Gb</option>
-          <option value="7">G (Sol)</option>
-          <option value="8">G# / Ab</option>
-          <option value="9">A (Lya)</option>
-          <option value="10">A# / Bb</option>
-          <option value="11">B (Si)</option>
-        </select>
-
-        <select id="scaleSel" title="Muğam və Ladlar"></select>
-
-        <button type="button" class="ui-btn is-auto" id="autoSnapBtn">Auto Pitch: ON</button>
-        <button type="button" class="ui-btn is-on" id="dragModeBtn">Sürüşdür</button>
-        <button type="button" class="ui-btn" id="splitModeBtn">Kəs</button>
-        <button type="button" class="ui-btn" id="resetBtn">Sıfırla</button>
-        <button type="button" class="ui-btn is-on" id="testBtn">▶ 4K Səs Sınağı</button>
-      </div>
-
-      <div class="controls-row">
-        <div class="ab-switch">
-          <button type="button" class="ab-btn active" id="bankA">A</button>
-          <button type="button" class="ab-btn" id="bankB">B</button>
+      <div class="top-controls-row">
+        <div class="tonality-box">
+          <span>♪ Tonallıq</span>
+          <button type="button" class="step-btn" id="rootPrev">&lt;</button>
+          <strong id="rootLabel" style="color:var(--gold-bright); min-width:24px; text-align:center;">A4</strong>
+          <button type="button" class="step-btn" id="rootNext">&gt;</button>
+          <button type="button" class="step-btn" id="majBtn" style="background:var(--gold-dim);">Major</button>
+          <button type="button" class="step-btn" id="minBtn">Minor</button>
         </div>
-        <button type="button" class="ui-btn is-gold" id="activeBtn">Active</button>
+
+        <div class="group-cluster">
+          <button type="button" class="mode-pill active" id="modeMugham">◈ Muğam Mode</button>
+          <button type="button" class="mode-pill" id="modeVocal">∿ Vokal Mode</button>
+          <button type="button" class="mode-pill" id="modeHarmony">👥 Harmony</button>
+          <button type="button" class="mode-pill" id="modeLive">🎙 Live Mode</button>
+          <button type="button" class="mode-pill ai-pill active" id="btnAiPitch">✦ AI Pitch: ON</button>
+          <button type="button" class="mode-pill ai-pill active" id="btnAiAnalyze">◎ AI Analyzer</button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Workspace -->
-    <section class="main-grid">
-      <div class="layers-col" id="layersCol"></div>
+    <!-- AI Analyzer Live Bar -->
+    <div class="ai-strip">
+      <div>
+        <span class="ai-badge">AI ANALYZER &amp; PITCH:</span>
+        <span id="aiSummaryText">Analiz edilir — Şur / Segah mikrotonal nəzarəti və avtomatik pitch kilidi aktivdir.</span>
+      </div>
+      <div class="group-cluster">
+        <button type="button" class="ai-apply-btn" id="btnRunAiScan">AI Analiz Et</button>
+        <button type="button" class="ai-apply-btn" id="btnApplyAiLad">Tövsiyə Edilən Ladı Tətbiq Et</button>
+      </div>
+    </div>
 
-      <div class="graph-col">
-        <div class="hud-line">
-          <div>
-            GİRİŞ: <strong id="hudIn">0.0 Hz</strong> &nbsp;|&nbsp;
-            HƏDƏF: <strong class="c-cyan" id="hudOut">0.0 Hz</strong> &nbsp;|&nbsp;
-            KOMMA: <strong class="c-gold" id="hudComma">+0c</strong> &nbsp;|&nbsp;
-            <strong class="c-ok" id="hudAuto">AUTO LOCK</strong>
+    <!-- Main 3-Column Stage -->
+    <section class="main-stage">
+      <!-- Left: Lad Seçimi + Effektlər -->
+      <aside class="left-dock">
+        <div>
+          <div class="dock-title">⚙ Lad Seçimi</div>
+          <div class="lad-list" id="ladList"></div>
+        </div>
+
+        <div>
+          <div class="dock-title">🎛 Effektlər</div>
+          <div class="fx-faders">
+            <div class="fx-col"><input type="range" id="fxEq" min="0" max="100" value="72" /><span>EQ</span></div>
+            <div class="fx-col"><input type="range" id="fxComp" min="0" max="100" value="65" /><span>Comp</span></div>
+            <div class="fx-col"><input type="range" id="fxRev" min="0" max="100" value="58" /><span>Reverb</span></div>
+            <div class="fx-col"><input type="range" id="fxDel" min="0" max="100" value="35" /><span>Delay</span></div>
+            <div class="fx-col"><input type="range" id="fxDeess" min="0" max="100" value="48" /><span>De-Esser</span></div>
           </div>
-          <div class="legend-row">
-            <span class="leg-item"><span class="leg-dot" style="background:#a5f3fc;"></span>4K Korreksiya</span>
-            <span class="leg-item"><span class="leg-dot" style="background:#94a3b8;"></span>İlkin xətt</span>
-            <span class="leg-item"><span class="leg-dot" style="background:#f59e0b;"></span>Muğam komma</span>
+        </div>
+      </aside>
+
+      <!-- Center: Note Axis & Interactive Pitch Curve -->
+      <main class="center-graph">
+        <div class="graph-toolbar">
+          <div>
+            LAD: <strong id="activeLadHud">Şur</strong> &nbsp;|&nbsp;
+            GİRİŞ: <strong id="inHzHud">440.0 Hz</strong> &nbsp;|&nbsp;
+            AI PITCH: <strong id="outHzHud">440.0 Hz</strong> &nbsp;|&nbsp;
+            KOMMA: <strong id="commaHud">0 ct</strong>
+          </div>
+          <div class="group-cluster">
+            <button type="button" class="g-btn" id="toolDrawBtn">✎ Sürüşdür</button>
+            <button type="button" class="g-btn" id="toolSplitBtn">✂ Böl</button>
+            <button type="button" class="g-btn" id="toolResetBtn">↺ Sıfırla</button>
           </div>
         </div>
 
-        <div class="canvas-box">
-          <div class="mini-piano" id="miniPiano"></div>
-          <canvas id="rollCanvas"></canvas>
+        <div class="graph-wrap">
+          <div class="note-axis">
+            <span>C6</span><span>B5</span><span>A5</span><span>G5</span>
+            <span>F5</span><span>E5</span><span>D5</span><span>C5</span>
+            <span>B4</span><span>A4</span>
+          </div>
+          <canvas id="pitchGraph"></canvas>
+        </div>
+      </main>
+
+      <!-- Right: Presetler + Correction -->
+      <aside class="right-dock">
+        <div>
+          <div class="dock-title">★ Presetlər</div>
+          <select id="presetSelect" style="width:100%;"></select>
+        </div>
+
+        <div>
+          <div class="dock-title" style="text-align:center;">Correction</div>
+          <div class="corr-rings">
+            <div class="ring-item" id="strengthDial" data-min="0" data-max="100" data-val="85">
+              <div class="ring-circle" id="strengthText">85%</div>
+              <span class="ring-sub">Strength</span>
+            </div>
+            <div class="ring-item" id="tolDial" data-min="5" data-max="50" data-val="15">
+              <div class="ring-circle" id="tolText">±15 ct</div>
+              <span class="ring-sub">Tolerance</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="corr-sliders">
+          <div class="slider-row">
+            <span>Natural Mode</span>
+            <button type="button" class="toggle-switch" id="natToggle"></button>
+          </div>
+          <div class="slider-row">
+            <span>Speed</span>
+            <input type="range" id="speedSlider" min="10" max="200" value="50" />
+            <span id="speedLbl">50 ms</span>
+          </div>
+          <div class="slider-row">
+            <span>Transition</span>
+            <input type="range" id="transSlider" min="20" max="300" value="120" />
+            <span id="transLbl">120 ms</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- 6 Studio FX Cards -->
+    <section class="fx-modules-row">
+      <div class="fx-card">
+        <div class="fx-card-head">👥 Harmony</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="harmRing" data-min="0" data-max="100" data-val="70">70%</div>
+          <div class="fx-meta">
+            <span>Voices</span>
+            <select id="harmVoices">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div class="dials-col">
-        <div class="hero-dial" id="pitchDial" data-min="-24" data-max="24" data-step="0.5" data-val="0">
-          <svg viewBox="0 0 138 138">
-            <circle cx="69" cy="69" r="57" fill="none" stroke="#182436" stroke-width="9" />
-            <circle id="pitchArc" cx="69" cy="69" r="57" fill="none" stroke="url(#spGrad)" stroke-width="9"
-              stroke-linecap="round" stroke-dasharray="358" stroke-dashoffset="179" transform="rotate(-90 69 69)" />
-            <defs>
-              <linearGradient id="spGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#a5f3fc" />
-                <stop offset="55%" stop-color="#38d6ff" />
-                <stop offset="100%" stop-color="#f59e0b" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="hero-core">
-            <div class="hero-num c-cyan" id="pitchNum">0.0</div>
-            <div class="hero-lbl">Pitch (st)</div>
+      <div class="fx-card">
+        <div class="fx-card-head">∿ Vibrato</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="vibRing" data-min="0" data-max="100" data-val="60">60%</div>
+          <div class="fx-meta">
+            <span>Rate</span>
+            <select id="vibRate">
+              <option value="4.2">4.2 Hz</option>
+              <option value="5.8" selected>5.8 Hz</option>
+              <option value="7.2">7.2 Hz</option>
+            </select>
           </div>
         </div>
+      </div>
 
-        <label class="link-chip" id="linkChip">
-          <span class="link-dot" id="linkDot"></span>
-          <span>Formant &amp; Lad Link</span>
-        </label>
+      <div class="fx-card">
+        <div class="fx-card-head">◔ Formant</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="formRing" data-min="0" data-max="100" data-val="65">65%</div>
+          <div class="fx-meta">
+            <span>Shift</span>
+            <select id="formShift">
+              <option value="-2.0">-2.0</option>
+              <option value="-1.0">-1.0</option>
+              <option value="0.0">0.0</option>
+              <option value="1.0" selected>+1.0</option>
+              <option value="2.0">+2.0</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <div class="hero-dial" id="formantDial" data-min="-12" data-max="12" data-step="0.5" data-val="0">
-          <svg viewBox="0 0 138 138">
-            <circle cx="69" cy="69" r="57" fill="none" stroke="#182436" stroke-width="9" />
-            <circle id="formantArc" cx="69" cy="69" r="57" fill="none" stroke="url(#spGrad)" stroke-width="9"
-              stroke-linecap="round" stroke-dasharray="358" stroke-dashoffset="179" transform="rotate(-90 69 69)" />
-          </svg>
-          <div class="hero-core">
-            <div class="hero-num" id="formantNum">0.0</div>
-            <div class="hero-lbl">Formant</div>
+      <div class="fx-card">
+        <div class="fx-card-head">☍ Pitch Drift</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="driftRing" data-min="0" data-max="100" data-val="30">30%</div>
+          <div class="fx-meta">
+            <span>AI Lock</span>
+            <span style="color:var(--emerald); font-weight:700;">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fx-card">
+        <div class="fx-card-head">◷ Delay</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="delRing" data-min="0" data-max="100" data-val="25">25%</div>
+          <div class="fx-meta">
+            <span>Mix</span>
+            <select id="delTime">
+              <option value="1/4">1/4</option>
+              <option value="1/8" selected>1/8</option>
+              <option value="1/16">1/16</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fx-card">
+        <div class="fx-card-head">≋ Reverb</div>
+        <div class="fx-card-body">
+          <div class="small-ring" id="revRing" data-min="0" data-max="100" data-val="40">40%</div>
+          <div class="fx-meta">
+            <span>Mix</span>
+            <select id="revRoom">
+              <option value="Room">Room</option>
+              <option value="Hall" selected>Hall</option>
+              <option value="Plate">Plate</option>
+            </select>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Bottom 4K Vocal Strip -->
-    <footer class="pro-strip">
-      <div class="pro-row">
-        <div class="mini-dial-wrap">
-          <div class="mini-dial" id="airKnob" data-min="0" data-max="100" data-val="64">64</div>
-          <span class="mini-cap">4K Air</span>
-        </div>
-
-        <div class="mini-dial-wrap">
-          <div class="mini-dial" id="warmKnob" data-min="0" data-max="100" data-val="32">32</div>
-          <span class="mini-cap">Warmth</span>
-        </div>
-
-        <div class="mini-dial-wrap">
-          <div class="mini-dial" id="wideKnob" data-min="0" data-max="100" data-val="54">54</div>
-          <span class="mini-cap">Stereo 4K</span>
-        </div>
-
-        <div class="eq-box">
-          <span class="eq-tag" id="hpTag">HP 85Hz</span>
-          <div class="eq-sliders">
-            <input type="range" id="hpSlider" min="20" max="350" value="85" />
-            <input type="range" id="lpSlider" min="2000" max="19500" value="16000" />
-          </div>
-          <span class="eq-tag" id="lpTag">LP 16.0k</span>
-        </div>
-
-        <div class="mini-dial-wrap">
-          <div class="mini-dial" id="mixKnob" data-min="0" data-max="100" data-val="100">100</div>
-          <span class="mini-cap">Mix</span>
-        </div>
-
-        <div class="mini-dial-wrap">
-          <div class="mini-dial" id="gainKnob" data-min="-12" data-max="12" data-val="2.0">+2.0</div>
-          <span class="mini-cap">Output</span>
-        </div>
-
-        <div class="out-meter">
-          <span>Level</span>
-          <div class="meter-leds" id="meterLeds"></div>
-          <strong id="meterVal">-1.8</strong>
-        </div>
+    <!-- Bottom Transport, Spectrum & Piano -->
+    <footer class="bottom-deck">
+      <div class="transport-bar">
+        <button type="button" class="t-btn" id="powerBtn" title="Power">⏻</button>
+        <button type="button" class="t-btn" id="prevBtn" title="Prev">⏮</button>
+        <button type="button" class="t-btn" id="playBtn" title="Play / AI Scan">▶</button>
+        <button type="button" class="t-btn" id="nextBtn" title="Next">⏭</button>
+        <button type="button" class="t-btn rec" id="recBtn" title="Record">●</button>
+        <span class="timecode" id="timecode">00:00:00.000</span>
       </div>
-      <div class="bottom-glow"></div>
+
+      <canvas id="specCanvas"></canvas>
+
+      <div class="bottom-piano" id="bottomPiano"></div>
     </footer>
   </div>
 
   <script>
-    const SCALES = [
-      { name: "Muğam: Şur", cents: [0, 155, 300, 500, 700, 855, 1000] },
-      { name: "Muğam: Segah", cents: [0, 145, 345, 500, 645, 845, 1000] },
-      { name: "Muğam: Rast", cents: [0, 200, 365, 500, 700, 900, 1065] },
-      { name: "Muğam: Çahargah", cents: [0, 135, 400, 500, 700, 835, 1100] },
-      { name: "Muğam: Bayatı-Şiraz", cents: [0, 200, 300, 500, 700, 800, 1065] },
-      { name: "Muğam: Şüştər", cents: [0, 145, 300, 445, 700, 800, 1000] },
-      { name: "Muğam: Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] },
-      { name: "Natural Major", cents: [0, 200, 400, 500, 700, 900, 1100] },
-      { name: "Harmonik Major", cents: [0, 200, 400, 500, 700, 800, 1100] },
-      { name: "Natural Minor", cents: [0, 200, 300, 500, 700, 800, 1000] },
-      { name: "Harmonik Minor", cents: [0, 200, 300, 500, 700, 800, 1100] }
+    const LADS = [
+      { name: "Şur", cents: [0, 155, 300, 500, 700, 855, 1000] },
+      { name: "Rast", cents: [0, 200, 365, 500, 700, 900, 1065] },
+      { name: "Segah", cents: [0, 145, 345, 500, 645, 845, 1000] },
+      { name: "Çahargah", cents: [0, 135, 400, 500, 700, 835, 1100] },
+      { name: "Bayatı-Şiraz", cents: [0, 200, 300, 500, 700, 800, 1065] },
+      { name: "Humayun", cents: [0, 145, 400, 500, 645, 800, 1000] },
+      { name: "Şüştər", cents: [0, 145, 300, 445, 700, 800, 1000] },
+      { name: "Nava", cents: [0, 155, 300, 500, 700, 855, 1065] },
+      { name: "Diğər", cents: [0, 150, 350, 500, 700, 900, 1100] }
     ];
 
     const PRESETS = [
-      { name: "4K Şur Studiya Vokal", root: 2, scaleIdx: 0, pitch: 0, formant: 0, air: 68, warm: 34, wide: 56, mix: 100, gain: 2.0, voices: [0, 155, 300, 700, 855] },
-      { name: "4K Segah Xanəndə Master", root: 4, scaleIdx: 1, pitch: 0, formant: -1.0, air: 74, warm: 40, wide: 62, mix: 100, gain: 2.5, voices: [0, 145, 345, 645, 845] },
-      { name: "4K Rast Təbii Atmosfer", root: 7, scaleIdx: 2, pitch: 0, formant: 0.5, air: 62, warm: 30, wide: 58, mix: 100, gain: 1.5, voices: [0, 200, 365, 700, 1065] },
-      { name: "4K Çahargah Parlaq Vokal", root: 0, scaleIdx: 3, pitch: 0, formant: 1.5, air: 82, warm: 38, wide: 66, mix: 100, gain: 2.5, voices: [0, 135, 400, 700, 835] },
-      { name: "4K Bayatı-Şiraz İpək Səs", root: 9, scaleIdx: 4, pitch: 0, formant: -1.5, air: 58, warm: 44, wide: 70, mix: 95, gain: 1.0, voices: [0, 200, 300, 700, 800] },
-      { name: "4K Pop Lead Double", root: 0, scaleIdx: 7, pitch: 12, formant: 3.5, air: 85, warm: 36, wide: 78, mix: 100, gain: 2.0, voices: [0, 400, 700, 1100, 1200] },
-      { name: "4K Akustik Studiya Təmiz", root: 9, scaleIdx: 9, pitch: 0, formant: 0, air: 52, warm: 26, wide: 44, mix: 92, gain: 0.5, voices: [0, 200, 300, 700, 1000] }
+      { name: "Professional", ladIdx: 0, strength: 85, tol: 15, harm: 70, vib: 60, form: 65, drift: 30, del: 25, rev: 40 },
+      { name: "Xanəndə Muğam Master", ladIdx: 2, strength: 90, tol: 12, harm: 75, vib: 72, form: 60, drift: 22, del: 30, rev: 52 },
+      { name: "Rast Təbii İfa", ladIdx: 1, strength: 80, tol: 18, harm: 65, vib: 58, form: 65, drift: 28, del: 20, rev: 45 },
+      { name: "Çahargah Zirvə", ladIdx: 3, strength: 94, tol: 10, harm: 82, vib: 50, form: 70, drift: 18, del: 28, rev: 48 },
+      { name: "Bayatı-Şiraz Lirik", ladIdx: 4, strength: 78, tol: 20, harm: 60, vib: 68, form: 55, drift: 35, del: 34, rev: 62 }
     ];
 
-    const presetSel = document.getElementById("presetSel");
-    const rootSel = document.getElementById("rootSel");
-    const scaleSel = document.getElementById("scaleSel");
-    const layersCol = document.getElementById("layersCol");
-    const miniPiano = document.getElementById("miniPiano");
-    const canvas = document.getElementById("rollCanvas");
-    const ctx = canvas.getContext("2d");
-    const meterLeds = document.getElementById("meterLeds");
+    const ROOT_NOTES = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
+    let rootIndex = 9; // A4
+    let activeLadIdx = 0;
+    let suggestedLadIdx = 0;
+    let aiPitchEnabled = true;
+    let aiAnalyzerEnabled = true;
+    let naturalMode = true;
+    let powerOn = true;
+    let graphTool = "draw"; // "draw" | "split"
 
-    let autoPitchOn = true;
-    let bypassed = false;
-    let linked = true;
-    let activeBank = "A";
-    let banks = { A: null, B: null };
-    let mode = "drag"; // "drag" | "split"
-    let activeLayer = 0;
-    let voiceOffsets = [0, 155, 300, 700, 855];
-    let segs = [{ start: 0.05, end: 0.96, cents: 0, sel: true }];
-    let dragIdx = -1;
-    let dragStartY = 0;
-    let dragStartCents = 0;
-    let cursorX = null;
-    let phase = 0;
+    let points = [];
+    let splits = [0.5];
+    let draggingPointIdx = -1;
+    let playheadNorm = 0.56;
+    let isPlaying = false;
+    let elapsedMs = 0;
     let audioCtx = null;
-    let hud = { inHz: 0, outHz: 0, comma: 0 };
 
-    PRESETS.forEach((p, i) => {
-      const o = document.createElement("option");
-      o.value = i;
-      o.textContent = p.name;
-      presetSel.appendChild(o);
-    });
+    const ladListEl = document.getElementById("ladList");
+    const presetSelectEl = document.getElementById("presetSelect");
+    const graphCanvas = document.getElementById("pitchGraph");
+    const gCtx = graphCanvas.getContext("2d");
+    const specCanvas = document.getElementById("specCanvas");
+    const sCtx = specCanvas.getContext("2d");
+    const bottomPianoEl = document.getElementById("bottomPiano");
 
-    SCALES.forEach((s, i) => {
-      const o = document.createElement("option");
-      o.value = i;
-      o.textContent = s.name;
-      scaleSel.appendChild(o);
-    });
-
-    for (let i = 0; i < 16; i++) {
-      const b = document.createElement("div");
-      b.className = "led-bar";
-      meterLeds.appendChild(b);
-    }
-
-    function setMeter(v01) {
-      const n = Math.round(Math.max(0, Math.min(1, v01)) * 16);
-      const bars = meterLeds.querySelectorAll(".led-bar");
-      bars.forEach((el, idx) => {
-        el.classList.remove("on", "hi");
-        if (idx < n) el.classList.add(idx >= 13 ? "hi" : "on");
-      });
-      const db = v01 <= 0.002 ? -60 : (-20 + v01 * 19.5).toFixed(1);
-      document.getElementById("meterVal").textContent = `${db > 0 ? "+" : ""}${db}`;
-    }
-
-    function valOf(id) {
-      return parseFloat(document.getElementById(id).dataset.val || "0");
-    }
-
-    function paintDial(id, hero, signedPlus = false) {
-      const el = document.getElementById(id);
-      const min = parseFloat(el.dataset.min);
-      const max = parseFloat(el.dataset.max);
-      const step = parseFloat(el.dataset.step || "1");
-      let v = parseFloat(el.dataset.val);
-      v = Math.max(min, Math.min(max, Math.round(v / step) * step));
-      el.dataset.val = String(v);
-
-      const t = (v - min) / (max - min);
-      const txt = step < 1
-        ? (signedPlus && v > 0 ? `+${v.toFixed(1)}` : v.toFixed(1))
-        : (signedPlus && v > 0 ? `+${Math.round(v)}` : String(Math.round(v)));
-
-      if (hero) {
-        const arc = document.getElementById(id === "pitchDial" ? "pitchArc" : "formantArc");
-        const num = document.getElementById(id === "pitchDial" ? "pitchNum" : "formantNum");
-        arc.setAttribute("stroke-dashoffset", String(358 * (1 - t * 0.85)));
-        num.textContent = txt;
-      } else {
-        el.textContent = txt;
-        el.style.boxShadow = `0 0 ${8 + t * 15}px rgba(56, 214, 255, ${(0.18 + t * 0.4).toFixed(2)})`;
+    function initCurvePoints() {
+      const sampleCount = 34;
+      points = [];
+      for (let i = 0; i < sampleCount; i++) {
+        const x = i / (sampleCount - 1);
+        const yNorm = 0.46 + 0.24 * Math.sin(x * Math.PI * 2.4) - 0.12 * Math.cos(x * Math.PI * 4.2);
+        points.push({ x, yNorm: Math.max(0.14, Math.min(0.86, yNorm)), offsetY: 0 });
       }
     }
 
-    function bindDial(id, hero, signedPlus, cb) {
+    function populateLists() {
+      ladListEl.innerHTML = "";
+      LADS.forEach((lad, idx) => {
+        const row = document.createElement("div");
+        row.className = "lad-item" + (idx === activeLadIdx ? " active" : "");
+        row.innerHTML = `<span>${lad.name}</span><span style="font-size:9px; opacity:0.75;">›</span>`;
+        row.addEventListener("click", () => {
+          activeLadIdx = idx;
+          renderLads();
+          renderBottomPiano();
+          runAiAnalysis();
+          drawGraph();
+        });
+        ladListEl.appendChild(row);
+      });
+
+      presetSelectEl.innerHTML = "";
+      PRESETS.forEach((p, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = p.name;
+        presetSelectEl.appendChild(opt);
+      });
+    }
+
+    function renderLads() {
+      const items = ladListEl.querySelectorAll(".lad-item");
+      items.forEach((el, idx) => el.classList.toggle("active", idx === activeLadIdx));
+      document.getElementById("activeLadHud").textContent = LADS[activeLadIdx].name;
+    }
+
+    function getRingVal(id) {
+      return parseFloat(document.getElementById(id).dataset.val || "0");
+    }
+
+    function setRingVal(id, val, suffix = "%") {
+      const el = document.getElementById(id);
+      const min = parseFloat(el.dataset.min);
+      const max = parseFloat(el.dataset.max);
+      const v = Math.max(min, Math.min(max, Math.round(val)));
+      el.dataset.val = String(v);
+      const textEl = id === "strengthDial"
+        ? document.getElementById("strengthText")
+        : id === "tolDial"
+          ? document.getElementById("tolText")
+          : el;
+      textEl.textContent = id === "tolDial" ? `±${v} ct` : `${v}${suffix}`;
+    }
+
+    function bindRingDrag(id, suffix = "%") {
       const el = document.getElementById(id);
       let sy = 0, sv = 0;
-
       el.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         sy = e.clientY;
         sv = parseFloat(el.dataset.val);
         el.setPointerCapture(e.pointerId);
       });
-
       el.addEventListener("pointermove", (e) => {
         if (!el.hasPointerCapture(e.pointerId)) return;
         const min = parseFloat(el.dataset.min);
         const max = parseFloat(el.dataset.max);
-        const nv = sv + ((sy - e.clientY) / 125) * (max - min);
-        el.dataset.val = String(nv);
-        paintDial(id, hero, signedPlus);
-
-        if (id === "pitchDial" && linked) {
-          const fEl = document.getElementById("formantDial");
-          const fMin = parseFloat(fEl.dataset.min);
-          const fMax = parseFloat(fEl.dataset.max);
-          fEl.dataset.val = String(Math.max(fMin, Math.min(fMax, nv * 0.42)));
-          paintDial("formantDial", true, true);
-        }
-        if (cb) cb();
+        const delta = ((sy - e.clientY) / 90) * (max - min);
+        setRingVal(id, sv + delta, suffix);
+        drawGraph();
       });
     }
 
-    function syncDials() {
-      paintDial("pitchDial", true, true);
-      paintDial("formantDial", true, true);
-      paintDial("airKnob", false, false);
-      paintDial("warmKnob", false, false);
-      paintDial("wideKnob", false, false);
-      paintDial("mixKnob", false, false);
-      paintDial("gainKnob", false, true);
-    }
+    function quantizeMidiToLad(rawMidi) {
+      if (!powerOn || !aiPitchEnabled) return { midi: rawMidi, comma: 0 };
+      const strength = getRingVal("strengthDial") / 100;
+      const tol = getRingVal("tolDial");
+      const lad = LADS[activeLadIdx];
+      const rootMidi = 69 + (rootIndex - 9);
+      const centsFromRoot = (rawMidi - rootMidi) * 100;
+      const oct = Math.floor(centsFromRoot / 1200) * 1200;
+      const inOct = centsFromRoot - oct;
 
-    function getDegree(pc, root, scale) {
-      const rel = (pc - root + 12) % 12;
-      for (const c of scale.cents) {
-        const semi = Math.round(c / 100) % 12;
-        if (semi === rel) {
-          return { hit: true, micro: Math.round(c - Math.round(c / 100) * 100) };
-        }
-      }
-      return { hit: false, micro: 0 };
-    }
-
-    function autoCorrectMidi(midiFloat, root, scale, strength = 0.95) {
-      if (bypassed || !autoPitchOn) return midiFloat;
-      const rootMidi = 60 + root;
-      const centsRel = (midiFloat - rootMidi) * 100;
-      const oct = Math.floor(centsRel / 1200) * 1200;
-      const inOct = centsRel - oct;
-
-      let best = scale.cents[0];
-      let bestD = Infinity;
-      for (const c of scale.cents) {
+      let bestC = lad.cents[0];
+      let bestDist = Infinity;
+      for (const c of lad.cents) {
         const d = Math.abs(inOct - c);
-        if (d < bestD) { bestD = d; best = c; }
+        if (d < bestDist) { bestDist = d; bestC = c; }
       }
-      if (Math.abs(inOct - 1200) < bestD) best = 1200;
+      if (Math.abs(inOct - 1200) < bestDist) bestC = 1200;
 
-      const targetMidi = rootMidi + (oct + best) / 100;
-      return midiFloat + (targetMidi - midiFloat) * strength;
+      const targetMidi = rootMidi + (oct + bestC) / 100;
+      const diffCents = (targetMidi - rawMidi) * 100;
+      const effectiveStrength = Math.abs(diffCents) <= tol * 2.2 ? strength : strength * 0.65;
+      const outMidi = rawMidi + (targetMidi - rawMidi) * effectiveStrength;
+      const comma = Math.round(bestC - Math.round(bestC / 100) * 100);
+      return { midi: outMidi, comma };
     }
 
-    function midiToHz(m) {
-      return 440 * Math.pow(2, (m - 69) / 12);
-    }
-
-    // 4K Pro Vocal Synthesizer (multi-harmonic + air + warmth + stereo)
-    function trigger4KVocalSound(hz, dur = 0.36) {
+    function playTone(freq, dur = 0.25) {
+      if (!powerOn) return;
       if (!audioCtx) {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         audioCtx = new Ctx();
       }
       if (audioCtx.state === "suspended") audioCtx.resume();
-
       const now = audioCtx.currentTime;
-      const airAmt = valOf("airKnob") / 100;
-      const warmAmt = valOf("warmKnob") / 100;
-      const wideAmt = valOf("wideKnob") / 100;
-      const mixAmt = valOf("mixKnob") / 100;
-      const outDb = valOf("gainKnob");
-      const lpHz = parseFloat(document.getElementById("lpSlider").value);
-
-      const masterGain = audioCtx.createGain();
-      const lpFilter = audioCtx.createBiquadFilter();
-      const airShelf = audioCtx.createBiquadFilter();
-
-      lpFilter.type = "lowpass";
-      lpFilter.frequency.setValueAtTime(lpHz, now);
-      lpFilter.Q.setValueAtTime(1.1 + warmAmt * 3.2, now);
-
-      airShelf.type = "highshelf";
-      airShelf.frequency.setValueAtTime(6500, now);
-      airShelf.gain.setValueAtTime(airAmt * 7.5, now);
-
-      const peakAmp = Math.min(0.28, 0.16 * mixAmt * Math.pow(10, outDb / 24));
-      masterGain.gain.setValueAtTime(0.0008, now);
-      masterGain.gain.exponentialRampToValueAtTime(Math.max(0.003, peakAmp), now + 0.02);
-      masterGain.gain.exponentialRampToValueAtTime(0.0006, now + dur);
-
-      // Primary voice + detuned 4K double + harmonic overtone
-      const voices = [
-        { type: warmAmt > 0.45 ? "sawtooth" : "triangle", freq: hz, gain: 0.65 },
-        { type: "sine", freq: hz * (1 + wideAmt * 0.008), gain: 0.35 + wideAmt * 0.2 },
-        { type: "triangle", freq: hz * 1.5, gain: 0.08 + airAmt * 0.08 }
-      ];
-
-      voices.forEach((v) => {
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = v.type;
-        o.frequency.setValueAtTime(v.freq, now);
-        g.gain.setValueAtTime(v.gain, now);
-        o.connect(g);
-        g.connect(lpFilter);
-        o.start(now);
-        o.stop(now + dur + 0.03);
-      });
-
-      lpFilter.connect(airShelf);
-      airShelf.connect(masterGain);
-      masterGain.connect(audioCtx.destination);
-
-      setMeter(0.62 + mixAmt * 0.32);
-      setTimeout(() => setMeter(0.06), dur * 1000);
-    }
-
-    function renderLayers() {
-      layersCol.innerHTML = "";
-      for (let i = 0; i < 5; i++) {
-        const d = document.createElement("div");
-        d.className = "layer-btn" + (i === activeLayer ? " active" : "");
-        const c = voiceOffsets[i] || 0;
-        d.innerHTML = `<span>${i + 1}</span><span class="layer-cent">${c > 0 ? "+" + c + "c" : "0c"}</span>`;
-        d.addEventListener("click", () => {
-          activeLayer = i;
-          renderLayers();
-          const root = parseInt(rootSel.value, 10);
-          const scale = SCALES[parseInt(scaleSel.value, 10)];
-          const rawM = 60 + root + (voiceOffsets[i] || 0) / 100 + 0.09; // slight off-pitch input demo
-          const outM = autoCorrectMidi(rawM + valOf("pitchDial"), root, scale, 0.95);
-          hud.inHz = midiToHz(rawM);
-          hud.outHz = midiToHz(outM);
-          hud.comma = Math.round((outM - rawM) * 100);
-          updateHud();
-          trigger4KVocalSound(hud.outHz, 0.34);
-        });
-        layersCol.appendChild(d);
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const vibPct = getRingVal("vibRing") / 100;
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, now);
+      if (vibPct > 0.05) {
+        osc.frequency.linearRampToValueAtTime(freq * (1 + vibPct * 0.012), now + dur * 0.5);
+        osc.frequency.linearRampToValueAtTime(freq, now + dur);
       }
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0006, now + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + dur + 0.02);
     }
 
-    function renderPiano() {
-      miniPiano.innerHTML = "";
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    function runAiAnalysis() {
+      if (!aiAnalyzerEnabled) {
+        document.getElementById("aiSummaryText").textContent = "AI Analyzer söndürülüb — əl ilə idarəetmə rejimi.";
+        return;
+      }
+      const avgY = points.reduce((acc, p) => acc + p.yNorm + p.offsetY, 0) / Math.max(1, points.length);
+      suggestedLadIdx = avgY < 0.45 ? 3 : avgY < 0.52 ? 0 : avgY < 0.58 ? 2 : 1;
+      const sugLad = LADS[suggestedLadIdx].name;
+      const str = getRingVal("strengthDial");
+      const drift = getRingVal("driftRing");
+      document.getElementById("aiSummaryText").textContent =
+        `Vokal konturu analiz edildi • Təklif olunan lad: ${sugLad} • Mikrotonal sapma nəzarəti: ${str}% • AI Pitch kilidi: ${aiPitchEnabled ? "AKTİV" : "BAĞLI"} • Drift: ${drift}%`;
+    }
 
-      for (let off = 0; off < 24; off++) {
-        const midi = 60 + off;
-        const pc = midi % 12;
-        const isBlack = [1, 3, 6, 8, 10].includes(pc);
-        const deg = getDegree(pc, root, scale);
+    function renderBottomPiano() {
+      bottomPianoEl.innerHTML = "";
+      const lad = LADS[activeLadIdx];
+      const names = ["C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F"];
+      const midis = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89];
+      const rootMidi = 69 + (rootIndex - 9);
 
+      midis.forEach((m, idx) => {
+        const relCents = (((m - rootMidi) * 100) % 1200 + 1200) % 1200;
+        const hit = lad.cents.some((c) => Math.abs(c - relCents) <= 55);
         const k = document.createElement("div");
-        k.className = "m-key " + (isBlack ? "b" : "w");
-        if (deg.hit) {
-          k.classList.add(Math.abs(deg.micro) >= 10 ? "comma-on" : "scale-on");
-        }
-        const tag = deg.hit && Math.abs(deg.micro) >= 10
-          ? `${deg.micro > 0 ? "+" : ""}${deg.micro}c`
-          : "";
-        k.innerHTML = `<span>${names[pc]}</span><span>${tag}</span>`;
-
-        k.addEventListener("pointerdown", (e) => {
-          e.preventDefault();
-          const rawM = midi + deg.micro / 100 + 0.08;
-          const outM = autoCorrectMidi(rawM + valOf("pitchDial"), root, scale, 0.95);
-          hud.inHz = midiToHz(rawM);
-          hud.outHz = midiToHz(outM);
-          hud.comma = deg.micro;
-          updateHud();
-          trigger4KVocalSound(hud.outHz, 0.35);
+        k.className = "bp-key" + (hit ? " scale-hit" : "");
+        k.textContent = names[idx];
+        k.addEventListener("pointerdown", () => {
+          const q = quantizeMidiToLad(m);
+          const hz = 440 * Math.pow(2, (q.midi - 69) / 12);
+          document.getElementById("inHzHud").textContent = `${(440 * Math.pow(2, (m - 69) / 12)).toFixed(1)} Hz`;
+          document.getElementById("outHzHud").textContent = `${hz.toFixed(1)} Hz`;
+          document.getElementById("commaHud").textContent = `${q.comma > 0 ? "+" : ""}${q.comma} ct`;
+          playTone(hz, 0.28);
         });
-
-        miniPiano.appendChild(k);
-      }
+        bottomPianoEl.appendChild(k);
+      });
     }
 
-    function updateHud() {
-      document.getElementById("hudIn").textContent = `${hud.inHz.toFixed(1)} Hz`;
-      document.getElementById("hudOut").textContent = `${hud.outHz.toFixed(1)} Hz`;
-      document.getElementById("hudComma").textContent = `${hud.comma > 0 ? "+" : ""}${hud.comma}c`;
-      const autoEl = document.getElementById("hudAuto");
-      if (bypassed) {
-        autoEl.textContent = "BYPASS";
-        autoEl.style.color = "#fbbf24";
-      } else if (autoPitchOn) {
-        autoEl.textContent = "AUTO PITCH ON";
-        autoEl.style.color = "#6ee7b7";
-      } else {
-        autoEl.textContent = "MANUAL";
-        autoEl.style.color = "#94a3b8";
-      }
-    }
-
-    function getContourMidi(xn) {
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const idx = Math.min(scale.cents.length - 1, Math.floor(xn * scale.cents.length));
-      // Slight natural vocal drift so Auto Pitch visibly locks onto scale degrees
-      const drift = 0.14 * Math.sin(xn * Math.PI * 14);
-      return 60 + root + scale.cents[idx] / 100 + drift;
-    }
-
-    function segAt(xn) {
-      for (let i = 0; i < segs.length; i++) {
-        if (xn >= segs[i].start && xn <= segs[i].end) return i;
-      }
-      return segs.length - 1;
-    }
-
-    function midiY(m, h) {
-      return h - ((m - 59) / 25) * h;
-    }
-
-    function resizeCanvas() {
-      const r = canvas.getBoundingClientRect();
+    function resizeCanvases() {
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.max(1, Math.floor(r.width * dpr));
-      canvas.height = Math.max(1, Math.floor(r.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawCanvas();
+      const gr = graphCanvas.getBoundingClientRect();
+      graphCanvas.width = Math.max(1, Math.floor(gr.width * dpr));
+      graphCanvas.height = Math.max(1, Math.floor(gr.height * dpr));
+      gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const sr = specCanvas.getBoundingClientRect();
+      specCanvas.width = Math.max(1, Math.floor(sr.width * dpr));
+      specCanvas.height = Math.max(1, Math.floor(sr.height * dpr));
+      sCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      drawGraph();
+      drawSpectrum();
     }
 
-    function drawCanvas() {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
+    function drawGraph() {
+      const w = graphCanvas.clientWidth;
+      const h = graphCanvas.clientHeight;
       if (!w || !h) return;
+      gCtx.clearRect(0, 0, w, h);
 
-      ctx.clearRect(0, 0, w, h);
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const pitchSt = valOf("pitchDial");
-      const wide = valOf("wideKnob") / 100;
-
-      // Grid
-      ctx.strokeStyle = "rgba(56, 214, 255, 0.06)";
-      ctx.lineWidth = 1;
+      // Grid lines
+      gCtx.strokeStyle = "rgba(245, 185, 66, 0.11)";
+      gCtx.lineWidth = 1;
       for (let gx = 1; gx < 12; gx++) {
         const x = (gx / 12) * w;
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        gCtx.beginPath(); gCtx.moveTo(x, 0); gCtx.lineTo(x, h); gCtx.stroke();
       }
-      for (let gy = 1; gy < 8; gy++) {
-        const y = (gy / 8) * h;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      for (let gy = 1; gy < 10; gy++) {
+        const y = (gy / 10) * h;
+        gCtx.beginPath(); gCtx.moveTo(0, y); gCtx.lineTo(w, y); gCtx.stroke();
       }
 
-      // Luminous studio ribbons
-      const ribbons = [
-        { amp: 0.13 + wide * 0.08, freq: 2.3, ph: phase, col: "rgba(56, 214, 255, 0.42)", lw: 2.2 },
-        { amp: 0.16 + wide * 0.09, freq: 3.2, ph: -phase * 0.85, col: "rgba(165, 243, 252, 0.34)", lw: 1.8 },
-        { amp: 0.1, freq: 4.5, ph: phase * 1.25, col: "rgba(245, 158, 11, 0.25)", lw: 1.5 }
-      ];
-
-      ribbons.forEach((rb) => {
-        ctx.save();
-        ctx.strokeStyle = rb.col;
-        ctx.lineWidth = rb.lw;
-        ctx.shadowColor = rb.col;
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        for (let x = 0; x <= w; x += 6) {
-          const xn = x / w;
-          const env = Math.sin(xn * Math.PI);
-          const y = h * 0.5 + Math.sin(xn * Math.PI * 2 * rb.freq + rb.ph) * h * rb.amp * env;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        ctx.restore();
+      // Compute corrected coordinates
+      const mapped = points.map((pt) => {
+        const rawY = Math.max(0.08, Math.min(0.92, pt.yNorm + pt.offsetY));
+        const rawMidi = 84 - rawY * 15;
+        const q = quantizeMidiToLad(rawMidi);
+        const corrY = Math.max(0.08, Math.min(0.92, (84 - q.midi) / 15));
+        return { x: pt.x * w, rawY: rawY * h, corrY: corrY * h, rawMidi, q };
       });
 
-      // Raw vocal guide line
-      ctx.save();
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.36)";
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      for (let i = 0; i <= 90; i++) {
-        const xn = 0.05 + (i / 90) * 0.91;
-        const px = xn * w;
-        const py = midiY(getContourMidi(xn), h);
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-      ctx.restore();
+      // Shaded ribbon area under curve
+      gCtx.save();
+      const grad = gCtx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "rgba(245, 185, 66, 0.24)");
+      grad.addColorStop(1, "rgba(245, 185, 66, 0.01)");
+      gCtx.fillStyle = grad;
+      gCtx.beginPath();
+      mapped.forEach((m, idx) => {
+        if (idx === 0) gCtx.moveTo(m.x, m.corrY);
+        else gCtx.lineTo(m.x, m.corrY);
+      });
+      gCtx.lineTo(w, h);
+      gCtx.lineTo(0, h);
+      gCtx.closePath();
+      gCtx.fill();
+      gCtx.restore();
 
-      // Corrected pitch segments
-      segs.forEach((s, idx) => {
-        ctx.save();
-        ctx.strokeStyle = s.sel ? "#a5f3fc" : "#38d6ff";
-        ctx.lineWidth = s.sel ? 3.2 : 2.2;
-        ctx.shadowColor = "#38d6ff";
-        ctx.shadowBlur = s.sel ? 12 : 6;
-        ctx.beginPath();
+      // Raw subtle line
+      gCtx.strokeStyle = "rgba(184, 176, 162, 0.35)";
+      gCtx.lineWidth = 1.4;
+      gCtx.beginPath();
+      mapped.forEach((m, idx) => {
+        if (idx === 0) gCtx.moveTo(m.x, m.rawY);
+        else gCtx.lineTo(m.x, m.rawY);
+      });
+      gCtx.stroke();
 
-        const steps = 64;
-        for (let i = 0; i <= steps; i++) {
-          const xn = s.start + (i / steps) * (s.end - s.start);
-          const rawM = getContourMidi(xn);
-          const shifted = rawM + pitchSt + s.cents / 100;
-          const outM = autoCorrectMidi(shifted, root, scale, 0.95);
-          const px = xn * w;
-          const py = midiY(outM, h);
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
+      // Main golden pitch curve
+      gCtx.save();
+      gCtx.strokeStyle = "#ffe08a";
+      gCtx.lineWidth = 2.6;
+      gCtx.shadowColor = "#f5b942";
+      gCtx.shadowBlur = 10;
+      gCtx.beginPath();
+      mapped.forEach((m, idx) => {
+        if (idx === 0) gCtx.moveTo(m.x, m.corrY);
+        else gCtx.lineTo(m.x, m.corrY);
+      });
+      gCtx.stroke();
+      gCtx.restore();
 
-        if (idx > 0) {
-          const sx = s.start * w;
-          ctx.shadowBlur = 0;
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.72)";
-          ctx.setLineDash([4, 4]);
-          ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, h); ctx.stroke();
-          ctx.setLineDash([]);
-        }
-        ctx.restore();
+      // Nodes
+      mapped.forEach((m) => {
+        gCtx.fillStyle = "#ffe08a";
+        gCtx.beginPath();
+        gCtx.arc(m.x, m.corrY, 3.6, 0, Math.PI * 2);
+        gCtx.fill();
       });
 
-      if (cursorX !== null) {
-        const px = cursorX * w;
-        ctx.save();
-        ctx.strokeStyle = "#f59e0b";
-        ctx.lineWidth = 2;
-        ctx.shadowColor = "#f59e0b";
-        ctx.shadowBlur = 10;
-        ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
-        ctx.restore();
+      // Split vertical guides
+      splits.forEach((sp) => {
+        const sx = sp * w;
+        gCtx.strokeStyle = "rgba(245, 185, 66, 0.35)";
+        gCtx.setLineDash([4, 4]);
+        gCtx.beginPath(); gCtx.moveTo(sx, 0); gCtx.lineTo(sx, h); gCtx.stroke();
+        gCtx.setLineDash([]);
+      });
+
+      // Playhead
+      const px = playheadNorm * w;
+      gCtx.strokeStyle = "#f8fafc";
+      gCtx.lineWidth = 1.6;
+      gCtx.beginPath(); gCtx.moveTo(px, 0); gCtx.lineTo(px, h); gCtx.stroke();
+
+      // Update HUD at playhead
+      const pIdx = Math.min(mapped.length - 1, Math.max(0, Math.round(playheadNorm * (mapped.length - 1))));
+      const curPt = mapped[pIdx];
+      if (curPt) {
+        const inHz = 440 * Math.pow(2, (curPt.rawMidi - 69) / 12);
+        const outHz = 440 * Math.pow(2, (curPt.q.midi - 69) / 12);
+        document.getElementById("inHzHud").textContent = `${inHz.toFixed(1)} Hz`;
+        document.getElementById("outHzHud").textContent = `${outHz.toFixed(1)} Hz`;
+        document.getElementById("commaHud").textContent = `${curPt.q.comma > 0 ? "+" : ""}${curPt.q.comma} ct`;
       }
     }
 
-    canvas.addEventListener("pointerdown", (e) => {
-      const r = canvas.getBoundingClientRect();
-      const xn = Math.max(0.02, Math.min(0.98, (e.clientX - r.left) / r.width));
-      const idx = segAt(xn);
-      if (idx < 0) return;
-      segs.forEach((s, i) => { s.sel = i === idx; });
+    function drawSpectrum() {
+      const w = specCanvas.clientWidth;
+      const h = specCanvas.clientHeight;
+      if (!w || !h) return;
+      sCtx.clearRect(0, 0, w, h);
+      const bars = 46;
+      const gap = w / bars;
+      const t = performance.now() * 0.004;
+      for (let i = 0; i < bars; i++) {
+        const env = Math.sin((i / bars) * Math.PI);
+        const amp = powerOn
+          ? (0.25 + 0.65 * Math.abs(Math.sin(t + i * 0.42))) * env
+          : 0.08 * env;
+        const bh = Math.max(3, amp * (h - 6));
+        sCtx.fillStyle = i % 7 === 0 ? "#f5b942" : "#e2e8f0";
+        sCtx.fillRect(i * gap + 1.5, h - bh - 2, Math.max(2, gap - 3), bh);
+      }
+    }
 
-      if (mode === "split") {
-        const cur = segs[idx];
-        if (xn - cur.start > 0.05 && cur.end - xn > 0.05) {
-          const rightSeg = { start: xn, end: cur.end, cents: cur.cents, sel: true };
-          cur.end = xn;
-          cur.sel = false;
-          segs.splice(idx + 1, 0, rightSeg);
-        }
-        drawCanvas();
+    graphCanvas.addEventListener("pointerdown", (e) => {
+      const r = graphCanvas.getBoundingClientRect();
+      const xn = Math.max(0.02, Math.min(0.98, (e.clientX - r.left) / r.width));
+      const yn = Math.max(0.08, Math.min(0.92, (e.clientY - r.top) / r.height));
+
+      if (graphTool === "split") {
+        splits.push(xn);
+        drawGraph();
         return;
       }
 
-      dragIdx = idx;
-      dragStartY = e.clientY;
-      dragStartCents = segs[idx].cents;
-      canvas.setPointerCapture(e.pointerId);
-      drawCanvas();
+      let best = 0;
+      let bestD = Infinity;
+      points.forEach((pt, idx) => {
+        const d = Math.abs(pt.x - xn);
+        if (d < bestD) { bestD = d; best = idx; }
+      });
+      draggingPointIdx = best;
+      points[best].offsetY = yn - points[best].yNorm;
+      graphCanvas.setPointerCapture(e.pointerId);
+      runAiAnalysis();
+      drawGraph();
     });
 
-    canvas.addEventListener("pointermove", (e) => {
-      if (dragIdx < 0) return;
-      const s = segs[dragIdx];
-      s.cents = Math.max(-600, Math.min(600, Math.round((dragStartCents + (dragStartY - e.clientY) * 2) / 5) * 5));
-
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const mid = (s.start + s.end) * 0.5;
-      const rawM = getContourMidi(mid);
-      const outM = autoCorrectMidi(rawM + valOf("pitchDial") + s.cents / 100, root, scale, 0.95);
-      hud.inHz = midiToHz(rawM);
-      hud.outHz = midiToHz(outM);
-      hud.comma = Math.round((outM - rawM) * 100);
-      updateHud();
-      drawCanvas();
+    graphCanvas.addEventListener("pointermove", (e) => {
+      if (draggingPointIdx < 0) return;
+      const r = graphCanvas.getBoundingClientRect();
+      const yn = Math.max(0.08, Math.min(0.92, (e.clientY - r.top) / r.height));
+      points[draggingPointIdx].offsetY = yn - points[draggingPointIdx].yNorm;
+      drawGraph();
     });
 
-    canvas.addEventListener("pointerup", () => { dragIdx = -1; });
+    graphCanvas.addEventListener("pointerup", () => {
+      draggingPointIdx = -1;
+      runAiAnalysis();
+    });
 
-    function loadPreset(i) {
-      const p = PRESETS[i];
+    // Controls wiring
+    document.getElementById("rootPrev").addEventListener("click", () => {
+      rootIndex = (rootIndex - 1 + ROOT_NOTES.length) % ROOT_NOTES.length;
+      document.getElementById("rootLabel").textContent = ROOT_NOTES[rootIndex];
+      renderBottomPiano();
+      drawGraph();
+    });
+
+    document.getElementById("rootNext").addEventListener("click", () => {
+      rootIndex = (rootIndex + 1) % ROOT_NOTES.length;
+      document.getElementById("rootLabel").textContent = ROOT_NOTES[rootIndex];
+      renderBottomPiano();
+      drawGraph();
+    });
+
+    ["modeMugham", "modeVocal", "modeHarmony", "modeLive"].forEach((id) => {
+      document.getElementById(id).addEventListener("click", () => {
+        ["modeMugham", "modeVocal", "modeHarmony", "modeLive"].forEach((k) =>
+          document.getElementById(k).classList.toggle("active", k === id)
+        );
+        if (id === "modeMugham") activeLadIdx = 0;
+        renderLads();
+        renderBottomPiano();
+        drawGraph();
+      });
+    });
+
+    document.getElementById("btnAiPitch").addEventListener("click", (e) => {
+      aiPitchEnabled = !aiPitchEnabled;
+      e.target.textContent = aiPitchEnabled ? "✦ AI Pitch: ON" : "✦ AI Pitch: OFF";
+      e.target.classList.toggle("active", aiPitchEnabled);
+      runAiAnalysis();
+      drawGraph();
+    });
+
+    document.getElementById("btnAiAnalyze").addEventListener("click", (e) => {
+      aiAnalyzerEnabled = !aiAnalyzerEnabled;
+      e.target.classList.toggle("active", aiAnalyzerEnabled);
+      runAiAnalysis();
+    });
+
+    document.getElementById("btnRunAiScan").addEventListener("click", () => {
+      points.forEach((pt, idx) => {
+        pt.offsetY = 0.05 * Math.sin(idx * 0.7);
+      });
+      runAiAnalysis();
+      drawGraph();
+      playTone(440, 0.25);
+    });
+
+    document.getElementById("btnApplyAiLad").addEventListener("click", () => {
+      activeLadIdx = suggestedLadIdx;
+      renderLads();
+      renderBottomPiano();
+      runAiAnalysis();
+      drawGraph();
+      playTone(523.25, 0.25);
+    });
+
+    document.getElementById("toolDrawBtn").addEventListener("click", () => {
+      graphTool = "draw";
+      drawGraph();
+    });
+
+    document.getElementById("toolSplitBtn").addEventListener("click", () => {
+      graphTool = "split";
+      drawGraph();
+    });
+
+    document.getElementById("toolResetBtn").addEventListener("click", () => {
+      initCurvePoints();
+      splits = [0.5];
+      runAiAnalysis();
+      drawGraph();
+    });
+
+    presetSelectEl.addEventListener("change", (e) => {
+      const p = PRESETS[parseInt(e.target.value, 10)];
       if (!p) return;
-      rootSel.value = String(p.root);
-      scaleSel.value = String(p.scaleIdx);
-      voiceOffsets = [...p.voices];
-      activeLayer = 0;
-
-      document.getElementById("pitchDial").dataset.val = String(p.pitch);
-      document.getElementById("formantDial").dataset.val = String(p.formant);
-      document.getElementById("airKnob").dataset.val = String(p.air);
-      document.getElementById("warmKnob").dataset.val = String(p.warm);
-      document.getElementById("wideKnob").dataset.val = String(p.wide);
-      document.getElementById("mixKnob").dataset.val = String(p.mix);
-      document.getElementById("gainKnob").dataset.val = String(p.gain);
-
-      syncDials();
-      renderLayers();
-      renderPiano();
-
-      // Auto-pitch immediately calculates lock on load
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const rawM = getContourMidi(0.25);
-      const outM = autoCorrectMidi(rawM + p.pitch, root, scale, 0.95);
-      hud.inHz = midiToHz(rawM);
-      hud.outHz = midiToHz(outM);
-      hud.comma = Math.round((outM - rawM) * 100);
-      updateHud();
-      drawCanvas();
-    }
-
-    document.getElementById("autoSnapBtn").addEventListener("click", (e) => {
-      autoPitchOn = !autoPitchOn;
-      e.target.textContent = autoPitchOn ? "Auto Pitch: ON" : "Auto Pitch: OFF";
-      e.target.classList.toggle("is-auto", autoPitchOn);
-      loadPreset(parseInt(presetSel.value, 10));
+      activeLadIdx = p.ladIdx;
+      setRingVal("strengthDial", p.strength, "%");
+      setRingVal("tolDial", p.tol, " ct");
+      setRingVal("harmRing", p.harm, "%");
+      setRingVal("vibRing", p.vib, "%");
+      setRingVal("formRing", p.form, "%");
+      setRingVal("driftRing", p.drift, "%");
+      setRingVal("delRing", p.del, "%");
+      setRingVal("revRing", p.rev, "%");
+      renderLads();
+      renderBottomPiano();
+      runAiAnalysis();
+      drawGraph();
     });
 
-    document.getElementById("dragModeBtn").addEventListener("click", () => {
-      mode = "drag";
-      document.getElementById("dragModeBtn").classList.add("is-on");
-      document.getElementById("splitModeBtn").classList.remove("is-on");
+    document.getElementById("natToggle").addEventListener("click", (e) => {
+      naturalMode = !naturalMode;
+      e.target.classList.toggle("off", !naturalMode);
+      setRingVal("strengthDial", naturalMode ? 85 : 98, "%");
+      drawGraph();
     });
 
-    document.getElementById("splitModeBtn").addEventListener("click", () => {
-      mode = "split";
-      document.getElementById("splitModeBtn").classList.add("is-on");
-      document.getElementById("dragModeBtn").classList.remove("is-on");
+    document.getElementById("speedSlider").addEventListener("input", (e) => {
+      document.getElementById("speedLbl").textContent = `${e.target.value} ms`;
     });
 
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      segs = [{ start: 0.05, end: 0.96, cents: 0, sel: true }];
-      document.getElementById("pitchDial").dataset.val = "0";
-      document.getElementById("formantDial").dataset.val = "0";
-      syncDials();
-      drawCanvas();
+    document.getElementById("transSlider").addEventListener("input", (e) => {
+      document.getElementById("transLbl").textContent = `${e.target.value} ms`;
     });
 
-    document.getElementById("testBtn").addEventListener("click", () => {
-      const root = parseInt(rootSel.value, 10);
-      const scale = SCALES[parseInt(scaleSel.value, 10)];
-      const pitchSt = valOf("pitchDial");
-      const steps = 10;
-
-      for (let i = 0; i < steps; i++) {
-        setTimeout(() => {
-          const xn = 0.05 + (i / (steps - 1)) * 0.91;
-          cursorX = xn;
-          const s = segs[segAt(xn)] || segs[0];
-          const rawM = getContourMidi(xn);
-          const outM = autoCorrectMidi(rawM + pitchSt + s.cents / 100, root, scale, 0.95);
-          hud.inHz = midiToHz(rawM);
-          hud.outHz = midiToHz(outM);
-          hud.comma = Math.round((outM - rawM) * 100);
-          updateHud();
-          trigger4KVocalSound(hud.outHz, 0.24);
-          drawCanvas();
-
-          if (i === steps - 1) {
-            setTimeout(() => { cursorX = null; drawCanvas(); }, 260);
-          }
-        }, i * 215);
-      }
+    document.getElementById("powerBtn").addEventListener("click", () => {
+      powerOn = !powerOn;
+      drawGraph();
     });
 
-    document.getElementById("linkChip").addEventListener("click", () => {
-      linked = !linked;
-      document.getElementById("linkDot").classList.toggle("off", !linked);
+    document.getElementById("playBtn").addEventListener("click", () => {
+      isPlaying = !isPlaying;
+      document.getElementById("playBtn").textContent = isPlaying ? "❚❚" : "▶";
+      if (isPlaying) playTone(440, 0.3);
     });
 
-    document.getElementById("activeBtn").addEventListener("click", (e) => {
-      bypassed = !bypassed;
-      e.target.textContent = bypassed ? "Bypass" : "Active";
-      e.target.classList.toggle("is-gold", !bypassed);
-      updateHud();
-      drawCanvas();
-    });
+    bindRingDrag("strengthDial", "%");
+    bindRingDrag("tolDial", " ct");
+    bindRingDrag("harmRing", "%");
+    bindRingDrag("vibRing", "%");
+    bindRingDrag("formRing", "%");
+    bindRingDrag("driftRing", "%");
+    bindRingDrag("delRing", "%");
+    bindRingDrag("revRing", "%");
 
-    function snapBank() {
-      return {
-        preset: presetSel.value,
-        root: rootSel.value,
-        scale: scaleSel.value,
-        pitch: document.getElementById("pitchDial").dataset.val,
-        formant: document.getElementById("formantDial").dataset.val,
-        air: document.getElementById("airKnob").dataset.val,
-        warm: document.getElementById("warmKnob").dataset.val,
-        wide: document.getElementById("wideKnob").dataset.val,
-        mix: document.getElementById("mixKnob").dataset.val,
-        gain: document.getElementById("gainKnob").dataset.val,
-        segs: JSON.parse(JSON.stringify(segs))
-      };
-    }
-
-    function applyBank(st) {
-      if (!st) return;
-      presetSel.value = st.preset;
-      rootSel.value = st.root;
-      scaleSel.value = st.scale;
-      document.getElementById("pitchDial").dataset.val = st.pitch;
-      document.getElementById("formantDial").dataset.val = st.formant;
-      document.getElementById("airKnob").dataset.val = st.air;
-      document.getElementById("warmKnob").dataset.val = st.warm;
-      document.getElementById("wideKnob").dataset.val = st.wide;
-      document.getElementById("mixKnob").dataset.val = st.mix;
-      document.getElementById("gainKnob").dataset.val = st.gain;
-      segs = JSON.parse(JSON.stringify(st.segs));
-      syncDials();
-      renderPiano();
-      drawCanvas();
-    }
-
-    document.getElementById("bankA").addEventListener("click", () => {
-      banks[activeBank] = snapBank();
-      activeBank = "A";
-      document.getElementById("bankA").classList.add("active");
-      document.getElementById("bankB").classList.remove("active");
-      if (banks.A) applyBank(banks.A);
-    });
-
-    document.getElementById("bankB").addEventListener("click", () => {
-      banks[activeBank] = snapBank();
-      activeBank = "B";
-      document.getElementById("bankB").classList.add("active");
-      document.getElementById("bankA").classList.remove("active");
-      if (banks.B) applyBank(banks.B);
-      else { presetSel.value = "1"; loadPreset(1); }
-    });
-
-    document.getElementById("hpSlider").addEventListener("input", (e) => {
-      document.getElementById("hpTag").textContent = `HP ${e.target.value}Hz`;
-    });
-
-    document.getElementById("lpSlider").addEventListener("input", (e) => {
-      const v = parseInt(e.target.value, 10);
-      document.getElementById("lpTag").textContent = v >= 1000 ? `LP ${(v / 1000).toFixed(1)}k` : `LP ${v}Hz`;
-    });
-
-    presetSel.addEventListener("change", (e) => loadPreset(parseInt(e.target.value, 10)));
-    rootSel.addEventListener("change", () => { renderPiano(); loadPreset(parseInt(presetSel.value, 10)); });
-    scaleSel.addEventListener("change", () => { renderPiano(); loadPreset(parseInt(presetSel.value, 10)); });
-
-    bindDial("pitchDial", true, true, drawCanvas);
-    bindDial("formantDial", true, true, drawCanvas);
-    bindDial("airKnob", false, false, drawCanvas);
-    bindDial("warmKnob", false, false, drawCanvas);
-    bindDial("wideKnob", false, false, drawCanvas);
-    bindDial("mixKnob", false, false, drawCanvas);
-    bindDial("gainKnob", false, true, drawCanvas);
-
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", resizeCanvases);
 
     setInterval(() => {
-      phase += 0.05;
-      drawCanvas();
-    }, 34);
+      if (isPlaying && powerOn) {
+        elapsedMs += 40;
+        playheadNorm = (playheadNorm + 0.008) % 1;
+        const cs = Math.floor((elapsedMs % 1000) / 1);
+        const s = Math.floor(elapsedMs / 1000) % 60;
+        const m = Math.floor(elapsedMs / 60000) % 60;
+        const h = Math.floor(elapsedMs / 3600000);
+        document.getElementById("timecode").textContent =
+          `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${String(cs).padStart(3, "0")}`;
+        if (Math.random() < 0.25) {
+          const outText = parseFloat(document.getElementById("outHzHud").textContent) || 440;
+          playTone(outText, 0.14);
+        }
+      }
+      drawGraph();
+      drawSpectrum();
+    }, 40);
 
-    presetSel.value = "0";
-    loadPreset(0);
-    resizeCanvas();
+    initCurvePoints();
+    populateLists();
+    renderBottomPiano();
+    runAiAnalysis();
+    resizeCanvases();
   </script>
 </body>
 </html>
