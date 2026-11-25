@@ -1,17 +1,16 @@
 #pragma once
-#include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_dsp/juce_dsp.h>
-#include <vector>
-#include <atomic>
-#include "MughamScales.h"
+#include <JuceHeader.h>
+#include "SPitchEngine.h"
 
 class SPitchAudioProcessor : public juce::AudioProcessor {
 public:
     SPitchAudioProcessor();
-    ~SPitchAudioProcessor() override = default;
+    ~SPitchAudioProcessor() override;
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
-    void releaseResources() override {}
+    void releaseResources() override;
+
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     juce::AudioProcessorEditor* createEditor() override;
@@ -20,7 +19,8 @@ public:
     const juce::String getName() const override { return "SPitch"; }
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
-    double getTailLengthSeconds() const override { return 0.0; }
+    bool isMidiEffect() const override { return false; }
+    double getTailLengthSeconds() const override { return 0.6; }
 
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 0; }
@@ -31,19 +31,17 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
+    SPitchEngine::Telemetry getEngineTelemetry() const noexcept {
+        return pitchEngine.getTelemetry();
+    }
+
     juce::AudioProcessorValueTreeState apvts;
-    std::atomic<float> currentDetectedHz { 0.0f };
-    std::atomic<float> currentTargetHz   { 0.0f };
 
 private:
-    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
-    double detectPitchYIN(const float* buffer, int numSamples, double sampleRate);
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    SPitchEngine::EngineParams collectEngineParams() const noexcept;
 
-    double currentSampleRate = 44100.0;
-    double smoothedRatio = 1.0;
-    double phaseAccumulator = 0.0;
-    std::vector<float> delayLine;
-    int writeIndex = 0;
+    SPitchEngine pitchEngine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SPitchAudioProcessor)
 };
