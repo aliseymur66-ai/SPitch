@@ -43,6 +43,12 @@ target_sources(SPitch
         ${SPITCH_SOURCES}
 )
 
+target_include_directories(SPitch
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source"
+)
+
 target_compile_definitions(SPitch
     PUBLIC
         JUCE_WEB_BROWSER=0
