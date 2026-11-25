@@ -1,10 +1,8 @@
 #pragma once
 #include <JuceHeader.h>
 #include <array>
-#include <atomic>
 #include <cmath>
-#include <string>
-#include <vector>
+#include <algorithm>
 
 class SPitchEngine {
 public:
@@ -17,28 +15,27 @@ public:
         Humayun,
         Suster,
         Nava,
-        Digar,
+        Diger,
         Major,
         Minor
     };
 
     struct EngineParams {
         LadType lad = LadType::Sur;
-        int rootMidiNote = 62;          // D4 (60 = C4, 69 = A4)
-        float correctionStrength = 0.85f; // 0.0 .. 1.0
-        float toleranceCents = 15.0f;   // 5.0 .. 50.0 ct
-        float speedMs = 50.0f;          // 10.0 .. 200.0 ms
-        float transitionMs = 120.0f;    // 20.0 .. 300.0 ms
-        float vibratoDepth = 0.60f;     // 0.0 .. 1.0
-        float vibratoRateHz = 5.8f;     // 3.0 .. 9.0 Hz
-        float formantShiftSt = 0.0f;    // -12.0 .. +12.0 semitones
-        float pitchDrift = 0.30f;       // 0.0 .. 1.0
-        float air4K = 0.65f;            // 0.0 .. 1.0
-        float warmth = 0.35f;           // 0.0 .. 1.0
-        float stereoWidth = 0.55f;      // 0.0 .. 1.0
-        float delayMix = 0.25f;         // 0.0 .. 1.0
-        float reverbMix = 0.40f;        // 0.0 .. 1.0
-        float outputGainDb = 1.5f;      // -12.0 .. +12.0 dB
+        int rootMidiNote = 62;
+        float correctionStrength = 0.85f;
+        float toleranceCents = 15.0f;
+        float speedMs = 50.0f;
+        float transitionMs = 120.0f;
+        float vibratoDepth = 0.60f;
+        float formantShiftSt = 1.0f;
+        float pitchDrift = 0.30f;
+        float air4K = 0.65f;
+        float warmth = 0.35f;
+        float stereoWidth = 0.55f;
+        float delayMix = 0.25f;
+        float reverbMix = 0.40f;
+        float outputGainDb = 1.5f;
         bool naturalMode = true;
         bool aiPitchEnabled = true;
         bool aiAnalyzerEnabled = true;
@@ -49,56 +46,13 @@ public:
         float inputHz = 0.0f;
         float targetHz = 0.0f;
         float commaCents = 0.0f;
-        LadType recommendedLad = LadType::Sur;
         float rmsLevel = 0.0f;
+        LadType recommendedLad = LadType::Sur;
     };
-
-    SPitchEngine() {
-        initializeAIEngines();
-    }
-
-    ~SPitchEngine() {
-        shutdownAIEngines();
-    }
-
-    void prepareToPlay(double sampleRate, int samplesPerBlock) {
-        currentSampleRate = sampleRate > 0.0 ? sampleRate : 44100.0;
-        currentBlockSize = juce::jmax(16, samplesPerBlock);
-
-        const int maxDelaySamples = static_cast<int>(currentSampleRate * 1.5) + 16;
-        for (int ch = 0; ch < 2; ++ch) {
-            delayLine[ch].assign(static_cast<size_t>(maxDelaySamples), 0.0f);
-            delayWritePos[ch] = 0;
-            dcPrevX[ch] = 0.0f;
-            dcPrevY[ch] = 0.0f;
-            lpState[ch] = 0.0f;
-            airState[ch] = 0.0f;
-            combState[ch] = 0.0f;
-        }
-
-        smoothedPitchRatio = 1.0f;
-        vibratoPhase = 0.0;
-        driftPhase = 0.0;
-        analysisAccum = 0.0f;
-        analysisCount = 0;
-    }
-
-    static LadType parseLadName(const juce::String& name) noexcept {
-        if (name == "Rast") return LadType::Rast;
-        if (name == "Segah") return LadType::Segah;
-        if (name == "Çahargah" || name == "Chahargah") return LadType::Cahargah;
-        if (name == "Bayatı-Şiraz" || name == "Bayati-Shiraz") return LadType::BayatiSiraz;
-        if (name == "Humayun") return LadType::Humayun;
-        if (name == "Şüştər" || name == "Shushtar") return LadType::Suster;
-        if (name == "Nava") return LadType::Nava;
-        if (name == "Diğər" || name == "Other") return LadType::Digar;
-        if (name == "Major") return LadType::Major;
-        if (name == "Minor") return LadType::Minor;
-        return LadType::Sur;
-    }
 
     static const char* ladToString(LadType lad) noexcept {
         switch (lad) {
+            case LadType::Sur:         return "Şur";
             case LadType::Rast:        return "Rast";
             case LadType::Segah:       return "Segah";
             case LadType::Cahargah:    return "Çahargah";
@@ -106,301 +60,277 @@ public:
             case LadType::Humayun:     return "Humayun";
             case LadType::Suster:      return "Şüştər";
             case LadType::Nava:        return "Nava";
-            case LadType::Digar:       return "Diğər";
+            case LadType::Diger:       return "Diğər";
             case LadType::Major:       return "Major";
             case LadType::Minor:       return "Minor";
-            case LadType::Sur:
             default:                   return "Şur";
         }
     }
 
-    // Sadə interfeys üçün köhnə imza ilə uyğunluq (backward compatibility)
-    void processBlock(juce::AudioBuffer<float>& buffer, const juce::String& selectedLad, float correctionStrength) {
-        EngineParams p;
-        p.lad = parseLadName(selectedLad);
-        p.correctionStrength = juce::jlimit(0.0f, 1.0f, correctionStrength);
-        processBlock(buffer, p);
+    void prepareToPlay(double newSampleRate, int samplesPerBlock) {
+        sampleRate = (newSampleRate > 1000.0) ? newSampleRate : 44100.0;
+        blockSize = std::max(1, samplesPerBlock);
+
+        const int delaySamples = static_cast<int>(sampleRate * 0.6) + 16;
+        delayBufferL.assign(static_cast<size_t>(delaySamples), 0.0f);
+        delayBufferR.assign(static_cast<size_t>(delaySamples), 0.0f);
+        delayWritePos = 0;
+
+        combPosL.fill(0);
+        combPosR.fill(0);
+        combBufL[0].assign(1116, 0.0f); combBufL[1].assign(1188, 0.0f);
+        combBufL[2].assign(1277, 0.0f); combBufL[3].assign(1356, 0.0f);
+        combBufR[0].assign(1139, 0.0f); combBufR[1].assign(1211, 0.0f);
+        combBufR[2].assign(1300, 0.0f); combBufR[3].assign(1379, 0.0f);
+
+        lfoPhase = 0.0;
+        driftPhase = 0.0;
+        lpWarmL = lpWarmR = 0.0f;
+        hpAirL = hpAirR = 0.0f;
+        prevSampleL = prevSampleR = 0.0f;
+        rmsSmoothed = 0.0f;
+        estimatedHz = 0.0f;
+        targetHz = 0.0f;
+        commaCents = 0.0f;
     }
 
-    // Tam studiya parametrləri ilə real-time emal
     void processBlock(juce::AudioBuffer<float>& buffer, const EngineParams& params) {
-        const int numChannels = buffer.getNumChannels();
         const int numSamples = buffer.getNumSamples();
-        if (numChannels <= 0 || numSamples <= 0) return;
+        const int numChannels = buffer.getNumChannels();
+        if (numSamples <= 0 || numChannels <= 0) return;
 
         if (params.bypassed) {
-            updateTelemetry(0.0f, 0.0f, 0.0f, params.lad, 0.0f);
             return;
         }
 
-        // 1. Blok üzrə vokal tezliyinin təyini (Hz)
-        const float detectedHz = detectPitchHz(buffer, 0);
+        const float* inL = buffer.getReadPointer(0);
+        const float* inR = (numChannels > 1) ? buffer.getReadPointer(1) : inL;
 
-        // 2. AI Pitch & Muğam ladına görə hədəf tezlik (Hz) və komma sent
-        float commaApplied = 0.0f;
-        const float targetHz = computeTargetPitchHz(detectedHz, params, commaApplied);
+        // Sadə RMS və tezlik təxmini (AI Analyzer + AI Pitch telemetriyası üçün)
+        double sumSq = 0.0;
+        int zeroCrossings = 0;
+        for (int i = 0; i < numSamples; ++i) {
+            const float s = 0.5f * (inL[i] + inR[i]);
+            sumSq += static_cast<double>(s) * static_cast<double>(s);
+            if ((prevMono <= 0.0f && s > 0.0f) || (prevMono >= 0.0f && s < 0.0f)) {
+                ++zeroCrossings;
+            }
+            prevMono = s;
+        }
 
-        // 3. Speed və Transition əsasında hamar keçid əmsalı
-        const float transSec = juce::jmax(0.01f, params.transitionMs * 0.001f);
-        const float speedFactor = juce::jlimit(0.001f, 0.25f, 1.0f / (transSec * static_cast<float>(currentSampleRate / currentBlockSize)));
-        const float desiredRatio = detectedHz > 1.0f ? (targetHz / detectedHz) : 1.0f;
-        smoothedPitchRatio += (desiredRatio - smoothedPitchRatio) * speedFactor;
+        const float rms = std::sqrt(static_cast<float>(sumSq / static_cast<double>(numSamples)));
+        rmsSmoothed = 0.85f * rmsSmoothed + 0.15f * rms;
 
-        const float outGainLinear = juce::Decibels::decibelsToGain(params.outputGainDb);
-        float blockEnergySum = 0.0f;
+        if (rmsSmoothed > 0.004f) {
+            const float blockSec = static_cast<float>(numSamples) / static_cast<float>(sampleRate);
+            const float rawFreq = (zeroCrossings * 0.5f) / std::max(0.0001f, blockSec);
+            if (rawFreq >= 65.0f && rawFreq <= 1100.0f) {
+                estimatedHz = (estimatedHz <= 0.0f) ? rawFreq : (0.75f * estimatedHz + 0.25f * rawFreq);
+            }
+        }
+
+        const LadType activeLad = params.aiAnalyzerEnabled ? recommendLad(estimatedHz, params.lad) : params.lad;
+        recommendedLad = activeLad;
+
+        const auto& scaleCents = getLadCents(activeLad);
+        const float rootHz = 440.0f * std::pow(2.0f, (static_cast<float>(params.rootMidiNote) - 69.0f) / 12.0f);
+
+        if (estimatedHz > 50.0f && rootHz > 20.0f) {
+            const float totalCentsFromRoot = 1200.0f * std::log2(estimatedHz / rootHz);
+            const float octaveFloor = std::floor(totalCentsFromRoot / 1200.0f) * 1200.0f;
+            const float inOctaveCents = totalCentsFromRoot - octaveFloor;
+
+            float bestDegree = scaleCents[0];
+            float minDist = std::abs(inOctaveCents - scaleCents[0]);
+            for (float c : scaleCents) {
+                const float d = std::abs(inOctaveCents - c);
+                if (d < minDist) {
+                    minDist = d;
+                    bestDegree = c;
+                }
+            }
+
+            const float diffCents = bestDegree - inOctaveCents;
+            const float withinTol = (std::abs(diffCents) <= params.toleranceCents) ? 1.0f : 0.0f;
+            const float natFactor = (params.naturalMode && withinTol > 0.5f) ? 0.35f : 1.0f;
+            const float effStrength = params.aiPitchEnabled
+                ? std::clamp(params.correctionStrength * natFactor, 0.0f, 1.0f)
+                : 0.0f;
+
+            const float correctedOctaveCents = inOctaveCents + diffCents * effStrength;
+            const float targetTotalCents = octaveFloor + correctedOctaveCents;
+            targetHz = rootHz * std::pow(2.0f, targetTotalCents / 1200.0f);
+
+            const float nearestSemitoneCents = std::round(bestDegree / 100.0f) * 100.0f;
+            commaCents = bestDegree - nearestSemitoneCents;
+        } else {
+            targetHz = estimatedHz;
+            commaCents = 0.0f;
+        }
+
+        const float gainLinear = std::pow(10.0f, params.outputGainDb / 20.0f);
+        const int delaySamples = std::clamp(
+            static_cast<int>(sampleRate * 0.22), 1, static_cast<int>(delayBufferL.size()) - 1
+        );
+
+        float* outL = buffer.getWritePointer(0);
+        float* outR = (numChannels > 1) ? buffer.getWritePointer(1) : nullptr;
 
         for (int i = 0; i < numSamples; ++i) {
-            // Vibrato və AI Pitch Drift modulyasiyası
-            vibratoPhase += (static_cast<double>(params.vibratoRateHz) / currentSampleRate);
-            if (vibratoPhase >= 1.0) vibratoPhase -= 1.0;
+            float l = inL[i];
+            float r = inR[i];
 
-            driftPhase += (0.65 / currentSampleRate);
-            if (driftPhase >= 1.0) driftPhase -= 1.0;
+            // Vibrato və Pitch Drift modulyasiyası
+            lfoPhase += (2.0 * juce::MathConstants<double>::pi * 5.6) / sampleRate;
+            if (lfoPhase > juce::MathConstants<double>::twoPi) lfoPhase -= juce::MathConstants<double>::twoPi;
 
-            const float vibMod = static_cast<float>(std::sin(vibratoPhase * juce::MathConstants<double>::twoPi))
-                               * (params.vibratoDepth * 0.008f);
-            const float driftMod = static_cast<float>(std::sin(driftPhase * juce::MathConstants<double>::twoPi))
-                                 * (params.pitchDrift * 0.004f);
+            driftPhase += (2.0 * juce::MathConstants<double>::pi * 0.35) / sampleRate;
+            if (driftPhase > juce::MathConstants<double>::twoPi) driftPhase -= juce::MathConstants<double>::twoPi;
 
-            const float activeRatio = juce::jlimit(0.5f, 2.0f, smoothedPitchRatio * (1.0f + vibMod + driftMod));
+            const float vibMod = static_cast<float>(std::sin(lfoPhase)) * params.vibratoDepth * 0.015f;
+            const float driftMod = static_cast<float>(std::sin(driftPhase)) * params.pitchDrift * 0.02f;
+            const float modFactor = 1.0f + vibMod + driftMod;
 
-            float monoSum = 0.0f;
-            for (int ch = 0; ch < numChannels; ++ch) {
-                float dry = buffer.getSample(ch, i);
-                blockEnergySum += dry * dry;
+            l *= modFactor;
+            r *= modFactor;
 
-                // AI küy təmizləmə + DC offset silmə
-                float clean = runRNNoiseSample(dry, ch);
+            // Warmth (aşağı-orta istilik)
+            const float warmCoeff = 0.12f + 0.25f * params.warmth;
+            lpWarmL += warmCoeff * (l - lpWarmL);
+            lpWarmR += warmCoeff * (r - lpWarmR);
+            l = l * (1.0f - 0.35f * params.warmth) + lpWarmL * (0.35f * params.warmth);
+            r = r * (1.0f - 0.35f * params.warmth) + lpWarmR * (0.35f * params.warmth);
 
-                // Formant-nəzarətli vokal emalı + 4K Air & Warmth
-                float wet = runFormantAnd4KSample(clean, detectedHz, activeRatio, params, ch);
+            // 4K Air (yüksək tezlik parıltısı)
+            const float hpL = l - prevSampleL + 0.92f * hpAirL;
+            const float hpR = r - prevSampleR + 0.92f * hpAirR;
+            prevSampleL = l;
+            prevSampleR = r;
+            hpAirL = hpL;
+            hpAirR = hpR;
+            l += hpL * params.air4K * 0.35f;
+            r += hpR * params.air4K * 0.35f;
 
-                // Delay və Reverb qatı
-                wet = applySpatialEffects(wet, params, ch);
+            // Stereo Width
+            const float mid = 0.5f * (l + r);
+            const float side = 0.5f * (l - r) * (0.5f + params.stereoWidth);
+            l = mid + side;
+            r = mid - side;
 
-                // Stereo genişlik balansı
-                if (numChannels > 1 && ch == 1) {
-                    wet *= (1.0f - params.stereoWidth * 0.12f);
-                }
+            // Delay
+            const int readPos = (delayWritePos - delaySamples + static_cast<int>(delayBufferL.size()))
+                          % static_cast<int>(delayBufferL.size());
+            const float delL = delayBufferL[static_cast<size_t>(readPos)];
+            const float delR = delayBufferR[static_cast<size_t>(readPos)];
+            delayBufferL[static_cast<size_t>(delayWritePos)] = l + delL * 0.35f;
+            delayBufferR[static_cast<size_t>(delayWritePos)] = r + delR * 0.35f;
+            delayWritePos = (delayWritePos + 1) % static_cast<int>(delayBufferL.size());
 
-                wet *= outGainLinear;
-                buffer.setSample(ch, i, juce::jlimit(-1.0f, 1.0f, wet));
-                monoSum += wet;
+            l += delL * params.delayMix * 0.5f;
+            r += delR * params.delayMix * 0.5f;
+
+            // Yüngül stereo Reverb
+            float revL = 0.0f;
+            float revR = 0.0f;
+            for (int c = 0; c < 4; ++c) {
+                auto& bL = combBufL[static_cast<size_t>(c)];
+                auto& bR = combBufR[static_cast<size_t>(c)];
+                const size_t pL = combPosL[static_cast<size_t>(c)] % bL.size();
+                const size_t pR = combPosR[static_cast<size_t>(c)] % bR.size();
+                const float yL = bL[pL];
+                const float yR = bR[pR];
+                bL[pL] = l + yL * 0.68f;
+                bR[pR] = r + yR * 0.68f;
+                combPosL[static_cast<size_t>(c)] = (pL + 1) % bL.size();
+                combPosR[static_cast<size_t>(c)] = (pR + 1) % bR.size();
+                revL += yL * 0.25f;
+                revR += yR * 0.25f;
             }
 
-            if (params.aiAnalyzerEnabled) {
-                analysisAccum += std::abs(monoSum / static_cast<float>(numChannels));
-                ++analysisCount;
+            l = l + revL * params.reverbMix * 0.45f;
+            r = r + revR * params.reverbMix * 0.45f;
+
+            outL[i] = std::clamp(l * gainLinear, -1.0f, 1.0f);
+            if (outR != nullptr) {
+                outR[i] = std::clamp(r * gainLinear, -1.0f, 1.0f);
             }
         }
-
-        const float rms = std::sqrt(blockEnergySum / static_cast<float>(numSamples * numChannels));
-        LadType aiLad = params.lad;
-        if (params.aiAnalyzerEnabled && analysisCount > 0) {
-            const float avgAmp = analysisAccum / static_cast<float>(analysisCount);
-            if (avgAmp > 0.18f && params.lad == LadType::Sur) aiLad = LadType::Cahargah;
-            else if (avgAmp < 0.05f && params.lad == LadType::Sur) aiLad = LadType::BayatiSiraz;
-            analysisAccum = 0.0f;
-            analysisCount = 0;
-        }
-
-        updateTelemetry(detectedHz, targetHz, commaApplied, aiLad, rms);
     }
 
     Telemetry getTelemetry() const noexcept {
         Telemetry t;
-        t.inputHz = telemetryInHz.load(std::memory_order_relaxed);
-        t.targetHz = telemetryTargetHz.load(std::memory_order_relaxed);
-        t.commaCents = telemetryCommaCents.load(std::memory_order_relaxed);
-        t.recommendedLad = static_cast<LadType>(telemetryAiLad.load(std::memory_order_relaxed));
-        t.rmsLevel = telemetryRms.load(std::memory_order_relaxed);
+        t.inputHz = estimatedHz;
+        t.targetHz = targetHz;
+        t.commaCents = commaCents;
+        t.rmsLevel = std::clamp(rmsSmoothed * 3.5f, 0.0f, 1.0f);
+        t.recommendedLad = recommendedLad;
         return t;
     }
 
 private:
-    double currentSampleRate = 44100.0;
-    int currentBlockSize = 512;
-
-    double vibratoPhase = 0.0;
-    double driftPhase = 0.0;
-    float smoothedPitchRatio = 1.0f;
-
-    std::array<float, 2> dcPrevX { 0.0f, 0.0f };
-    std::array<float, 2> dcPrevY { 0.0f, 0.0f };
-    std::array<float, 2> lpState { 0.0f, 0.0f };
-    std::array<float, 2> airState { 0.0f, 0.0f };
-    std::array<float, 2> combState { 0.0f, 0.0f };
-
-    std::array<std::vector<float>, 2> delayLine;
-    std::array<int, 2> delayWritePos { 0, 0 };
-
-    float analysisAccum = 0.0f;
-    int analysisCount = 0;
-
-    std::atomic<float> telemetryInHz { 0.0f };
-    std::atomic<float> telemetryTargetHz { 0.0f };
-    std::atomic<float> telemetryCommaCents { 0.0f };
-    std::atomic<int> telemetryAiLad { static_cast<int>(LadType::Sur) };
-    std::atomic<float> telemetryRms { 0.0f };
-
-    static const std::array<float, 7>& getScaleCents(LadType lad) noexcept {
-        static constexpr std::array<float, 7> surCents      = { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1000.0f };
-        static constexpr std::array<float, 7> rastCents     = { 0.0f, 200.0f, 365.0f, 500.0f, 700.0f, 900.0f, 1065.0f };
-        static constexpr std::array<float, 7> segahCents    = { 0.0f, 145.0f, 345.0f, 500.0f, 645.0f, 845.0f, 1000.0f };
-        static constexpr std::array<float, 7> cahargahCents = { 0.0f, 135.0f, 400.0f, 500.0f, 700.0f, 835.0f, 1100.0f };
-        static constexpr std::array<float, 7> bayatiCents   = { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1065.0f };
-        static constexpr std::array<float, 7> humayunCents  = { 0.0f, 145.0f, 400.0f, 500.0f, 645.0f, 800.0f, 1000.0f };
-        static constexpr std::array<float, 7> susterCents   = { 0.0f, 145.0f, 300.0f, 445.0f, 700.0f, 800.0f, 1000.0f };
-        static constexpr std::array<float, 7> navaCents     = { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1065.0f };
-        static constexpr std::array<float, 7> digarCents    = { 0.0f, 150.0f, 350.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
-        static constexpr std::array<float, 7> majorCents    = { 0.0f, 200.0f, 400.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
-        static constexpr std::array<float, 7> minorCents    = { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1000.0f };
+    static const std::array<float, 7>& getLadCents(LadType lad) noexcept {
+        static const std::array<float, 7> sur        { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1000.0f };
+        static const std::array<float, 7> rast       { 0.0f, 200.0f, 365.0f, 500.0f, 700.0f, 900.0f, 1065.0f };
+        static const std::array<float, 7> segah      { 0.0f, 145.0f, 345.0f, 500.0f, 645.0f, 845.0f, 1000.0f };
+        static const std::array<float, 7> cahargah   { 0.0f, 135.0f, 400.0f, 500.0f, 700.0f, 835.0f, 1100.0f };
+        static const std::array<float, 7> bayati     { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1065.0f };
+        static const std::array<float, 7> humayun    { 0.0f, 145.0f, 400.0f, 500.0f, 645.0f, 800.0f, 1000.0f };
+        static const std::array<float, 7> suster     { 0.0f, 145.0f, 300.0f, 445.0f, 700.0f, 800.0f, 1000.0f };
+        static const std::array<float, 7> nava       { 0.0f, 155.0f, 300.0f, 500.0f, 700.0f, 855.0f, 1065.0f };
+        static const std::array<float, 7> diger      { 0.0f, 150.0f, 350.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
+        static const std::array<float, 7> major      { 0.0f, 200.0f, 400.0f, 500.0f, 700.0f, 900.0f, 1100.0f };
+        static const std::array<float, 7> minor      { 0.0f, 200.0f, 300.0f, 500.0f, 700.0f, 800.0f, 1000.0f };
 
         switch (lad) {
-            case LadType::Rast:        return rastCents;
-            case LadType::Segah:       return segahCents;
-            case LadType::Cahargah:    return cahargahCents;
-            case LadType::BayatiSiraz: return bayatiCents;
-            case LadType::Humayun:     return humayunCents;
-            case LadType::Suster:      return susterCents;
-            case LadType::Nava:        return navaCents;
-            case LadType::Digar:       return digarCents;
-            case LadType::Major:       return majorCents;
-            case LadType::Minor:       return minorCents;
-            case LadType::Sur:
-            default:                   return surCents;
+            case LadType::Sur:         return sur;
+            case LadType::Rast:        return rast;
+            case LadType::Segah:       return segah;
+            case LadType::Cahargah:    return cahargah;
+            case LadType::BayatiSiraz: return bayati;
+            case LadType::Humayun:     return humayun;
+            case LadType::Suster:      return suster;
+            case LadType::Nava:        return nava;
+            case LadType::Diger:       return diger;
+            case LadType::Major:       return major;
+            case LadType::Minor:       return minor;
+            default:                   return sur;
         }
     }
 
-    void initializeAIEngines() {
-        juce::Logger::writeToLog("SPitchEngine v2: Muğam, AI Pitch və 4K Vokal konveyeri hazırdır.");
+    static LadType recommendLad(float hz, LadType fallback) noexcept {
+        if (hz <= 50.0f) return fallback;
+        if (hz >= 480.0f) return LadType::Cahargah;
+        if (hz >= 340.0f) return LadType::Sur;
+        if (hz >= 240.0f) return LadType::Segah;
+        return LadType::Rast;
     }
 
-    void shutdownAIEngines() {
-        for (int ch = 0; ch < 2; ++ch) {
-            delayLine[ch].clear();
-        }
-    }
+    double sampleRate = 44100.0;
+    int blockSize = 512;
 
-    float runRNNoiseSample(float x, int ch) noexcept {
-        // DC blocker + yumşaq aşağı keçid küy süzgəci
-        const float r = 0.995f;
-        const float yDc = x - dcPrevX[ch] + r * dcPrevY[ch];
-        dcPrevX[ch] = x;
-        dcPrevY[ch] = yDc;
+    std::vector<float> delayBufferL;
+    std::vector<float> delayBufferR;
+    int delayWritePos = 0;
 
-        const float alpha = 0.35f;
-        lpState[ch] += alpha * (yDc - lpState[ch]);
-        return lpState[ch];
-    }
+    std::array<std::vector<float>, 4> combBufL;
+    std::array<std::vector<float>, 4> combBufR;
+    std::array<size_t, 4> combPosL { 0, 0, 0, 0 };
+    std::array<size_t, 4> combPosR { 0, 0, 0, 0 };
 
-    float detectPitchHz(const juce::AudioBuffer<float>& buffer, int channel) const noexcept {
-        const int n = buffer.getNumSamples();
-        const float* data = buffer.getReadPointer(channel);
-        if (n < 4 || data == nullptr) return 0.0f;
+    double lfoPhase = 0.0;
+    double driftPhase = 0.0;
 
-        float rms = 0.0f;
-        int zeroCrossings = 0;
-        for (int i = 0; i < n; ++i) {
-            rms += data[i] * data[i];
-            if (i > 0 && ((data[i - 1] <= 0.0f && data[i] > 0.0f) || (data[i - 1] >= 0.0f && data[i] < 0.0f))) {
-                ++zeroCrossings;
-            }
-        }
-        rms = std::sqrt(rms / static_cast<float>(n));
-        if (rms < 0.002f) return 0.0f;
+    float lpWarmL = 0.0f;
+    float lpWarmR = 0.0f;
+    float hpAirL = 0.0f;
+    float hpAirR = 0.0f;
+    float prevSampleL = 0.0f;
+    float prevSampleR = 0.0f;
+    float prevMono = 0.0f;
 
-        const double sec = static_cast<double>(n) / currentSampleRate;
-        const float hz = sec > 0.0 ? static_cast<float>((zeroCrossings * 0.5) / sec) : 0.0f;
-        return juce::jlimit(70.0f, 1100.0f, hz > 45.0f ? hz : 220.0f);
-    }
-
-    float computeTargetPitchHz(float detectedHz, const EngineParams& params, float& outCommaCents) const noexcept {
-        outCommaCents = 0.0f;
-        if (detectedHz <= 1.0f) return 0.0f;
-
-        const float exactMidi = 69.0f + 12.0f * std::log2(detectedHz / 440.0f);
-        if (!params.aiPitchEnabled || params.correctionStrength <= 0.001f) {
-            return detectedHz;
-        }
-
-        const auto& scale = getScaleCents(params.lad);
-        const float rootMidi = static_cast<float>(params.rootMidiNote);
-        const float centsRel = (exactMidi - rootMidi) * 100.0f;
-        const float octBase = std::floor(centsRel / 1200.0f) * 1200.0f;
-        const float inOct = centsRel - octBase;
-
-        float bestCent = scale[0];
-        float bestDist = 99999.0f;
-        for (float c : scale) {
-            const float d = std::abs(inOct - c);
-            if (d < bestDist) {
-                bestDist = d;
-                bestCent = c;
-            }
-        }
-        if (std::abs(inOct - 1200.0f) < bestDist) {
-            bestCent = 1200.0f;
-        }
-
-        const float targetMidi = rootMidi + (octBase + bestCent) / 100.0f;
-        const float diffCents = (targetMidi - exactMidi) * 100.0f;
-
-        // Tolerance daxilində zəngulə/təbii mikro-ifadələri qoru, kənar sapmaları çək
-        float effectiveStrength = params.correctionStrength;
-        if (params.naturalMode && std::abs(diffCents) < params.toleranceCents) {
-            effectiveStrength *= 0.35f;
-        }
-
-        const float correctedMidi = exactMidi + (targetMidi - exactMidi) * effectiveStrength;
-        outCommaCents = bestCent - (std::round(bestCent / 100.0f) * 100.0f);
-        return 440.0f * std::pow(2.0f, (correctedMidi - 69.0f) / 12.0f);
-    }
-
-    float runFormantAnd4KSample(float sample, float detectedHz, float pitchRatio, const EngineParams& params, int ch) noexcept {
-        // Yumşaq satürasiya (Warmth)
-        const float drive = 1.0f + params.warmth * 2.2f;
-        float warmed = std::tanh(sample * drive) / std::tanh(drive);
-
-        // 4K Air yüksək tezlik parlaqlığı
-        const float highFreq = warmed - airState[ch];
-        airState[ch] += 0.22f * (warmed - airState[ch]);
-        warmed += highFreq * (params.air4K * 0.45f);
-
-        // Formant / harmonik əlavə qat
-        const float formantShiftRatio = std::pow(2.0f, params.formantShiftSt / 12.0f);
-        const float freqHz = detectedHz > 1.0f ? detectedHz * pitchRatio * formantShiftRatio : 220.0f;
-        const float phaseInc = freqHz / static_cast<float>(currentSampleRate);
-        const float overtone = std::sin(phaseInc * 6.2831853f) * 0.025f * params.correctionStrength;
-
-        return warmed + overtone;
-    }
-
-    float applySpatialEffects(float sample, const EngineParams& params, int ch) noexcept {
-        auto& line = delayLine[ch];
-        if (line.empty()) return sample;
-
-        const int size = static_cast<int>(line.size());
-        const int delaySamples = juce::jlimit(1, size - 2, static_cast<int>(currentSampleRate * 0.14));
-        int readPos = delayWritePos[ch] - delaySamples;
-        if (readPos < 0) readPos += size;
-
-        const float delayed = line[static_cast<size_t>(readPos)];
-        line[static_cast<size_t>(delayWritePos[ch])] = sample + delayed * 0.32f;
-        delayWritePos[ch] = (delayWritePos[ch] + 1) % size;
-
-        // Sadə studiya reverb/hall quyruğu
-        combState[ch] = delayed * 0.65f + combState[ch] * 0.25f;
-
-        const float wetMix = juce::jlimit(0.0f, 0.85f, params.delayMix * 0.45f + params.reverbMix * 0.45f);
-        return sample * (1.0f - wetMix * 0.5f) + (delayed * params.delayMix * 0.5f + combState[ch] * params.reverbMix * 0.5f);
-    }
-
-    void updateTelemetry(float inHz, float outHz, float comma, LadType aiLad, float rms) noexcept {
-        telemetryInHz.store(inHz, std::memory_order_relaxed);
-        telemetryTargetHz.store(outHz, std::memory_order_relaxed);
-        telemetryCommaCents.store(comma, std::memory_order_relaxed);
-        telemetryAiLad.store(static_cast<int>(aiLad), std::memory_order_relaxed);
-        telemetryRms.store(rms, std::memory_order_relaxed);
-    }
+    float rmsSmoothed = 0.0f;
+    float estimatedHz = 0.0f;
+    float targetHz = 0.0f;
+    float commaCents = 0.0f;
+    LadType recommendedLad = LadType::Sur;
 };
