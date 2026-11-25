@@ -1,18 +1,21 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "SPitchParams.h"
 #include <cmath>
+#include <algorithm>
 
 namespace {
-    const juce::Colour bgVoid      { 0xff070509 };
-    const juce::Colour bgPanel     { 0xff120d18 };
-    const juce::Colour bgCard      { 0xff191221 };
-    const juce::Colour goldHi      { 0xfffff2be };
-    const juce::Colour goldMain    { 0xfff5bf47 };
-    const juce::Colour goldBorder  { 0x8ef5bf47 };
-    const juce::Colour cyanAccent  { 0xff38bdf8 };
-    const juce::Colour textMuted   { 0xffcbbd9f };
+    const juce::Colour bgVoid     { 0xff070509 };
+    const juce::Colour bgPanel    { 0xff120d18 };
+    const juce::Colour bgCard     { 0xff191221 };
+    const juce::Colour goldHi     { 0xfffff2be };
+    const juce::Colour goldMain   { 0xfff5bf47 };
+    const juce::Colour goldBorder { 0x8ef5bf47 };
+    const juce::Colour cyanAccent { 0xff38bdf8 };
+    const juce::Colour textLight  { 0xfffaf6ee };
+    const juce::Colour textMuted  { 0xffcbbd9f };
 
-    void styleRotarySlider(juce::Slider& s, const juce::String& suffix = {}) {
+    void configureRotary(juce::Slider& s, const juce::String& suffix) {
         s.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         s.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 68, 18);
         if (suffix.isNotEmpty()) {
@@ -26,21 +29,21 @@ namespace {
         s.setColour(juce::Slider::textBoxBackgroundColourId, bgCard);
     }
 
-    void styleCombo(juce::ComboBox& c) {
+    void configureCombo(juce::ComboBox& c) {
         c.setColour(juce::ComboBox::backgroundColourId, bgCard);
-        c.setColour(juce::ComboBox::textColourId, juce::Colour(0xfffaf6ee));
+        c.setColour(juce::ComboBox::textColourId, textLight);
         c.setColour(juce::ComboBox::outlineColourId, goldBorder);
         c.setColour(juce::ComboBox::arrowColourId, goldMain);
     }
 
-    void styleToggle(juce::ToggleButton& b) {
-        b.setColour(juce::ToggleButton::textColourId, juce::Colour(0xfffaf6ee));
+    void configureToggle(juce::ToggleButton& b) {
+        b.setColour(juce::ToggleButton::textColourId, textLight);
         b.setColour(juce::ToggleButton::tickColourId, goldHi);
         b.setColour(juce::ToggleButton::tickDisabledColourId, textMuted);
     }
 }
 
-SPitchAudioProcessorEditor::SPitchAudioProcessorEditor(SPitchAudioProcessor& p)
+SPitchEditor::SPitchEditor(SPitchProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p) {
     setSize(980, 560);
     setResizable(true, true);
@@ -48,23 +51,23 @@ SPitchAudioProcessorEditor::SPitchAudioProcessorEditor(SPitchAudioProcessor& p)
 
     populateComboBoxes();
 
-    styleCombo(ladBox);
-    styleCombo(keyBox);
-    styleCombo(tuningBox);
-    styleCombo(vocalModeBox);
+    configureCombo(ladBox);
+    configureCombo(keyBox);
+    configureCombo(tuningBox);
+    configureCombo(vocalModeBox);
 
-    styleRotarySlider(strengthSlider, "%");
-    styleRotarySlider(toleranceSlider, " ct");
-    styleRotarySlider(vibratoSlider, "%");
-    styleRotarySlider(formantSlider, " st");
-    styleRotarySlider(reverbSlider, "%");
-    styleRotarySlider(delaySlider, "%");
-    styleRotarySlider(gainSlider, " dB");
+    configureRotary(strengthSlider, "%");
+    configureRotary(toleranceSlider, " ct");
+    configureRotary(vibratoSlider, "%");
+    configureRotary(formantSlider, " st");
+    configureRotary(reverbSlider, "%");
+    configureRotary(delaySlider, "%");
+    configureRotary(gainSlider, " dB");
 
-    styleToggle(naturalModeButton);
-    styleToggle(aiPitchButton);
-    styleToggle(aiAnalyzerButton);
-    styleToggle(bypassButton);
+    configureToggle(naturalModeButton);
+    configureToggle(aiPitchButton);
+    configureToggle(aiAnalyzerButton);
+    configureToggle(bypassButton);
 
     addAndMakeVisible(ladBox);
     addAndMakeVisible(keyBox);
@@ -85,32 +88,32 @@ SPitchAudioProcessorEditor::SPitchAudioProcessorEditor(SPitchAudioProcessor& p)
     addAndMakeVisible(bypassButton);
 
     auto& apvts = audioProcessor.apvts;
-    ladAttach        = std::make_unique<ComboAttachment>(apvts, "lad", ladBox);
-    keyAttach        = std::make_unique<ComboAttachment>(apvts, "rootNote", keyBox);
-    tuningAttach     = std::make_unique<ComboAttachment>(apvts, "tuningHz", tuningBox);
-    vocalModeAttach  = std::make_unique<ComboAttachment>(apvts, "vocalMode", vocalModeBox);
+    ladAttach        = std::make_unique<ComboAttachment>(apvts, SPitchParams::lad, ladBox);
+    keyAttach        = std::make_unique<ComboAttachment>(apvts, SPitchParams::rootNote, keyBox);
+    tuningAttach     = std::make_unique<ComboAttachment>(apvts, SPitchParams::tuningHz, tuningBox);
+    vocalModeAttach  = std::make_unique<ComboAttachment>(apvts, SPitchParams::vocalMode, vocalModeBox);
 
-    strengthAttach   = std::make_unique<SliderAttachment>(apvts, "correctionStrength", strengthSlider);
-    toleranceAttach  = std::make_unique<SliderAttachment>(apvts, "toleranceCents", toleranceSlider);
-    vibratoAttach    = std::make_unique<SliderAttachment>(apvts, "vibratoDepth", vibratoSlider);
-    formantAttach    = std::make_unique<SliderAttachment>(apvts, "formantShift", formantSlider);
-    reverbAttach     = std::make_unique<SliderAttachment>(apvts, "reverbMix", reverbSlider);
-    delayAttach      = std::make_unique<SliderAttachment>(apvts, "delayMix", delaySlider);
-    gainAttach       = std::make_unique<SliderAttachment>(apvts, "outputGain", gainSlider);
+    strengthAttach   = std::make_unique<SliderAttachment>(apvts, SPitchParams::correctionStrength, strengthSlider);
+    toleranceAttach  = std::make_unique<SliderAttachment>(apvts, SPitchParams::toleranceCents, toleranceSlider);
+    vibratoAttach    = std::make_unique<SliderAttachment>(apvts, SPitchParams::vibratoDepth, vibratoSlider);
+    formantAttach    = std::make_unique<SliderAttachment>(apvts, SPitchParams::formantShift, formantSlider);
+    reverbAttach     = std::make_unique<SliderAttachment>(apvts, SPitchParams::reverbMix, reverbSlider);
+    delayAttach      = std::make_unique<SliderAttachment>(apvts, SPitchParams::delayMix, delaySlider);
+    gainAttach       = std::make_unique<SliderAttachment>(apvts, SPitchParams::outputGain, gainSlider);
 
-    naturalAttach    = std::make_unique<ButtonAttachment>(apvts, "naturalMode", naturalModeButton);
-    aiPitchAttach    = std::make_unique<ButtonAttachment>(apvts, "aiPitchEnabled", aiPitchButton);
-    aiAnalyzerAttach = std::make_unique<ButtonAttachment>(apvts, "aiAnalyzerEnabled", aiAnalyzerButton);
-    bypassAttach     = std::make_unique<ButtonAttachment>(apvts, "bypass", bypassButton);
+    naturalAttach    = std::make_unique<ButtonAttachment>(apvts, SPitchParams::naturalMode, naturalModeButton);
+    aiPitchAttach    = std::make_unique<ButtonAttachment>(apvts, SPitchParams::aiPitchEnabled, aiPitchButton);
+    aiAnalyzerAttach = std::make_unique<ButtonAttachment>(apvts, SPitchParams::aiAnalyzerEnabled, aiAnalyzerButton);
+    bypassAttach     = std::make_unique<ButtonAttachment>(apvts, SPitchParams::bypass, bypassButton);
 
     startTimerHz(25);
 }
 
-SPitchAudioProcessorEditor::~SPitchAudioProcessorEditor() {
+SPitchEditor::~SPitchEditor() {
     stopTimer();
 }
 
-void SPitchAudioProcessorEditor::populateComboBoxes() {
+void SPitchEditor::populateComboBoxes() {
     ladBox.clear();
     ladBox.addItemList({
         "Şur", "Rast", "Segah", "Çahargah", "Bayatı-Şiraz",
@@ -127,8 +130,8 @@ void SPitchAudioProcessorEditor::populateComboBoxes() {
     vocalModeBox.addItemList({ "Natural", "Mugham AI", "Modern Pop" }, 1);
 }
 
-void SPitchAudioProcessorEditor::timerCallback() {
-    latestTelemetry = audioProcessor.getEngineTelemetry();
+void SPitchEditor::timerCallback() {
+    latestTelemetry = audioProcessor.engine.getTelemetry();
     phaseAnim += 0.16f;
     if (phaseAnim > juce::MathConstants<float>::twoPi) {
         phaseAnim -= juce::MathConstants<float>::twoPi;
@@ -136,8 +139,9 @@ void SPitchAudioProcessorEditor::timerCallback() {
     repaint();
 }
 
-void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
+void SPitchEditor::paint(juce::Graphics& g) {
     auto bounds = getLocalBounds().toFloat();
+    const float fullW = static_cast<float>(getWidth());
 
     juce::ColourGradient bgGrad(
         bgPanel, bounds.getCentreX(), 0.0f,
@@ -150,21 +154,21 @@ void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
     g.setColour(bgCard);
     g.fillRect(headerRect);
     g.setColour(goldBorder);
-    g.drawLine(0.0f, headerRect.getBottom(), getWidth() * 1.0f, headerRect.getBottom(), 1.5f);
+    g.drawLine(0.0f, headerRect.getBottom(), fullW, headerRect.getBottom(), 1.5f);
 
     g.setColour(goldHi);
     g.setFont(juce::Font(24.0f, juce::Font::bold));
     g.drawText("SPitch", headerRect.reduced(16.0f, 4.0f), juce::Justification::centredLeft);
 
     g.setColour(goldMain);
-    g.setFont(juce::Font(22.0f, juce::Font::italic | juce::Font::bold));
+    g.setFont(juce::Font(21.0f, juce::Font::italic | juce::Font::bold));
     g.drawText("Seymur Ali  |  Muğam & Vocal Studio", headerRect, juce::Justification::centred);
 
     auto footerRect = bounds.removeFromBottom(32.0f);
     g.setColour(bgCard);
     g.fillRect(footerRect);
     g.setColour(goldBorder);
-    g.drawLine(0.0f, footerRect.getY(), getWidth() * 1.0f, footerRect.getY(), 1.2f);
+    g.drawLine(0.0f, footerRect.getY(), fullW, footerRect.getY(), 1.2f);
 
     const juce::String recLad = SPitchEngine::ladToString(latestTelemetry.recommendedLad);
     const juce::String telemetryText =
@@ -185,13 +189,13 @@ void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
     g.setColour(bgPanel);
     g.fillRect(topBar);
     g.setColour(goldBorder);
-    g.drawLine(0.0f, topBar.getBottom(), getWidth() * 1.0f, topBar.getBottom(), 1.0f);
+    g.drawLine(0.0f, topBar.getBottom(), fullW, topBar.getBottom(), 1.0f);
 
     auto bottomModRow = bounds.removeFromBottom(126.0f);
     g.setColour(bgPanel);
     g.fillRect(bottomModRow);
     g.setColour(goldBorder);
-    g.drawLine(0.0f, bottomModRow.getY(), getWidth() * 1.0f, bottomModRow.getY(), 1.0f);
+    g.drawLine(0.0f, bottomModRow.getY(), fullW, bottomModRow.getY(), 1.0f);
 
     auto rightPanel = bounds.removeFromRight(210.0f);
     g.setColour(bgPanel);
@@ -211,8 +215,8 @@ void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
 
     g.setColour(juce::Colour(0x22f5bf47));
     for (int row = 1; row < 8; ++row) {
-        const float y = canvasArea.getY() + (canvasArea.getHeight() * static_cast<float>(row)) / 8.0f;
-        g.drawHorizontalLine(static_cast<int>(y), canvasArea.getX() + 4.0f, canvasArea.getRight() - 4.0f);
+        const float gridY = canvasArea.getY() + (canvasArea.getHeight() * static_cast<float>(row)) / 8.0f;
+        g.drawHorizontalLine(static_cast<int>(gridY), canvasArea.getX() + 4.0f, canvasArea.getRight() - 4.0f);
     }
 
     juce::Path wavePath;
@@ -221,11 +225,11 @@ void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
     for (int i = 0; i <= steps; ++i) {
         const float t = static_cast<float>(i) / static_cast<float>(steps);
         const float x = canvasArea.getX() + t * canvasArea.getWidth();
-        const float y = canvasArea.getCentreY()
-                      + std::sin(t * juce::MathConstants<float>::twoPi * 2.5f + phaseAnim) * baseAmp
-                      + std::cos(t * juce::MathConstants<float>::twoPi * 5.0f - phaseAnim * 0.6f) * (baseAmp * 0.35f);
-        if (i == 0) wavePath.startNewSubPath(x, y);
-        else wavePath.lineTo(x, y);
+        const float waveY = canvasArea.getCentreY()
+                          + std::sin(t * juce::MathConstants<float>::twoPi * 2.5f + phaseAnim) * baseAmp
+                          + std::cos(t * juce::MathConstants<float>::twoPi * 5.0f - phaseAnim * 0.6f) * (baseAmp * 0.35f);
+        if (i == 0) wavePath.startNewSubPath(x, waveY);
+        else wavePath.lineTo(x, waveY);
     }
 
     g.setColour(goldHi);
@@ -235,7 +239,7 @@ void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(1.0f), 6.0f, 1.8f);
 }
 
-void SPitchAudioProcessorEditor::resized() {
+void SPitchEditor::resized() {
     auto bounds = getLocalBounds();
     auto header = bounds.removeFromTop(58);
     bypassButton.setBounds(header.removeFromRight(100).reduced(10, 14));
@@ -250,7 +254,7 @@ void SPitchAudioProcessorEditor::resized() {
     bounds.removeFromBottom(32);
 
     auto bottomRow = bounds.removeFromBottom(126).reduced(8, 6);
-    const int modW = bottomRow.getWidth() / 5;
+    const int modW = std::max(40, bottomRow.getWidth() / 5);
     vibratoSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
     formantSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
     reverbSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
@@ -258,7 +262,7 @@ void SPitchAudioProcessorEditor::resized() {
     gainSlider.setBounds(bottomRow.reduced(4));
 
     auto rightPanel = bounds.removeFromRight(210).reduced(10, 32);
-    const int dialH = rightPanel.getHeight() / 3;
+    const int dialH = std::max(50, rightPanel.getHeight() / 3);
     strengthSlider.setBounds(rightPanel.removeFromTop(dialH).reduced(4));
     toleranceSlider.setBounds(rightPanel.removeFromTop(dialH).reduced(4));
     naturalModeButton.setBounds(rightPanel.removeFromTop(26).reduced(2, 0));
