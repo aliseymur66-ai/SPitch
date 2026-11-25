@@ -3,117 +3,105 @@
 #include <cmath>
 
 namespace {
-    const juce::Colour colBgDark     { 0xff08060a };
-    const juce::Colour colPanel      { 0xff120d17 };
-    const juce::Colour colGoldBright { 0xfffff0b8 };
-    const juce::Colour colGoldMain   { 0xfff4be49 };
-    const juce::Colour colGoldDim    { 0xff8a5a12 };
-    const juce::Colour colCyan       { 0xff38bdf8 };
-    const juce::Colour colEmerald    { 0xff34d399 };
-    const juce::Colour colTextMuted  { 0xffcbbd9f };
+    const juce::Colour bgVoid      { 0xff070509 };
+    const juce::Colour bgPanel     { 0xff120d18 };
+    const juce::Colour bgCard      { 0xff191221 };
+    const juce::Colour goldHi      { 0xfffff2be };
+    const juce::Colour goldMain    { 0xfff5bf47 };
+    const juce::Colour goldBorder  { 0x8ef5bf47 };
+    const juce::Colour cyanAccent  { 0xff38bdf8 };
+    const juce::Colour textMuted   { 0xffcbbd9f };
 
-    void configureRotary(juce::Slider& s, const juce::String& suffix = "") {
+    void styleRotarySlider(juce::Slider& s, const juce::String& suffix = {}) {
         s.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-        s.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 64, 16);
-        s.setTextValueSuffix(suffix);
-        s.setColour(juce::Slider::rotarySliderFillColourId, colGoldMain);
-        s.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour { 0xff281f30 });
-        s.setColour(juce::Slider::thumbColourId, colGoldBright);
-        s.setColour(juce::Slider::textBoxTextColourId, colGoldBright);
-        s.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+        s.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 68, 18);
+        if (suffix.isNotEmpty()) {
+            s.setTextValueSuffix(suffix);
+        }
+        s.setColour(juce::Slider::rotarySliderFillColourId, goldMain);
+        s.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour(0xff2b2036));
+        s.setColour(juce::Slider::thumbColourId, goldHi);
+        s.setColour(juce::Slider::textBoxTextColourId, goldHi);
+        s.setColour(juce::Slider::textBoxOutlineColourId, goldBorder);
+        s.setColour(juce::Slider::textBoxBackgroundColourId, bgCard);
     }
 
-    void configureLinear(juce::Slider& s, const juce::String& suffix = "") {
-        s.setSliderStyle(juce::Slider::LinearHorizontal);
-        s.setTextBoxStyle(juce::Slider::TextBoxRight, false, 54, 16);
-        s.setTextValueSuffix(suffix);
-        s.setColour(juce::Slider::trackColourId, colGoldMain);
-        s.setColour(juce::Slider::backgroundColourId, juce::Colour { 0xff241c2c });
-        s.setColour(juce::Slider::thumbColourId, colGoldBright);
-        s.setColour(juce::Slider::textBoxTextColourId, colGoldBright);
-        s.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+    void styleCombo(juce::ComboBox& c) {
+        c.setColour(juce::ComboBox::backgroundColourId, bgCard);
+        c.setColour(juce::ComboBox::textColourId, juce::Colour(0xfffaf6ee));
+        c.setColour(juce::ComboBox::outlineColourId, goldBorder);
+        c.setColour(juce::ComboBox::arrowColourId, goldMain);
+    }
+
+    void styleToggle(juce::ToggleButton& b) {
+        b.setColour(juce::ToggleButton::textColourId, juce::Colour(0xfffaf6ee));
+        b.setColour(juce::ToggleButton::tickColourId, goldHi);
+        b.setColour(juce::ToggleButton::tickDisabledColourId, textMuted);
     }
 }
 
 SPitchAudioProcessorEditor::SPitchAudioProcessorEditor(SPitchAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p) {
-    setSize(1040, 620);
+    setSize(980, 560);
+    setResizable(true, true);
+    setResizeLimits(760, 440, 1440, 860);
 
-    titleLabel.setText("SPitch", juce::dontSendNotification);
-    titleLabel.setFont(juce::FontOptions(26.0f, juce::Font::bold));
-    titleLabel.setColour(juce::Label::textColourId, colGoldBright);
-    titleLabel.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(titleLabel);
+    populateComboBoxes();
 
-    subtitleLabel.setText("Azerbaijani Vocal Studio  •  AI Pitch & Mugham Engine", juce::dontSendNotification);
-    subtitleLabel.setFont(juce::FontOptions(12.0f, juce::Font::plain));
-    subtitleLabel.setColour(juce::Label::textColourId, colTextMuted);
-    subtitleLabel.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(subtitleLabel);
+    styleCombo(ladBox);
+    styleCombo(keyBox);
+    styleCombo(tuningBox);
+    styleCombo(vocalModeBox);
 
-    ladBox.addItemList({
-        "Şur", "Rast", "Segah", "Çahargah", "Bayatı-Şiraz",
-        "Humayun", "Şüştər", "Nava", "Diğər", "Major", "Minor"
-    }, 1);
-    ladBox.setColour(juce::ComboBox::backgroundColourId, colPanel);
-    ladBox.setColour(juce::ComboBox::textColourId, colGoldBright);
-    ladBox.setColour(juce::ComboBox::outlineColourId, colGoldMain);
+    styleRotarySlider(strengthSlider, "%");
+    styleRotarySlider(toleranceSlider, " ct");
+    styleRotarySlider(vibratoSlider, "%");
+    styleRotarySlider(formantSlider, " st");
+    styleRotarySlider(reverbSlider, "%");
+    styleRotarySlider(delaySlider, "%");
+    styleRotarySlider(gainSlider, " dB");
+
+    styleToggle(naturalModeButton);
+    styleToggle(aiPitchButton);
+    styleToggle(aiAnalyzerButton);
+    styleToggle(bypassButton);
+
     addAndMakeVisible(ladBox);
+    addAndMakeVisible(keyBox);
+    addAndMakeVisible(tuningBox);
+    addAndMakeVisible(vocalModeBox);
 
-    configureLinear(rootSlider, " MIDI");
-    configureRotary(strengthSlider, "%");
-    configureRotary(toleranceSlider, " ct");
-    configureRotary(vibratoSlider, "%");
-    configureRotary(formantSlider, " st");
-    configureRotary(driftSlider, "%");
-    configureRotary(air4kSlider, "%");
-    configureRotary(warmthSlider, "%");
-    configureRotary(stereoSlider, "%");
-    configureRotary(delaySlider, "%");
-    configureRotary(reverbSlider, "%");
-    configureRotary(gainSlider, " dB");
+    addAndMakeVisible(strengthSlider);
+    addAndMakeVisible(toleranceSlider);
+    addAndMakeVisible(vibratoSlider);
+    addAndMakeVisible(formantSlider);
+    addAndMakeVisible(reverbSlider);
+    addAndMakeVisible(delaySlider);
+    addAndMakeVisible(gainSlider);
 
-    for (auto* sl : { &rootSlider, &strengthSlider, &toleranceSlider, &vibratoSlider,
-                     &formantSlider, &driftSlider, &air4kSlider, &warmthSlider,
-                     &stereoSlider, &delaySlider, &reverbSlider, &gainSlider }) {
-        addAndMakeVisible(*sl);
-    }
-
-    for (auto* btn : { &aiPitchButton, &aiAnalyzerButton, &naturalModeButton, &bypassButton }) {
-        btn->setColour(juce::ToggleButton::textColourId, colGoldBright);
-        btn->setColour(juce::ToggleButton::tickColourId, colGoldMain);
-        addAndMakeVisible(*btn);
-    }
-
-    telemetryLabel.setText("GİRİŞ: 0.0 Hz  |  HƏDƏF: 0.0 Hz  |  KOMMA: +0.0 ct", juce::dontSendNotification);
-    telemetryLabel.setFont(juce::FontOptions(12.5f, juce::Font::bold));
-    telemetryLabel.setColour(juce::Label::textColourId, colCyan);
-    addAndMakeVisible(telemetryLabel);
-
-    aiStatusLabel.setText("AI ANALYZER: Muğam və vokal tonallığı izlənilir...", juce::dontSendNotification);
-    aiStatusLabel.setFont(juce::FontOptions(11.5f, juce::Font::plain));
-    aiStatusLabel.setColour(juce::Label::textColourId, colEmerald);
-    addAndMakeVisible(aiStatusLabel);
+    addAndMakeVisible(naturalModeButton);
+    addAndMakeVisible(aiPitchButton);
+    addAndMakeVisible(aiAnalyzerButton);
+    addAndMakeVisible(bypassButton);
 
     auto& apvts = audioProcessor.apvts;
-    ladAttachment         = std::make_unique<ComboAttachment>(apvts, "lad", ladBox);
-    rootAttachment        = std::make_unique<SliderAttachment>(apvts, "rootMidi", rootSlider);
-    strengthAttachment    = std::make_unique<SliderAttachment>(apvts, "strength", strengthSlider);
-    toleranceAttachment   = std::make_unique<SliderAttachment>(apvts, "tolerance", toleranceSlider);
-    vibratoAttachment     = std::make_unique<SliderAttachment>(apvts, "vibrato", vibratoSlider);
-    formantAttachment     = std::make_unique<SliderAttachment>(apvts, "formant", formantSlider);
-    driftAttachment       = std::make_unique<SliderAttachment>(apvts, "drift", driftSlider);
-    air4kAttachment       = std::make_unique<SliderAttachment>(apvts, "air4k", air4kSlider);
-    warmthAttachment      = std::make_unique<SliderAttachment>(apvts, "warmth", warmthSlider);
-    stereoAttachment      = std::make_unique<SliderAttachment>(apvts, "stereoWidth", stereoSlider);
-    delayAttachment       = std::make_unique<SliderAttachment>(apvts, "delayMix", delaySlider);
-    reverbAttachment      = std::make_unique<SliderAttachment>(apvts, "reverbMix", reverbSlider);
-    gainAttachment        = std::make_unique<SliderAttachment>(apvts, "outputGainDb", gainSlider);
+    ladAttach        = std::make_unique<ComboAttachment>(apvts, "lad", ladBox);
+    keyAttach        = std::make_unique<ComboAttachment>(apvts, "rootNote", keyBox);
+    tuningAttach     = std::make_unique<ComboAttachment>(apvts, "tuningHz", tuningBox);
+    vocalModeAttach  = std::make_unique<ComboAttachment>(apvts, "vocalMode", vocalModeBox);
 
-    aiPitchAttachment     = std::make_unique<ButtonAttachment>(apvts, "aiPitch", aiPitchButton);
-    aiAnalyzerAttachment  = std::make_unique<ButtonAttachment>(apvts, "aiAnalyzer", aiAnalyzerButton);
-    naturalModeAttachment = std::make_unique<ButtonAttachment>(apvts, "naturalMode", naturalModeButton);
-    bypassAttachment      = std::make_unique<ButtonAttachment>(apvts, "bypass", bypassButton);
+    strengthAttach   = std::make_unique<SliderAttachment>(apvts, "correctionStrength", strengthSlider);
+    toleranceAttach  = std::make_unique<SliderAttachment>(apvts, "toleranceCents", toleranceSlider);
+    vibratoAttach    = std::make_unique<SliderAttachment>(apvts, "vibratoDepth", vibratoSlider);
+    formantAttach    = std::make_unique<SliderAttachment>(apvts, "formantShift", formantSlider);
+    reverbAttach     = std::make_unique<SliderAttachment>(apvts, "reverbMix", reverbSlider);
+    delayAttach      = std::make_unique<SliderAttachment>(apvts, "delayMix", delaySlider);
+    gainAttach       = std::make_unique<SliderAttachment>(apvts, "outputGain", gainSlider);
+
+    naturalAttach    = std::make_unique<ButtonAttachment>(apvts, "naturalMode", naturalModeButton);
+    aiPitchAttach    = std::make_unique<ButtonAttachment>(apvts, "aiPitchEnabled", aiPitchButton);
+    aiAnalyzerAttach = std::make_unique<ButtonAttachment>(apvts, "aiAnalyzerEnabled", aiAnalyzerButton);
+    bypassAttach     = std::make_unique<ButtonAttachment>(apvts, "bypass", bypassButton);
 
     startTimerHz(25);
 }
@@ -122,162 +110,158 @@ SPitchAudioProcessorEditor::~SPitchAudioProcessorEditor() {
     stopTimer();
 }
 
+void SPitchAudioProcessorEditor::populateComboBoxes() {
+    ladBox.clear();
+    ladBox.addItemList({
+        "Şur", "Rast", "Segah", "Çahargah", "Bayatı-Şiraz",
+        "Humayun", "Şüştər", "Nava", "Diğər", "Major", "Minor"
+    }, 1);
+
+    keyBox.clear();
+    keyBox.addItemList({ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }, 1);
+
+    tuningBox.clear();
+    tuningBox.addItemList({ "432 Hz", "440 Hz", "442 Hz" }, 1);
+
+    vocalModeBox.clear();
+    vocalModeBox.addItemList({ "Natural", "Mugham AI", "Modern Pop" }, 1);
+}
+
 void SPitchAudioProcessorEditor::timerCallback() {
-    animatedPhase += 0.14f;
-    const auto tel = audioProcessor.getEngineTelemetry();
-
-    const juce::String sign = tel.commaCents > 0.0f ? "+" : "";
-    telemetryLabel.setText(
-        "GİRİŞ: " + juce::String(tel.inputHz, 1) + " Hz  |  " +
-        "HƏDƏF: " + juce::String(tel.targetHz, 1) + " Hz  |  " +
-        "KOMMA: " + sign + juce::String(tel.commaCents, 1) + " ct",
-        juce::dontSendNotification
-    );
-
-    const char* recName = SPitchEngine::ladToString(tel.recommendedLad);
-    aiStatusLabel.setText(
-        juce::String("AI ANALYZER: Tövsiyə olunan lad -> ") + recName +
-        "  |  Səviyyə: " + juce::String(tel.rmsLevel * 100.0f, 0) + "%",
-        juce::dontSendNotification
-    );
-
+    latestTelemetry = audioProcessor.getEngineTelemetry();
+    phaseAnim += 0.16f;
+    if (phaseAnim > juce::MathConstants<float>::twoPi) {
+        phaseAnim -= juce::MathConstants<float>::twoPi;
+    }
     repaint();
 }
 
-void SPitchAudioProcessorEditor::drawButaMotif(juce::Graphics& g, juce::Rectangle<float> bounds, bool mirrorX) const {
-    juce::Graphics::ScopedSaveState state(g);
-    if (mirrorX) {
-        g.addTransform(juce::AffineTransform::scale(-1.0f, 1.0f, bounds.getCentreX(), bounds.getCentreY()));
-    }
-
-    juce::Path buta;
-    const float x = bounds.getX();
-    const float y = bounds.getY();
-    const float w = bounds.getWidth();
-    const float h = bounds.getHeight();
-
-    buta.startNewSubPath(x + w * 0.55f, y + h * 0.08f);
-    buta.cubicTo(x + w * 0.12f, y + h * 0.14f, x + w * 0.08f, y + h * 0.88f, x + w * 0.58f, y + h * 0.90f);
-    buta.cubicTo(x + w * 0.92f, y + h * 0.90f, x + w * 0.94f, y + h * 0.42f, x + w * 0.56f, y + h * 0.46f);
-    buta.cubicTo(x + w * 0.36f, y + h * 0.48f, x + w * 0.38f, y + h * 0.68f, x + w * 0.55f, y + h * 0.68f);
-
-    g.setColour(colGoldMain.withAlpha(0.32f));
-    g.strokePath(buta, juce::PathStrokeType(2.0f));
-}
-
-void SPitchAudioProcessorEditor::drawPitchCurve(juce::Graphics& g, juce::Rectangle<float> bounds) const {
-    g.setColour(juce::Colour { 0xff0b090f });
-    g.fillRoundedRectangle(bounds, 8.0f);
-
-    g.setColour(colGoldMain.withAlpha(0.35f));
-    g.drawRoundedRectangle(bounds, 8.0f, 1.2f);
-
-    // Tor xəttləri
-    g.setColour(colGoldMain.withAlpha(0.09f));
-    for (int i = 1; i < 10; ++i) {
-        const float gy = bounds.getY() + (bounds.getHeight() * i) / 10.0f;
-        g.drawHorizontalLine(static_cast<int>(gy), bounds.getX() + 6.0f, bounds.getRight() - 6.0f);
-    }
-    for (int j = 1; j < 12; ++j) {
-        const float gx = bounds.getX() + (bounds.getWidth() * j) / 12.0f;
-        g.drawVerticalLine(static_cast<int>(gx), bounds.getY() + 6.0f, bounds.getBottom() - 6.0f);
-    }
-
-    const float str = static_cast<float>(strengthSlider.getValue() / 100.0);
-    juce::Path curve;
-    const int steps = 48;
-    for (int i = 0; i <= steps; ++i) {
-        const float t = static_cast<float>(i) / static_cast<float>(steps);
-        const float px = bounds.getX() + 12.0f + t * (bounds.getWidth() - 24.0f);
-        const float rawWave = 0.5f + 0.24f * std::sin(t * 7.2f + animatedPhase * 0.25f)
-                                    - 0.11f * std::cos(t * 13.0f);
-        const float snapped = 0.5f + (rawWave - 0.5f) * (1.0f - str * 0.22f);
-        const float py = bounds.getY() + juce::jlimit(0.12f, 0.88f, snapped) * bounds.getHeight();
-
-        if (i == 0) curve.startNewSubPath(px, py);
-        else curve.lineTo(px, py);
-    }
-
-    g.setColour(colGoldMain.withAlpha(0.28f));
-    g.strokePath(curve, juce::PathStrokeType(6.0f));
-
-    g.setColour(colGoldBright);
-    g.strokePath(curve, juce::PathStrokeType(2.2f));
-}
-
-void SPitchAudioProcessorEditor::drawMiniPiano(juce::Graphics& g, juce::Rectangle<float> bounds) const {
-    const int numKeys = 24;
-    const float keyW = bounds.getWidth() / static_cast<float>(numKeys);
-    const int rootNote = static_cast<int>(rootSlider.getValue()) % 12;
-
-    for (int i = 0; i < numKeys; ++i) {
-        const int pc = i % 12;
-        const bool isInRoot = (pc == rootNote);
-        const bool isBlack = (pc == 1 || pc == 3 || pc == 6 || pc == 8 || pc == 10);
-
-        juce::Rectangle<float> kr(bounds.getX() + i * keyW, bounds.getY(), keyW - 1.0f, bounds.getHeight());
-        if (isInRoot) g.setColour(colGoldMain);
-        else if (isBlack) g.setColour(juce::Colour { 0xff1b1524 });
-        else g.setColour(juce::Colour { 0xffd8dee9 });
-
-        g.fillRect(kr);
-    }
-}
-
 void SPitchAudioProcessorEditor::paint(juce::Graphics& g) {
+    auto bounds = getLocalBounds().toFloat();
+
     juce::ColourGradient bgGrad(
-        juce::Colour { 0xff160f1f }, 0.0f, 0.0f,
-        colBgDark, 0.0f, static_cast<float>(getHeight()), false
+        bgPanel, bounds.getCentreX(), 0.0f,
+        bgVoid, bounds.getCentreX(), bounds.getHeight(), false
     );
     g.setGradientFill(bgGrad);
-    g.fillAll();
+    g.fillRect(bounds);
 
-    auto outer = getLocalBounds().toFloat().reduced(6.0f);
-    g.setColour(colGoldMain.withAlpha(0.55f));
-    g.drawRoundedRectangle(outer, 12.0f, 1.8f);
+    auto headerRect = bounds.removeFromTop(58.0f);
+    g.setColour(bgCard);
+    g.fillRect(headerRect);
+    g.setColour(goldBorder);
+    g.drawLine(0.0f, headerRect.getBottom(), getWidth() * 1.0f, headerRect.getBottom(), 1.5f);
 
-    // Milli buta naxışları
-    drawButaMotif(g, { 18.0f, 12.0f, 72.0f, 84.0f }, false);
-    drawButaMotif(g, { static_cast<float>(getWidth()) - 90.0f, 12.0f, 72.0f, 84.0f }, true);
+    g.setColour(goldHi);
+    g.setFont(juce::Font(24.0f, juce::Font::bold));
+    g.drawText("SPitch", headerRect.reduced(16.0f, 4.0f), juce::Justification::centredLeft);
 
-    // Qrafik və piano sahəsi
-    drawPitchCurve(g, { 24.0f, 178.0f, 680.0f, 275.0f });
-    drawMiniPiano(g, { 24.0f, 556.0f, static_cast<float>(getWidth()) - 48.0f, 34.0f });
+    g.setColour(goldMain);
+    g.setFont(juce::Font(22.0f, juce::Font::italic | juce::Font::bold));
+    g.drawText("Seymur Ali  |  Muğam & Vocal Studio", headerRect, juce::Justification::centred);
+
+    auto footerRect = bounds.removeFromBottom(32.0f);
+    g.setColour(bgCard);
+    g.fillRect(footerRect);
+    g.setColour(goldBorder);
+    g.drawLine(0.0f, footerRect.getY(), getWidth() * 1.0f, footerRect.getY(), 1.2f);
+
+    const juce::String recLad = SPitchEngine::ladToString(latestTelemetry.recommendedLad);
+    const juce::String telemetryText =
+        "AI Lad: " + recLad +
+        "   |   Giriş: " + juce::String(latestTelemetry.inputHz, 1) + " Hz" +
+        "   |   AI Pitch: " + juce::String(latestTelemetry.targetHz, 1) + " Hz" +
+        "   |   Komma: " + juce::String(latestTelemetry.commaCents, 0) + " ct";
+
+    g.setColour(cyanAccent);
+    g.setFont(juce::Font(12.5f, juce::Font::bold));
+    g.drawText(telemetryText, footerRect.reduced(14.0f, 2.0f), juce::Justification::centredLeft);
+
+    g.setColour(textMuted);
+    g.setFont(juce::Font(11.5f, juce::Font::italic));
+    g.drawText("Muğam ruhu, müasir texnologiya...", footerRect.reduced(14.0f, 2.0f), juce::Justification::centredRight);
+
+    auto topBar = bounds.removeFromTop(44.0f);
+    g.setColour(bgPanel);
+    g.fillRect(topBar);
+    g.setColour(goldBorder);
+    g.drawLine(0.0f, topBar.getBottom(), getWidth() * 1.0f, topBar.getBottom(), 1.0f);
+
+    auto bottomModRow = bounds.removeFromBottom(126.0f);
+    g.setColour(bgPanel);
+    g.fillRect(bottomModRow);
+    g.setColour(goldBorder);
+    g.drawLine(0.0f, bottomModRow.getY(), getWidth() * 1.0f, bottomModRow.getY(), 1.0f);
+
+    auto rightPanel = bounds.removeFromRight(210.0f);
+    g.setColour(bgPanel);
+    g.fillRect(rightPanel);
+    g.setColour(goldBorder);
+    g.drawLine(rightPanel.getX(), rightPanel.getY(), rightPanel.getX(), rightPanel.getBottom(), 1.0f);
+
+    g.setColour(goldHi);
+    g.setFont(juce::Font(14.0f, juce::Font::bold));
+    g.drawText("Correction", rightPanel.removeFromTop(28.0f), juce::Justification::centred);
+
+    auto canvasArea = bounds.reduced(10.0f, 8.0f);
+    g.setColour(bgCard);
+    g.fillRoundedRectangle(canvasArea, 8.0f);
+    g.setColour(goldBorder);
+    g.drawRoundedRectangle(canvasArea, 8.0f, 1.2f);
+
+    g.setColour(juce::Colour(0x22f5bf47));
+    for (int row = 1; row < 8; ++row) {
+        const float y = canvasArea.getY() + (canvasArea.getHeight() * static_cast<float>(row)) / 8.0f;
+        g.drawHorizontalLine(static_cast<int>(y), canvasArea.getX() + 4.0f, canvasArea.getRight() - 4.0f);
+    }
+
+    juce::Path wavePath;
+    const int steps = 80;
+    const float baseAmp = std::max(8.0f, latestTelemetry.rmsLevel * canvasArea.getHeight() * 0.35f);
+    for (int i = 0; i <= steps; ++i) {
+        const float t = static_cast<float>(i) / static_cast<float>(steps);
+        const float x = canvasArea.getX() + t * canvasArea.getWidth();
+        const float y = canvasArea.getCentreY()
+                      + std::sin(t * juce::MathConstants<float>::twoPi * 2.5f + phaseAnim) * baseAmp
+                      + std::cos(t * juce::MathConstants<float>::twoPi * 5.0f - phaseAnim * 0.6f) * (baseAmp * 0.35f);
+        if (i == 0) wavePath.startNewSubPath(x, y);
+        else wavePath.lineTo(x, y);
+    }
+
+    g.setColour(goldHi);
+    g.strokePath(wavePath, juce::PathStrokeType(2.2f));
+
+    g.setColour(goldMain);
+    g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(1.0f), 6.0f, 1.8f);
 }
 
 void SPitchAudioProcessorEditor::resized() {
-    const int w = getWidth();
+    auto bounds = getLocalBounds();
+    auto header = bounds.removeFromTop(58);
+    bypassButton.setBounds(header.removeFromRight(100).reduced(10, 14));
 
-    titleLabel.setBounds(w / 2 - 160, 14, 320, 32);
-    subtitleLabel.setBounds(w / 2 - 220, 44, 440, 20);
+    auto topBar = bounds.removeFromTop(44).reduced(10, 7);
+    const int topW = topBar.getWidth();
+    ladBox.setBounds(topBar.removeFromLeft(static_cast<int>(topW * 0.34f)).reduced(3, 0));
+    keyBox.setBounds(topBar.removeFromLeft(static_cast<int>(topW * 0.16f)).reduced(3, 0));
+    tuningBox.setBounds(topBar.removeFromLeft(static_cast<int>(topW * 0.22f)).reduced(3, 0));
+    vocalModeBox.setBounds(topBar.reduced(3, 0));
 
-    ladBox.setBounds(24, 76, 170, 28);
-    rootSlider.setBounds(206, 74, 210, 32);
+    bounds.removeFromBottom(32);
 
-    aiPitchButton.setBounds(432, 74, 110, 30);
-    aiAnalyzerButton.setBounds(546, 74, 125, 30);
-    naturalModeButton.setBounds(676, 74, 130, 30);
-    bypassButton.setBounds(812, 74, 90, 30);
+    auto bottomRow = bounds.removeFromBottom(126).reduced(8, 6);
+    const int modW = bottomRow.getWidth() / 5;
+    vibratoSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
+    formantSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
+    reverbSlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
+    delaySlider.setBounds(bottomRow.removeFromLeft(modW).reduced(4));
+    gainSlider.setBounds(bottomRow.reduced(4));
 
-    aiStatusLabel.setBounds(24, 114, w - 48, 22);
-    telemetryLabel.setBounds(24, 140, w - 48, 24);
-
-    // Sağ tərəf: Correction dairələri
-    const int rightX = 724;
-    strengthSlider.setBounds(rightX, 178, 136, 132);
-    toleranceSlider.setBounds(rightX + 148, 178, 136, 132);
-    formantSlider.setBounds(rightX, 320, 136, 132);
-    gainSlider.setBounds(rightX + 148, 320, 136, 132);
-
-    // Aşağı 4K / FX sırası
-    const int fxY = 464;
-    const int fxW = 112;
-    const int gap = 10;
-    juce::Slider* fxRow[] = {
-        &vibratoSlider, &driftSlider, &air4kSlider, &warmthSlider,
-        &stereoSlider, &delaySlider, &reverbSlider
-    };
-    for (int i = 0; i < 7; ++i) {
-        fxRow[i]->setBounds(24 + i * (fxW + gap), fxY, fxW, 82);
-    }
+    auto rightPanel = bounds.removeFromRight(210).reduced(10, 32);
+    const int dialH = rightPanel.getHeight() / 3;
+    strengthSlider.setBounds(rightPanel.removeFromTop(dialH).reduced(4));
+    toleranceSlider.setBounds(rightPanel.removeFromTop(dialH).reduced(4));
+    naturalModeButton.setBounds(rightPanel.removeFromTop(26).reduced(2, 0));
+    aiPitchButton.setBounds(rightPanel.removeFromTop(26).reduced(2, 0));
+    aiAnalyzerButton.setBounds(rightPanel.removeFromTop(26).reduced(2, 0));
 }
