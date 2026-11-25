@@ -4,7 +4,6 @@ project(SPitch VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# JUCE repozitoriyası yerli və ya FetchContent ilə qoşulur
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/JUCE")
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/JUCE" JUCE)
 else()
@@ -33,13 +32,15 @@ juce_add_plugin(SPitch
 
 juce_generate_juce_header(SPitch)
 
+file(GLOB_RECURSE SPITCH_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+list(FILTER SPITCH_SOURCES EXCLUDE REGEX "build/|JUCE/")
+
 target_sources(SPitch
     PRIVATE
-        Source/SPitchEngine.h
-        Source/PluginProcessor.h
-        Source/PluginProcessor.cpp
-        Source/PluginEditor.h
-        Source/PluginEditor.cpp
+        ${SPITCH_SOURCES}
 )
 
 target_compile_definitions(SPitch
