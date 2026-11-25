@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 
 class SPitchEngine {
 public:
@@ -78,16 +79,21 @@ public:
 
         combPosL.fill(0);
         combPosR.fill(0);
-        combBufL[0].assign(1116, 0.0f); combBufL[1].assign(1188, 0.0f);
-        combBufL[2].assign(1277, 0.0f); combBufL[3].assign(1356, 0.0f);
-        combBufR[0].assign(1139, 0.0f); combBufR[1].assign(1211, 0.0f);
-        combBufR[2].assign(1300, 0.0f); combBufR[3].assign(1379, 0.0f);
+        combBufL[0].assign(1116, 0.0f);
+        combBufL[1].assign(1188, 0.0f);
+        combBufL[2].assign(1277, 0.0f);
+        combBufL[3].assign(1356, 0.0f);
+        combBufR[0].assign(1139, 0.0f);
+        combBufR[1].assign(1211, 0.0f);
+        combBufR[2].assign(1300, 0.0f);
+        combBufR[3].assign(1379, 0.0f);
 
         lfoPhase = 0.0;
         driftPhase = 0.0;
         lpWarmL = lpWarmR = 0.0f;
         hpAirL = hpAirR = 0.0f;
         prevSampleL = prevSampleR = 0.0f;
+        prevMono = 0.0f;
         rmsSmoothed = 0.0f;
         estimatedHz = 0.0f;
         targetHz = 0.0f;
@@ -106,7 +112,6 @@ public:
         const float* inL = buffer.getReadPointer(0);
         const float* inR = (numChannels > 1) ? buffer.getReadPointer(1) : inL;
 
-        // Sadə RMS və tezlik təxmini (AI Analyzer + AI Pitch telemetriyası üçün)
         double sumSq = 0.0;
         int zeroCrossings = 0;
         for (int i = 0; i < numSamples; ++i) {
@@ -180,7 +185,6 @@ public:
             float l = inL[i];
             float r = inR[i];
 
-            // Vibrato və Pitch Drift modulyasiyası
             lfoPhase += (2.0 * juce::MathConstants<double>::pi * 5.6) / sampleRate;
             if (lfoPhase > juce::MathConstants<double>::twoPi) lfoPhase -= juce::MathConstants<double>::twoPi;
 
@@ -194,14 +198,12 @@ public:
             l *= modFactor;
             r *= modFactor;
 
-            // Warmth (aşağı-orta istilik)
             const float warmCoeff = 0.12f + 0.25f * params.warmth;
             lpWarmL += warmCoeff * (l - lpWarmL);
             lpWarmR += warmCoeff * (r - lpWarmR);
             l = l * (1.0f - 0.35f * params.warmth) + lpWarmL * (0.35f * params.warmth);
             r = r * (1.0f - 0.35f * params.warmth) + lpWarmR * (0.35f * params.warmth);
 
-            // 4K Air (yüksək tezlik parıltısı)
             const float hpL = l - prevSampleL + 0.92f * hpAirL;
             const float hpR = r - prevSampleR + 0.92f * hpAirR;
             prevSampleL = l;
@@ -211,13 +213,11 @@ public:
             l += hpL * params.air4K * 0.35f;
             r += hpR * params.air4K * 0.35f;
 
-            // Stereo Width
             const float mid = 0.5f * (l + r);
             const float side = 0.5f * (l - r) * (0.5f + params.stereoWidth);
             l = mid + side;
             r = mid - side;
 
-            // Delay
             const int readPos = (delayWritePos - delaySamples + static_cast<int>(delayBufferL.size()))
                           % static_cast<int>(delayBufferL.size());
             const float delL = delayBufferL[static_cast<size_t>(readPos)];
@@ -229,7 +229,6 @@ public:
             l += delL * params.delayMix * 0.5f;
             r += delR * params.delayMix * 0.5f;
 
-            // Yüngül stereo Reverb
             float revL = 0.0f;
             float revR = 0.0f;
             for (int c = 0; c < 4; ++c) {
