@@ -38,6 +38,12 @@ public:
         float warmth = 0.35f;
         float stereoWidth = 0.55f;
         float delayMix = 0.25f;
+        float tuningHz = 440.0f, vibratoRateHz = 5.8f, formantAmount = 0.7f, harmonyMix = 0.6f;
+        int   harmonyVoices = 2;   // 0..2
+        int   harmonyType = 2;     // 0 Major, 1 Minor, 2 Lad-dan
+        int   reverbType = 1;      // 0 Room, 1 Hall, 2 Plate
+        LadType mugamHint = LadType::Rast;  // AI Analyzer üçün üstünlük verilən lad
+        bool  analyzerLock = false;         // true = tapılan lad/kök sabitlənir
         float delayMs = 220.0f;          // yeni: delay vaxtı
         float reverbMix = 0.40f;
         float outputGainDb = 1.5f;
@@ -126,6 +132,8 @@ public:
 
     void reset() { resetState(); }
 
+    static const std::array<float, 7>& ladDegrees(LadType l) noexcept { return getLadCents(l); }
+
     int getLatencySamples() const noexcept {
         return static_cast<int>(grainLength * 0.5) + 6;
     }
@@ -141,6 +149,7 @@ public:
         if (p.bypassed) { wasBypassed = true; return; }
         if (wasBypassed) { shiftSm = 0.0f; targetShiftCents = 0.0f; curTargetValid = false; wasBypassed = false; }
         if (!paramsInit) snapParams(p);
+        refHz = std::clamp(p.tuningHz, 400.0f, 480.0f);
 
         float* outL = buffer.getWritePointer(0);
         float* outR = (ch > 1) ? buffer.getWritePointer(1) : nullptr;
@@ -180,7 +189,7 @@ public:
             if (transLeft > 0) --transLeft;
             shiftSm += coeff * (targetShiftCents - shiftSm);
 
-            lfoPhase += twoPi * 5.6f / sr;     if (lfoPhase > twoPi) lfoPhase -= twoPi;
+            lfoPhase += twoPi * std::clamp(p.vibratoRateHz, 1.0f, 12.0f) / sr;     if (lfoPhase > twoPi) lfoPhase -= twoPi;
             driftPhase += twoPi * 0.35f / sr;  if (driftPhase > twoPi) driftPhase -= twoPi;
             drift2Phase += twoPi * 0.91f / sr; if (drift2Phase > twoPi) drift2Phase -= twoPi;
 
@@ -207,10 +216,31 @@ public:
             float r = outR ? (readHermite(pitchBufR, pitchWritePos, delayA) * winA
                             + readHermite(pitchBufR, pitchWritePos, delayB) * winB)
                            : l;
+            // ---- harmoniya səsləri (düzəldilmiş notun üstünə lad dərəcəsi ilə)
+            {
+                const float hTarget = (voiced && p.harmonyVoices > 0) ? p.harmonyMix : 0.0f;
+                smHarm += paramCoeff * (hTarget - smHarm);
+                if (smHarm > 0.002f) {
+                    const int nv = std::min(2, p.harmonyVoices);
+                    for (int v = 0; v < nv; ++v) {
+                        hInt[v] += coeffTrans * (hIntTarget[v] - hInt[v]);
+                        const double vr = ratio * std::exp2(static_cast<double>(hInt[v]) / 1200.0);
+                        hPhase[v] += (1.0 - vr) / grainLength;
+                        hPhase[v] -= std::floor(hPhase[v]);
+                        double pb = hPhase[v] + 0.5;
+                        if (pb >= 1.0) pb -= 1.0;
+                        const float wA = static_cast<float>(0.5 - 0.5 * std::cos(2.0 * juce::MathConstants<double>::pi * hPhase[v]));
+                        const float hs = (readHermite(pitchBufL, pitchWritePos, hPhase[v] * grainLength + 6.0) * wA
+                                        + readHermite(pitchBufL, pitchWritePos, pb * grainLength + 6.0) * (1.0f - wA)) * smHarm * 0.55f;
+                        l += hs * (v == 0 ? 1.0f : 0.45f);
+                        r += hs * (v == 0 ? 0.45f : 1.0f);
+                    }
+                }
+            }
             if (++pitchWritePos >= psSize) pitchWritePos = 0;
 
             // ---- formant (təxmini spektral meyl)
-            const float tilt = std::clamp(1.0f + 0.06f * smFormant, 0.5f, 1.8f);
+            const float tilt = std::clamp(1.0f + 0.085f * smFormant * p.formantAmount, 0.5f, 1.8f);
             lpFormL += formCoef * (l - lpFormL);
             lpFormR += formCoef * (r - lpFormR);
             l = lpFormL + (l - lpFormL) * tilt;
@@ -247,10 +277,12 @@ public:
 
             // ---- reverb
             const float revIn = (l + r) * 0.5f * 0.15f;
+            const float rvFb   = (p.reverbType == 0) ? 0.70f : (p.reverbType == 1 ? 0.80f : 0.86f);
+            const float rvDamp = (p.reverbType == 0) ? 0.45f : (p.reverbType == 1 ? 0.30f : 0.12f);
             float revL = 0.0f, revR = 0.0f;
             for (int c = 0; c < 4; ++c) {
-                revL += combsL[c].process(revIn, 0.80f, 0.30f);
-                revR += combsR[c].process(revIn, 0.80f, 0.30f);
+                revL += combsL[c].process(revIn, rvFb, rvDamp);
+                revR += combsR[c].process(revIn, rvFb, rvDamp);
             }
             for (int a = 0; a < 2; ++a) {
                 revL = apsL[a].process(revL);
@@ -401,6 +433,7 @@ private:
         pitchWritePos = 0; delayWritePos = 0;
         grainPhaseA = 0.0;
         lfoPhase = driftPhase = drift2Phase = 0.0f;
+        hPhase[0] = hPhase[1] = 0.0; hInt[0] = hInt[1] = hIntTarget[0] = hIntTarget[1] = 0.0f; smHarm = 0.0f;
         lpWarmL = lpWarmR = lpFormL = lpFormR = 0.0f;
         hpAirL = hpAirR = prevInL = prevInR = 0.0f;
         dlyLpL = dlyLpR = 0.0f;
@@ -490,7 +523,7 @@ private:
         unvoicedFrames = 0;
         voiced = true;
 
-        const float c = 1200.0f * std::log2(hz / 440.0f);   // mütləq sent (A440-a nəzərən)
+        const float c = 1200.0f * std::log2(hz / refHz);   // mütləq sent (A440-a nəzərən)
 
         // median süzgəc (oktava səhvlərinə qarşı)
         medBuf[static_cast<size_t>(medIdx)] = c;
@@ -503,7 +536,7 @@ private:
         // lad analizi üçün histoqram (10 sent-lik qutular, oktava daxilində)
         for (auto& h : hist) h *= 0.9993f;
         hist[static_cast<size_t>(static_cast<int>(wrap1200(cm) / 10.0f) % kKeyBins)] += conf * conf;
-        if (++framesSinceKey >= 40) { framesSinceKey = 0; estimateKey(p); }
+        if (++framesSinceKey >= 40) { framesSinceKey = 0; if (!(p.analyzerLock && keyReady)) estimateKey(p); }
 
         // aktiv lad + kök
         const float manualRoot = manualRootCents(p.rootMidiNote);
@@ -557,11 +590,20 @@ private:
 
         // telemetriya
         const float degRel = wrap1200(targetAbs - activeRootCents);
+        {   // harmoniya intervalları
+            int idx = 0; float bd = 1e9f;
+            for (int k = 0; k < 7; ++k) { const float d = std::fabs(degRel - scale[static_cast<size_t>(k)]); if (d < bd) { bd = d; idx = k; } }
+            if (std::fabs(degRel - 1200.0f) < bd) idx = 0;
+            auto up = [&](int steps) { const int j = idx + steps; return scale[static_cast<size_t>(j % 7)] + 1200.0f * static_cast<float>(j / 7) - scale[static_cast<size_t>(idx)]; };
+            if (p.harmonyType == 0)      { hIntTarget[0] = 400.0f; hIntTarget[1] = 700.0f; }
+            else if (p.harmonyType == 1) { hIntTarget[0] = 300.0f; hIntTarget[1] = 700.0f; }
+            else                         { hIntTarget[0] = up(2);  hIntTarget[1] = up(4); }
+        }
         float midi = 69.0f + activeRootCents / 100.0f;
         midi += 12.0f * std::round((static_cast<float>(p.rootMidiNote) - midi) / 12.0f);
 
-        tInputHz.store(440.0f * std::exp2(cm / 1200.0f), std::memory_order_relaxed);
-        tTargetHz.store(440.0f * std::exp2(targetAbs / 1200.0f), std::memory_order_relaxed);
+        tInputHz.store(refHz * std::exp2(cm / 1200.0f), std::memory_order_relaxed);
+        tTargetHz.store(refHz * std::exp2(targetAbs / 1200.0f), std::memory_order_relaxed);
         tComma.store(degRel - std::round(degRel / 100.0f) * 100.0f, std::memory_order_relaxed);
         tLad.store(static_cast<int>(activeLad), std::memory_order_relaxed);
         tRootMidi.store(static_cast<int>(std::lround(midi)), std::memory_order_relaxed);
@@ -599,7 +641,8 @@ private:
                     s += w[k] * S[static_cast<size_t>(idx)];
                 }
                 if (keyReady && lad == detLad && r == detRootBin) s *= 1.12f;  // sabitlik
-                if (lad == p.lad && r == manualBin) s *= 1.05f;                // istifadəçi seçiminə kiçik üstünlük
+                if (lad == p.lad && r == manualBin) s *= 1.05f;
+                if (lad == p.mugamHint) s *= 1.08f;                // istifadəçi seçiminə kiçik üstünlük
                 if (s > bestScore) { bestScore = s; bestLad = lad; bestRoot = r; }
             }
         }
@@ -610,6 +653,7 @@ private:
 
     // ------------------------------------------------------------------ data
     double sampleRate = 44100.0;
+    float refHz = 440.0f;
 
     // pitch shifter
     std::vector<float> pitchBufL, pitchBufR;
@@ -629,6 +673,8 @@ private:
     float hpAirL = 0, hpAirR = 0, prevInL = 0, prevInR = 0;
     float dlyLpL = 0, dlyLpR = 0;
     float lfoPhase = 0, driftPhase = 0, drift2Phase = 0;
+    double hPhase[2] = { 0.0, 0.0 };
+    float hInt[2] = { 0.0f, 0.0f }, hIntTarget[2] = { 0.0f, 0.0f }, smHarm = 0.0f;
 
     // hamarlanmış parametrlər
     float smWarmth = 0, smAir = 0, smWidth = 0, smDelayMix = 0, smReverbMix = 0;
