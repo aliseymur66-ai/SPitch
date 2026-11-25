@@ -26,7 +26,7 @@
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      padding: 10px;
+      padding: 8px;
     }
 
     .shell {
@@ -34,7 +34,7 @@
       margin: 0 auto;
       background: #100b16;
       border: 1.5px solid var(--gold-border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
     }
@@ -42,20 +42,20 @@
     .header {
       background: linear-gradient(180deg, #1d1428 0%, #110c17 100%);
       border-bottom: 1px solid var(--gold-border);
-      padding: 14px 16px;
+      padding: 12px 14px;
       text-align: center;
     }
 
-    .clef { font-size: 28px; color: var(--gold-hi); line-height: 1; }
-    .title { font-size: 26px; font-weight: 800; color: var(--gold-hi); margin-top: 2px; }
+    .clef { font-size: 24px; color: var(--gold-hi); line-height: 1; }
+    .title { font-size: 24px; font-weight: 800; color: var(--gold-hi); margin-top: 2px; }
     .sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .sig { font-family: Georgia, serif; font-style: italic; font-size: 32px; font-weight: 700; color: var(--gold-hi); margin-top: 6px; }
+    .sig { font-family: Georgia, serif; font-style: italic; font-size: 28px; font-weight: 700; color: var(--gold-hi); margin-top: 4px; }
 
     .flag-bar {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
+      margin-top: 4px;
       font-size: 12px;
       color: var(--text-muted);
     }
@@ -76,8 +76,8 @@
 
     .pro-pill {
       display: inline-block;
-      margin-top: 6px;
-      padding: 3px 14px;
+      margin-top: 5px;
+      padding: 2px 12px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
@@ -86,12 +86,12 @@
       border: 1px solid var(--gold-border);
     }
 
-    /* Yalnız TƏK Lad seçimi olan üst zolaq */
+    /* Yalnız TƏK Lad seçimi */
     .top-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       background: var(--bg-panel);
       border-bottom: 1px solid var(--gold-border);
     }
@@ -99,23 +99,24 @@
     .box {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
-      border-radius: 9px;
-      padding: 6px 10px;
+      border-radius: 8px;
+      padding: 5px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
+      min-width: 0;
     }
 
-    .lbl { font-size: 11px; font-weight: 700; color: var(--gold-main); }
+    .lbl { font-size: 11px; font-weight: 700; color: var(--gold-main); white-space: nowrap; }
 
     select, button {
       background: var(--bg-input);
       color: var(--text-main);
       border: 1px solid var(--gold-border);
-      border-radius: 7px;
-      padding: 5px 8px;
-      font-size: 12px;
+      border-radius: 6px;
+      padding: 4px 6px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
     }
@@ -124,17 +125,23 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 165px 1fr 260px;
+      grid-template-columns: 155px 1fr 250px;
     }
 
     .sidebar {
       background: #0e0914;
       border-right: 1px solid var(--gold-border);
-      padding: 10px 8px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 12px;
+      gap: 8px;
+    }
+
+    .nav-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
     .nav-btn {
@@ -143,9 +150,9 @@
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 8px 10px;
-      border-radius: 8px;
-      margin-bottom: 4px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      font-size: 11px;
     }
 
     .nav-btn.active, .nav-btn:hover {
@@ -157,15 +164,15 @@
     .emblem {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 10px;
+      padding: 8px;
       text-align: center;
     }
 
     .ring {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 6px;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 4px;
       border-radius: 50%;
       border: 2px solid var(--gold-main);
       background: repeating-conic-gradient(rgba(245,191,71,0.3) 0deg 15deg, #160f1e 15deg 30deg);
@@ -173,22 +180,24 @@
       place-items: center;
       color: var(--gold-hi);
       font-weight: 900;
+      font-size: 14px;
     }
 
     .center {
-      padding: 10px;
+      padding: 8px;
       background: #0a060f;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      min-width: 0;
     }
 
     .telemetry {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
       border-radius: 8px;
-      padding: 7px 10px;
-      font-size: 11px;
+      padding: 6px 8px;
+      font-size: 10.5px;
       font-weight: 700;
       color: var(--cyan);
       display: flex;
@@ -199,7 +208,7 @@
 
     canvas {
       width: 100%;
-      height: 310px;
+      height: 250px;
       display: block;
       background: #08050c;
       border: 1px solid var(--gold-border);
@@ -209,33 +218,33 @@
     .right {
       background: var(--bg-panel);
       border-left: 1px solid var(--gold-border);
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .sec-title { text-align: center; font-size: 14px; font-weight: 800; color: var(--gold-hi); }
+    .sec-title { text-align: center; font-size: 13px; font-weight: 800; color: var(--gold-hi); }
 
     .dials { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .dial {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
-      border-radius: 10px;
-      padding: 8px 4px;
+      border-radius: 9px;
+      padding: 6px 4px;
       text-align: center;
     }
 
     .circle-val {
-      width: 68px;
-      height: 68px;
+      width: 56px;
+      height: 56px;
       margin: 0 auto 4px;
       border-radius: 50%;
-      border: 3px solid var(--gold-main);
+      border: 2.5px solid var(--gold-main);
       display: grid;
       place-items: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--gold-hi);
     }
@@ -245,16 +254,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
-    .row-item input[type="range"] { width: 105px; accent-color: var(--gold-main); }
+    .row-item input[type="range"] { width: 92px; accent-color: var(--gold-main); }
 
     .mods {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       background: #0e0914;
       border-top: 1px solid var(--gold-border);
     }
@@ -262,40 +271,41 @@
     .mod {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
-      border-radius: 10px;
-      padding: 8px 10px;
+      border-radius: 9px;
+      padding: 7px 8px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      min-width: 0;
     }
 
     .mod-badge {
-      width: 46px;
-      height: 46px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 2px solid var(--gold-main);
       display: grid;
       place-items: center;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       color: var(--gold-hi);
       flex-shrink: 0;
     }
 
-    .mod-body { flex: 1; }
-    .mod-name { font-size: 11px; font-weight: 800; color: var(--gold-hi); margin-bottom: 4px; }
+    .mod-body { flex: 1; min-width: 0; }
+    .mod-name { font-size: 10.5px; font-weight: 800; color: var(--gold-hi); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mod-body input[type="range"] { width: 100%; accent-color: var(--gold-main); }
 
     .ai-bar {
-      padding: 10px 12px;
+      padding: 8px 10px;
       background: var(--bg-panel);
       border-top: 1px solid var(--gold-border);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      font-size: 11px;
+      gap: 6px;
+      font-size: 10.5px;
       color: var(--text-muted);
     }
 
@@ -303,22 +313,40 @@
     .ai-btns { display: flex; gap: 6px; flex-wrap: wrap; }
 
     .foot {
-      padding: 8px 14px;
+      padding: 7px 12px;
       background: #0b0710;
       border-top: 1px solid rgba(245,191,71,0.25);
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-muted);
       font-style: italic;
     }
 
-    @media (max-width: 880px) {
+    /* Planşet və mobil ekranlarda yığcam görünüş */
+    @media (max-width: 820px) {
+      .top-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .main-grid { grid-template-columns: 1fr; }
-      .sidebar { border-right: none; border-bottom: 1px solid var(--gold-border); }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--gold-border);
+        padding: 6px;
+      }
+      .nav-wrap {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 4px;
+        padding-bottom: 2px;
+      }
+      .nav-btn {
+        width: auto;
+        white-space: nowrap;
+        padding: 5px 9px;
+        margin-bottom: 0;
+      }
       .emblem { display: none; }
       .right { border-left: none; border-top: 1px solid var(--gold-border); }
-      .mods { grid-template-columns: 1fr; }
+      .mods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
 </head>
@@ -342,7 +370,7 @@
       <div class="box">
         <span class="lbl">★ Preset</span>
         <select id="presetSel">
-          <option value="mugham" selected>Azerbaijan Muğam Style</option>
+          <option value="mugham" selected>Azerbaijan Muğam</option>
           <option value="pop">Bakı Pop-Şanson</option>
           <option value="ethno">Ethno-Pop</option>
           <option value="natural">Natural</option>
@@ -393,7 +421,7 @@
 
     <div class="main-grid">
       <aside class="sidebar">
-        <div>
+        <div class="nav-wrap">
           <button class="nav-btn active" type="button">✎ Pitch</button>
           <button class="nav-btn" type="button">↻ Correction</button>
           <button class="nav-btn" type="button">♫ Harmony</button>
@@ -406,8 +434,8 @@
         </div>
         <div class="emblem">
           <div class="ring">✦</div>
-          <div style="font-size:13px;font-weight:800;color:var(--gold-hi);">SPitch</div>
-          <div style="font-size:10px;color:var(--text-muted);">by Azerbaijani Soul</div>
+          <div style="font-size:12px;font-weight:800;color:var(--gold-hi);">SPitch</div>
+          <div style="font-size:9.5px;color:var(--text-muted);">by Azerbaijani Soul</div>
         </div>
       </aside>
 
@@ -418,7 +446,7 @@
           <span>AI PITCH: <strong id="outTarget">849.7 Hz</strong></span>
           <span>KOMMA: <strong id="outComma">-45 ct</strong></span>
         </div>
-        <canvas id="waveCanvas" width="760" height="310"></canvas>
+        <canvas id="waveCanvas" width="760" height="250"></canvas>
       </main>
 
       <aside class="right">
@@ -426,11 +454,11 @@
         <div class="dials">
           <div class="dial">
             <div class="circle-val" id="strCircle">75%</div>
-            <div style="font-size:11px;color:var(--text-muted);">Strength</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">Strength</div>
           </div>
           <div class="dial">
             <div class="circle-val" id="tolCircle">±15 ct</div>
-            <div style="font-size:11px;color:var(--text-muted);">Tolerance</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">Tolerance</div>
           </div>
         </div>
 
@@ -570,8 +598,7 @@
       });
 
       document.getElementById("btnAiAnaliz").addEventListener("click", () => {
-        const idx = (ladSel.selectedIndex + 1) % 9;
-        ladSel.selectedIndex = idx;
+        ladSel.selectedIndex = (ladSel.selectedIndex + 1) % 9;
         refreshLabels();
       });
 
@@ -591,35 +618,42 @@
         const h = canvas.height;
         ctx.clearRect(0, 0, w, h);
 
-        const padL = 38;
-        const plotW = w - padL - 12;
-        const plotH = h - 20;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, w, h);
+        ctx.clip();
 
-        ctx.font = "600 11px sans-serif";
+        const padL = 34;
+        const plotW = w - padL - 10;
+        const plotH = h - 24;
+
+        ctx.font = "600 10px sans-serif";
         notes.forEach((n, i) => {
-          const y = 10 + (i / (notes.length - 1)) * plotH;
+          const y = 12 + (i / (notes.length - 1)) * plotH;
           ctx.strokeStyle = "rgba(245, 191, 71, 0.14)";
           ctx.beginPath();
           ctx.moveTo(padL, y);
           ctx.lineTo(padL + plotW, y);
           ctx.stroke();
           ctx.fillStyle = "#cbbd9f";
-          ctx.fillText(n, 8, y + 4);
+          ctx.fillText(n, 6, y + 3);
         });
 
         ctx.beginPath();
         for (let i = 0; i <= 80; i++) {
           const u = i / 80;
           const x = padL + u * plotW;
-          const y = 10 + plotH * 0.52
-            + Math.sin(u * Math.PI * 3 - tPhase) * (plotH * 0.28)
-            + Math.cos(u * Math.PI * 6 + tPhase * 1.5) * (plotH * 0.08);
+          const rawY = 12 + plotH * 0.52
+            + Math.sin(u * Math.PI * 3 - tPhase) * (plotH * 0.24)
+            + Math.cos(u * Math.PI * 6 + tPhase * 1.5) * (plotH * 0.06);
+          const y = Math.max(14, Math.min(h - 14, rawY));
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = "#f5bf47";
-        ctx.lineWidth = 2.6;
+        ctx.lineWidth = 2.4;
         ctx.stroke();
+        ctx.restore();
 
         const inHz = 780 + Math.sin(tPhase * 0.7) * 65;
         const outHz = inHz + Math.cos(tPhase * 0.7) * 18;
