@@ -13,6 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Ensure Source/SPitchEngine.h exists
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path "Source" -Force | Out-Null
+          if (-not (Test-Path "Source/SPitchEngine.h")) {
+            $found = Get-ChildItem -Path "." -Filter "SPitchEngine.h" -File -Recurse | Where-Object { $_.FullName -notmatch "\\build\\|\\JUCE\\" } | Select-Object -First 1
+            if ($found) {
+              Copy-Item -Path $found.FullName -Destination "Source/SPitchEngine.h" -Force
+            } else {
+              throw "SPitchEngine.h repozitoriyada tapilmadi! Fayli Source/SPitchEngine.h adi ile elave edin."
+            }
+          }
+
       - name: Configure CMake
         run: cmake -B build -A x64
 
