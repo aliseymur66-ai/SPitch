@@ -12,177 +12,91 @@
       --bg-input: #21182c;
       --gold-hi: #fff2be;
       --gold-main: #f5bf47;
-      --gold-dim: #a97c24;
-      --gold-border: rgba(245, 191, 71, 0.42);
+      --gold-border: rgba(245, 191, 71, 0.45);
       --cyan: #38bdf8;
       --green: #34d399;
       --text-main: #faf6ee;
       --text-muted: #cbbd9f;
-      --radius: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: radial-gradient(circle at top, #1d1428 0%, var(--bg-void) 72%);
+      background: radial-gradient(circle at top, #1d1428 0%, var(--bg-void) 75%);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       padding: 10px;
     }
 
-    .studio-shell {
-      max-width: 1280px;
+    .shell {
+      max-width: 1240px;
       margin: 0 auto;
-      background: rgba(15, 10, 21, 0.96);
+      background: #100b16;
       border: 1.5px solid var(--gold-border);
       border-radius: 16px;
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75), 0 0 28px rgba(245, 191, 71, 0.08);
       overflow: hidden;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
     }
 
-    /* Header */
     .header {
-      position: relative;
-      background: linear-gradient(180deg, #1b1325 0%, #110c17 100%);
+      background: linear-gradient(180deg, #1d1428 0%, #110c17 100%);
       border-bottom: 1px solid var(--gold-border);
-      padding: 14px 18px;
+      padding: 14px 16px;
       text-align: center;
     }
 
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .clef { font-size: 28px; color: var(--gold-hi); line-height: 1; }
+    .title { font-size: 26px; font-weight: 800; color: var(--gold-hi); margin-top: 2px; }
+    .sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .sig { font-family: Georgia, serif; font-style: italic; font-size: 32px; font-weight: 700; color: var(--gold-hi); margin-top: 6px; }
 
-    .brand-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-    }
-
-    .clef-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: rgba(245, 191, 71, 0.12);
-      border: 1px solid var(--gold-border);
-      display: grid;
-      place-items: center;
-      color: var(--gold-hi);
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .brand-title {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: var(--gold-hi);
-      line-height: 1.1;
-    }
-
-    .brand-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.4px;
-    }
-
-    .status-pills {
-      display: flex;
+    .flag-bar {
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .pill-btn {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--gold-border);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.18s ease;
-    }
-
-    .pill-btn.active {
-      background: linear-gradient(135deg, var(--gold-main), #d99b1e);
-      color: #140e04;
-      border-color: var(--gold-hi);
-    }
-
-    .signature-block {
-      margin-top: 8px;
-    }
-
-    .signature-name {
-      font-family: Georgia, "Times New Roman", serif;
-      font-style: italic;
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--gold-hi);
-      text-shadow: 0 0 18px rgba(245, 191, 71, 0.28);
-    }
-
-    .flag-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 4px;
+      margin-top: 6px;
       font-size: 12px;
       color: var(--text-muted);
     }
 
-    .az-flag {
+    .flag {
       display: inline-flex;
       flex-direction: column;
       width: 24px;
       height: 14px;
+      border: 1px solid rgba(255,255,255,0.25);
       border-radius: 2px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
-    .az-flag span:nth-child(1) { flex: 1; background: #0092bc; }
-    .az-flag span:nth-child(2) { flex: 1; background: #e4002b; }
-    .az-flag span:nth-child(3) { flex: 1; background: #00af66; }
+    .flag span:nth-child(1) { flex: 1; background: #0092bc; }
+    .flag span:nth-child(2) { flex: 1; background: #e4002b; }
+    .flag span:nth-child(3) { flex: 1; background: #00af66; }
 
-    .pro-badge {
+    .pro-pill {
       display: inline-block;
       margin-top: 6px;
-      padding: 3px 12px;
+      padding: 3px 14px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
       color: var(--gold-hi);
-      background: rgba(245, 191, 71, 0.12);
+      background: rgba(245, 191, 71, 0.14);
       border: 1px solid var(--gold-border);
     }
 
-    /* Single Clean Top Bar (Only ONE Lad selector) */
-    .top-controls {
+    /* Yalnız TƏK Lad seçimi olan üst zolaq */
+    .top-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 8px;
       padding: 10px 12px;
       background: var(--bg-panel);
       border-bottom: 1px solid var(--gold-border);
     }
 
-    .ctrl-box {
+    .box {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
       border-radius: 9px;
@@ -193,136 +107,87 @@
       gap: 8px;
     }
 
-    .ctrl-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--gold-main);
-      white-space: nowrap;
-    }
+    .lbl { font-size: 11px; font-weight: 700; color: var(--gold-main); }
 
-    select, button.mini-btn {
+    select, button {
       background: var(--bg-input);
       color: var(--text-main);
-      border: 1px solid rgba(245, 191, 71, 0.35);
+      border: 1px solid var(--gold-border);
       border-radius: 7px;
       padding: 5px 8px;
       font-size: 12px;
       font-weight: 600;
-      outline: none;
       cursor: pointer;
     }
 
-    select {
-      flex: 1;
-      min-width: 0;
-    }
+    select { flex: 1; min-width: 0; }
 
-    /* Main Workspace */
-    .workspace {
+    .main-grid {
       display: grid;
-      grid-template-columns: 165px 1fr 270px;
-      min-height: 430px;
+      grid-template-columns: 165px 1fr 260px;
     }
 
-    /* Sidebar */
     .sidebar {
-      background: #100b16;
+      background: #0e0914;
       border-right: 1px solid var(--gold-border);
       padding: 10px 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .nav-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .nav-item {
+    .nav-btn {
       width: 100%;
       text-align: left;
       background: transparent;
-      color: var(--text-muted);
       border: 1px solid transparent;
-      border-radius: 8px;
+      color: var(--text-muted);
       padding: 8px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.15s ease;
+      border-radius: 8px;
+      margin-bottom: 4px;
     }
 
-    .nav-item.active,
-    .nav-item:hover {
+    .nav-btn.active, .nav-btn:hover {
       background: rgba(245, 191, 71, 0.14);
       color: var(--gold-hi);
       border-color: var(--gold-border);
     }
 
-    .buta-emblem {
+    .emblem {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
       border-radius: 12px;
-      padding: 10px 8px;
+      padding: 10px;
       text-align: center;
     }
 
-    .mandala-ring {
-      width: 66px;
-      height: 66px;
+    .ring {
+      width: 64px;
+      height: 64px;
       margin: 0 auto 6px;
       border-radius: 50%;
       border: 2px solid var(--gold-main);
-      background: repeating-conic-gradient(
-        from 0deg,
-        rgba(245, 191, 71, 0.28) 0deg 15deg,
-        rgba(18, 13, 24, 0.9) 15deg 30deg
-      );
+      background: repeating-conic-gradient(rgba(245,191,71,0.3) 0deg 15deg, #160f1e 15deg 30deg);
       display: grid;
       place-items: center;
-      box-shadow: 0 0 16px rgba(245, 191, 71, 0.2);
-    }
-
-    .mandala-core {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--gold-hi);
-      color: #160f04;
-      font-size: 12px;
-      font-weight: 900;
-      display: grid;
-      place-items: center;
-    }
-
-    .buta-title {
-      font-size: 13px;
-      font-weight: 800;
       color: var(--gold-hi);
+      font-weight: 900;
     }
 
-    .buta-sub {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    /* Center Canvas */
-    .center-pane {
+    .center {
       padding: 10px;
+      background: #0a060f;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      background: #0b0710;
     }
 
-    .telemetry-strip {
+    .telemetry {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 7px 10px;
       font-size: 11px;
       font-weight: 700;
       color: var(--cyan);
@@ -332,83 +197,442 @@
       gap: 6px;
     }
 
-    .canvas-wrap {
-      position: relative;
-      flex: 1;
-      min-height: 290px;
-      background: #09060d;
+    canvas {
+      width: 100%;
+      height: 310px;
+      display: block;
+      background: #08050c;
       border: 1px solid var(--gold-border);
       border-radius: 10px;
-      overflow: hidden;
     }
 
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Right Correction Panel */
-    .right-pane {
+    .right {
       background: var(--bg-panel);
       border-left: 1px solid var(--gold-border);
       padding: 12px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .pane-heading {
-      text-align: center;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--gold-hi);
-      letter-spacing: 0.4px;
-    }
-
-    .dials-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .dial-card {
+    .sec-title { text-align: center; font-size: 14px; font-weight: 800; color: var(--gold-hi); }
+
+    .dials { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .dial {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
-      border-radius: 12px;
-      padding: 10px 6px;
+      border-radius: 10px;
+      padding: 8px 4px;
       text-align: center;
     }
 
-    .ring-val {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 6px;
+    .circle-val {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 4px;
       border-radius: 50%;
       border: 3px solid var(--gold-main);
-      background: rgba(245, 191, 71, 0.08);
       display: grid;
       place-items: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: var(--gold-hi);
     }
 
-    .dial-lbl {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .toggle-row {
+    .row-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       font-size: 12px;
-      font-weight: 600;
     }
 
-    input[type="range"] {
-      accent
+    .row-item input[type="range"] { width: 105px; accent-color: var(--gold-main); }
+
+    .mods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 10px 12px;
+      background: #0e0914;
+      border-top: 1px solid var(--gold-border);
+    }
+
+    .mod {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mod-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-main);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gold-hi);
+      flex-shrink: 0;
+    }
+
+    .mod-body { flex: 1; }
+    .mod-name { font-size: 11px; font-weight: 800; color: var(--gold-hi); margin-bottom: 4px; }
+    .mod-body input[type="range"] { width: 100%; accent-color: var(--gold-main); }
+
+    .ai-bar {
+      padding: 10px 12px;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--gold-border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .ai-bar strong { color: var(--green); }
+    .ai-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .foot {
+      padding: 8px 14px;
+      background: #0b0710;
+      border-top: 1px solid rgba(245,191,71,0.25);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    @media (max-width: 880px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--gold-border); }
+      .emblem { display: none; }
+      .right { border-left: none; border-top: 1px solid var(--gold-border); }
+      .mods { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="header">
+      <div class="clef">𝄞</div>
+      <div class="title">SPitch</div>
+      <div class="sub">Vocal · Pitch · Harmony · Culture</div>
+      <div class="sig">Seymur Ali</div>
+      <div class="flag-bar">
+        <span>✦</span>
+        <span class="flag"><span></span><span></span><span></span></span>
+        <span>✦</span>
+      </div>
+      <div><span class="pro-pill">Professional</span></div>
+    </header>
+
+    <!-- Yalnız TƏK Lad seçimi -->
+    <section class="top-bar">
+      <div class="box">
+        <span class="lbl">★ Preset</span>
+        <select id="presetSel">
+          <option value="mugham" selected>Azerbaijan Muğam Style</option>
+          <option value="pop">Bakı Pop-Şanson</option>
+          <option value="ethno">Ethno-Pop</option>
+          <option value="natural">Natural</option>
+        </select>
+      </div>
+      <div class="box">
+        <span class="lbl">♫ Lad</span>
+        <select id="ladSel">
+          <option value="Sur" selected>Şur</option>
+          <option value="Rast">Rast</option>
+          <option value="Segah">Segah</option>
+          <option value="Cahargah">Çahargah</option>
+          <option value="BayatiSiraz">Bayatı-Şiraz</option>
+          <option value="Humayun">Humayun</option>
+          <option value="Suster">Şüştər</option>
+          <option value="Nava">Nava</option>
+          <option value="Diger">Diğər</option>
+          <option value="Major">Major</option>
+          <option value="Minor">Minor</option>
+        </select>
+      </div>
+      <div class="box">
+        <span class="lbl">♪ Key</span>
+        <select id="keySel">
+          <option value="C" selected>C</option>
+          <option value="C#">C#</option>
+          <option value="D">D</option>
+          <option value="D#">D#</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+          <option value="F#">F#</option>
+          <option value="G">G</option>
+          <option value="G#">G#</option>
+          <option value="A">A</option>
+          <option value="A#">A#</option>
+          <option value="B">B</option>
+        </select>
+      </div>
+      <div class="box">
+        <span class="lbl">⊞ Tuning</span>
+        <select id="tuneSel">
+          <option value="432">432 Hz</option>
+          <option value="440" selected>440 Hz</option>
+          <option value="442">442 Hz</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <aside class="sidebar">
+        <div>
+          <button class="nav-btn active" type="button">✎ Pitch</button>
+          <button class="nav-btn" type="button">↻ Correction</button>
+          <button class="nav-btn" type="button">♫ Harmony</button>
+          <button class="nav-btn" type="button">~ Vibrato</button>
+          <button class="nav-btn" type="button">⊞ Tuning</button>
+          <button class="nav-btn" type="button">◉ Formant</button>
+          <button class="nav-btn" type="button">▮ EQ</button>
+          <button class="nav-btn" type="button">✦ Effects</button>
+          <button class="nav-btn" type="button">★ Presets</button>
+        </div>
+        <div class="emblem">
+          <div class="ring">✦</div>
+          <div style="font-size:13px;font-weight:800;color:var(--gold-hi);">SPitch</div>
+          <div style="font-size:10px;color:var(--text-muted);">by Azerbaijani Soul</div>
+        </div>
+      </aside>
+
+      <main class="center">
+        <div class="telemetry">
+          <span>LAD: <strong id="outLad">Şur</strong></span>
+          <span>GİRİŞ: <strong id="outIn">827.0 Hz</strong></span>
+          <span>AI PITCH: <strong id="outTarget">849.7 Hz</strong></span>
+          <span>KOMMA: <strong id="outComma">-45 ct</strong></span>
+        </div>
+        <canvas id="waveCanvas" width="760" height="310"></canvas>
+      </main>
+
+      <aside class="right">
+        <div class="sec-title">Correction</div>
+        <div class="dials">
+          <div class="dial">
+            <div class="circle-val" id="strCircle">75%</div>
+            <div style="font-size:11px;color:var(--text-muted);">Strength</div>
+          </div>
+          <div class="dial">
+            <div class="circle-val" id="tolCircle">±15 ct</div>
+            <div style="font-size:11px;color:var(--text-muted);">Tolerance</div>
+          </div>
+        </div>
+
+        <div class="row-item">
+          <span>Natural Mode</span>
+          <input id="natChk" type="checkbox" checked />
+        </div>
+        <div class="row-item">
+          <span>Strength</span>
+          <input id="strRng" type="range" min="0" max="100" value="75" />
+          <span id="strTxt">75%</span>
+        </div>
+        <div class="row-item">
+          <span>Tolerance</span>
+          <input id="tolRng" type="range" min="5" max="60" value="15" />
+          <span id="tolTxt">±15 ct</span>
+        </div>
+        <div class="row-item">
+          <span>Speed</span>
+          <input id="spdRng" type="range" min="10" max="300" value="147" />
+          <span id="spdTxt">147 ms</span>
+        </div>
+        <div class="row-item">
+          <span>Transition</span>
+          <input id="trnRng" type="range" min="20" max="500" value="216" />
+          <span id="trnTxt">216 ms</span>
+        </div>
+        <div class="row-item">
+          <span>Vocal Mode</span>
+          <select id="modeSel">
+            <option value="Natural" selected>Natural</option>
+            <option value="Mugham AI">Mugham AI</option>
+            <option value="Modern Pop">Modern Pop</option>
+          </select>
+        </div>
+      </aside>
+    </div>
+
+    <section class="mods">
+      <div class="mod">
+        <div class="mod-badge" id="bHarm">60%</div>
+        <div class="mod-body">
+          <div class="mod-name">♫ Harmony</div>
+          <input id="rHarm" type="range" min="0" max="100" value="60" />
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-badge" id="bVib">65%</div>
+        <div class="mod-body">
+          <div class="mod-name">~ Vibrato</div>
+          <input id="rVib" type="range" min="0" max="100" value="65" />
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-badge" id="bForm">100%</div>
+        <div class="mod-body">
+          <div class="mod-name">◉ Formant</div>
+          <input id="rForm" type="range" min="0" max="100" value="100" />
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-badge" id="bRev">35%</div>
+        <div class="mod-body">
+          <div class="mod-name">✦ Reverb</div>
+          <input id="rRev" type="range" min="0" max="100" value="35" />
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-badge" id="bDel">25%</div>
+        <div class="mod-body">
+          <div class="mod-name">◷ Delay</div>
+          <input id="rDel" type="range" min="0" max="100" value="25" />
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-badge" id="bGain">+12.0</div>
+        <div class="mod-body">
+          <div class="mod-name">▮ Master Gain (dB)</div>
+          <input id="rGain" type="range" min="-24" max="18" step="0.5" value="12" />
+        </div>
+      </div>
+    </section>
+
+    <div class="ai-bar">
+      <div>SPitch Pro · <strong>Active Engine</strong> | 0.1ms Latency | CPU: 2%</div>
+      <div class="ai-btns">
+        <button id="btnAiAnaliz" type="button">Milli AI Analiz</button>
+        <button id="btnAiRestore" type="button">AI Vocal Restore · AI ENHANCE</button>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span>SPitch · Seymur Ali</span>
+      <span>Muğam ruhu, müasir texnologiya...</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const ladSel = document.getElementById("ladSel");
+      const strRng = document.getElementById("strRng");
+      const tolRng = document.getElementById("tolRng");
+      const spdRng = document.getElementById("spdRng");
+      const trnRng = document.getElementById("trnRng");
+      const rHarm = document.getElementById("rHarm");
+      const rVib = document.getElementById("rVib");
+      const rForm = document.getElementById("rForm");
+      const rRev = document.getElementById("rRev");
+      const rDel = document.getElementById("rDel");
+      const rGain = document.getElementById("rGain");
+
+      function refreshLabels() {
+        document.getElementById("outLad").textContent = ladSel.options[ladSel.selectedIndex].text;
+        document.getElementById("strCircle").textContent = strRng.value + "%";
+        document.getElementById("strTxt").textContent = strRng.value + "%";
+        document.getElementById("tolCircle").textContent = "±" + tolRng.value + " ct";
+        document.getElementById("tolTxt").textContent = "±" + tolRng.value + " ct";
+        document.getElementById("spdTxt").textContent = spdRng.value + " ms";
+        document.getElementById("trnTxt").textContent = trnRng.value + " ms";
+        document.getElementById("bHarm").textContent = rHarm.value + "%";
+        document.getElementById("bVib").textContent = rVib.value + "%";
+        document.getElementById("bForm").textContent = rForm.value + "%";
+        document.getElementById("bRev").textContent = rRev.value + "%";
+        document.getElementById("bDel").textContent = rDel.value + "%";
+        const g = Number(rGain.value);
+        document.getElementById("bGain").textContent = (g >= 0 ? "+" : "") + g.toFixed(1);
+      }
+
+      [ladSel, strRng, tolRng, spdRng, trnRng, rHarm, rVib, rForm, rRev, rDel, rGain]
+        .forEach((el) => el.addEventListener("input", refreshLabels));
+
+      document.querySelectorAll(".nav-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      document.getElementById("btnAiAnaliz").addEventListener("click", () => {
+        const idx = (ladSel.selectedIndex + 1) % 9;
+        ladSel.selectedIndex = idx;
+        refreshLabels();
+      });
+
+      document.getElementById("btnAiRestore").addEventListener("click", () => {
+        strRng.value = 85;
+        document.getElementById("natChk").checked = true;
+        refreshLabels();
+      });
+
+      const canvas = document.getElementById("waveCanvas");
+      const ctx = canvas.getContext("2d");
+      const notes = ["C6","B5","A5","G5","F5","E5","D5","C5","B4","A4"];
+      let tPhase = 0;
+
+      function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const padL = 38;
+        const plotW = w - padL - 12;
+        const plotH = h - 20;
+
+        ctx.font = "600 11px sans-serif";
+        notes.forEach((n, i) => {
+          const y = 10 + (i / (notes.length - 1)) * plotH;
+          ctx.strokeStyle = "rgba(245, 191, 71, 0.14)";
+          ctx.beginPath();
+          ctx.moveTo(padL, y);
+          ctx.lineTo(padL + plotW, y);
+          ctx.stroke();
+          ctx.fillStyle = "#cbbd9f";
+          ctx.fillText(n, 8, y + 4);
+        });
+
+        ctx.beginPath();
+        for (let i = 0; i <= 80; i++) {
+          const u = i / 80;
+          const x = padL + u * plotW;
+          const y = 10 + plotH * 0.52
+            + Math.sin(u * Math.PI * 3 - tPhase) * (plotH * 0.28)
+            + Math.cos(u * Math.PI * 6 + tPhase * 1.5) * (plotH * 0.08);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "#f5bf47";
+        ctx.lineWidth = 2.6;
+        ctx.stroke();
+
+        const inHz = 780 + Math.sin(tPhase * 0.7) * 65;
+        const outHz = inHz + Math.cos(tPhase * 0.7) * 18;
+        document.getElementById("outIn").textContent = inHz.toFixed(1) + " Hz";
+        document.getElementById("outTarget").textContent = outHz.toFixed(1) + " Hz";
+
+        tPhase += 0.04;
+        requestAnimationFrame(draw);
+      }
+
+      refreshLabels();
+      draw();
+    })();
+  </script>
+</body>
+</html>
